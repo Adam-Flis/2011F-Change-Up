@@ -4,6 +4,7 @@
 
 int Lift::top = 1200,
 Lift::bottom = 500,
+Lift::bothIntakes = 800,
 Lift::hold = 1000;
 
 int Lift::target, Lift::velocity;
@@ -22,12 +23,16 @@ Lift& Lift::stop() {
 }
 
 void Lift::setBrakeMode() {
-  if (ArmPot.get_value() > hold && Arm.get_brake_mode() == 1){
+  if (getPot() > hold && Arm.get_brake_mode() == 1){
     Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
   }
   else {
     Arm.set_brake_mode(MOTOR_BRAKE_BRAKE);
   }
+}
+
+int Lift::getPot(){
+  return ArmPot.get_value();
 }
 
 void Lift::move(int velocity) {
@@ -45,7 +50,7 @@ Lift& Lift::move(int target_, int velocity_, float timeOut_) {
 
 void Lift::start(void *ignore) {
   if(!isRunning) {
-    pros::delay(500);
+    delay(500);
     Lift *that = static_cast<Lift*>(ignore);
     that -> run();
   }
@@ -54,7 +59,7 @@ void Lift::start(void *ignore) {
 void Lift::run() {
   isRunning = true;
   while(isRunning) {
-    if (target == ArmPot.get_value()+5 || target == ArmPot.get_value()-5 || timeOut == millis()+timeOut){
+    if (target == getPot()+5 || target == getPot()-5 || timeOut == millis()+timeOut){
       isSettled = true;
       break;
     }

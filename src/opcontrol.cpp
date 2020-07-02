@@ -15,8 +15,6 @@ void opcontrol() {
   chassis.brake();
   intakes.brake();
 
-  bool bothIntakes;
-
   while(1){
 
     /* ********** Drivetrain ********** */
@@ -38,31 +36,38 @@ void opcontrol() {
 
     /* ********** Both Ball Intakes ********** */
 
-    if (ArmPot.get_value() < 1000){
-      bothIntakes = true;
-    } else {
-      bothIntakes = false;
+    if (lift.getPot() < lift.bothIntakes) {
+      if (Master.get_digital(DIGITAL_L1) || Master.get_digital(DIGITAL_A)){ // Button L1 or A pressed, intake on both intakes
+        intakes.move(600);
+      } else if (Master.get_digital(DIGITAL_L2) || Master.get_digital(DIGITAL_B)){ // Button L2 or B pressed, outake on both intakes
+        intakes.move(-600);
+      } else {
+        intakes.stop(); //Stops both intakes
+      }
     }
 
     /* ********** Bottom Ball Intake ********** */
 
-    if (Master.get_digital(DIGITAL_L1)) { // Button L1 pressed, intake balls
-      bottom.move(600);
-    } else if (Master.get_digital(DIGITAL_L2)) { // Button L2 pressed, outtake balls
-      bottom.move(-600);
-    } else {
-      bottom.stop(); // Stops bottom intakes
+    if (lift.getPot() > lift.bothIntakes) {
+      if (Master.get_digital(DIGITAL_L1)) { // Button L1 pressed, intake balls
+        bottom.move(600);
+      } else if (Master.get_digital(DIGITAL_L2)) { // Button L2 pressed, outtake balls
+        bottom.move(-600);
+      } else {
+        bottom.stop(); // Stops bottom intakes
+      }
     }
 
     /* ********** Top Ball Intake ********** */
 
-    if (Master.get_digital(DIGITAL_A)) { // Button A pressed, intake balls
-      top.move(600);
-    } else if (Master.get_digital(DIGITAL_B)) { // Button B pressed, outake balls
-      top.move(-600);
-    }
-    else {
-      top.stop(); // Stops top intake
+    if (lift.getPot() > lift.bothIntakes) {
+      if (Master.get_digital(DIGITAL_A)) { // Button A pressed, intake balls
+        top.move(600);
+      } else if (Master.get_digital(DIGITAL_B)) { // Button B pressed, outake balls
+        top.move(-600);
+      } else {
+        top.stop(); // Stops top intake
+      }
     }
 
     delay(10); // Loop speed, prevent overload

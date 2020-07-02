@@ -5,22 +5,19 @@
 
 /* ********** Declare Motors ********** */
 
-extern Motor LFD, LBD , RFD, RBD; //Drive motors
-extern Motor BLI, BRI; //Bottom intakes
-extern Motor Arm;
-extern Motor TI;
+extern Motor LFD, LBD , RFD, RBD; // Drive motors
+extern Motor BLI, BRI; // Bottom intakes
+extern Motor Arm; // Arm motor
+extern Motor TI; // Top intake
 
 /* ********** Declare Sensors ********** */
 
-extern Imu IMU;
-extern ADIEncoder LEnc, REnc, MEnc; //Encoders
-extern ADIPotentiometer ArmPot;
+extern Imu IMU; // Inertial measurement unit
+extern ADIEncoder LEnc, REnc, MEnc; // Encoders
+extern ADIPotentiometer ArmPot; // Arm potentiometer
 
 /* ********** Declare Controller ********** */
 
-extern Controller Master;
-
-/* ********** Declare Global Variables ********** */
-
+extern Controller Master; // Master controller
 
 #endif

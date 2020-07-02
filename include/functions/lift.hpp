@@ -3,7 +3,6 @@
 #ifndef LIFT_HPP
 #define LIFT_HPP
 
-
 class Lift {
   public:
     Lift();
@@ -16,12 +15,13 @@ class Lift {
 
     void setBrakeMode();
 
+    int getPot();
+
     static void start(void *ignore);
     void run();
     void move(int velocity);
 
-    static int top;
-    static int bottom;
+    static int top, bottom, bothIntakes;
 
   private:
     static int target, velocity;

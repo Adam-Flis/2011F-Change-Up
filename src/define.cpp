@@ -44,5 +44,3 @@ ADIAnalogIn ArmPot (Arm_Potentiometer_Port);
 /* ********** Creates Controller ********** */
 
 Controller Master (CONTROLLER_MASTER);
-
-/* ********** Global Variables ********** */
