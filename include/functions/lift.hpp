@@ -8,24 +8,23 @@ class Lift {
     Lift();
     ~Lift();
 
+    static void startTask(void *param);
+    void endTask();
+
+    Lift& move(int velocity, int target, int timeOut);
+    void reset();
+    void waitUntilSettled();
+
     Lift& stop();
-    Lift& move(int target_, int velocity_, float timeOut_);
-
-    void waitUntillSettled();
-
     void setBrakeMode();
 
     int getPot();
-
-    static void start(void *ignore);
-    void run();
     void move(int velocity);
 
-    static int top, bottom, bothIntakes;
+    static int topLimit, bottomLimit, bothIntakesLimit;
 
   private:
-    static int target, velocity;
-    static float timeOut;
+    static int target, velocity, timeOut;
     static int hold;
     static bool isRunning, isSettled;
 };

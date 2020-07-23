@@ -5,6 +5,8 @@
 
 class Intake {
   public:
+    Intake();
+    ~Intake();
 
     Intake& stop();
     void brake();

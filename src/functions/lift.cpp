@@ -2,23 +2,74 @@
 #include "define.hpp"
 #include "functions/lift.hpp"
 
-int Lift::top = 1200,
-Lift::bottom = 500,
-Lift::bothIntakes = 800,
+bool Lift::isRunning = false,
+     Lift::isSettled = true;
+
+int Lift::topLimit = 1200,
+Lift::bottomLimit = 500,
+Lift::bothIntakesLimit = 800,
 Lift::hold = 1000;
 
-int Lift::target, Lift::velocity;
-float Lift::timeOut;
+int Lift::velocity,
+    Lift::target,
+    Lift::timeOut;
 
-bool Lift::isRunning = false,
-Lift::isSettled = true;
+Lift lift;
 
-Lift::Lift() { }
+Lift::Lift() {}
+Lift::~Lift() {}
 
-Lift::~Lift() { }
+void Lift::startTask(void* param){
+  delay(200);
+  isRunning = true;
+  cout<<"Lift task started"<<endl;
+  while(isRunning){
+    lift.move(velocity);
+    if (!isSettled){
+      if (millis() >= timeOut){ // Time out stopping
+        lift.reset();
+      }
+      else if (velocity > 0 && lift.getPot() > target){ // Lift up stopping
+        lift.reset();
+      }
+      else if (velocity < 0 && lift.getPot() < target){ // Lift down stopping
+        lift.reset();
+      }
+    }
+    delay(10);
+  }
+}
 
-Lift& Lift::stop() {
-  Arm.move_velocity(0);
+void Lift::endTask(){
+  isRunning = false;
+  reset();
+  cout<<"Lift task ended"<<endl;
+}
+
+Lift& Lift::move(int velocity_, int target_, int timeOut_){
+  if (isRunning){
+    velocity = velocity_;
+    target = target_;
+    timeOut = timeOut_ + millis();
+    isSettled = false;
+    cout<<"Lift Velocity: "<<velocity<<" Lift Target: "<<target<<" Lift Timeout: "<<timeOut<<endl;
+  }
+  return *this;
+}
+
+void Lift::reset(){
+  isSettled = true;
+  velocity = target = timeOut = 0;
+  setBrakeMode();
+  cout<<"Lift Velocity: "<<velocity<<" Lift Target: "<<target<< " Lift Timeout: "<<timeOut<<endl;
+}
+
+void Lift::waitUntilSettled(){
+  while(!isSettled)delay(10);
+}
+
+Lift& Lift::stop(){
+  move(0);
   return *this;
 }
 
@@ -35,40 +86,6 @@ int Lift::getPot(){
   return ArmPot.get_value();
 }
 
-void Lift::move(int velocity) {
+void Lift::move(int velocity){
   Arm.move_velocity(velocity);
-}
-
-Lift& Lift::move(int target_, int velocity_, float timeOut_) {
-  target = target_;
-  velocity = velocity_;
-  timeOut = timeOut_;
-  stop();
-  isSettled = false;
-  return *this;
-}
-
-void Lift::start(void *ignore) {
-  if(!isRunning) {
-    delay(500);
-    Lift *that = static_cast<Lift*>(ignore);
-    that -> run();
-  }
-}
-
-void Lift::run() {
-  isRunning = true;
-  while(isRunning) {
-    if (target == getPot()+5 || target == getPot()-5 || timeOut == millis()+timeOut){
-      isSettled = true;
-      break;
-    }
-    move(velocity);
-    delay(10);
-  }
-  setBrakeMode();
-}
-
-void Lift::waitUntillSettled() {
-  while(!isSettled) delay(20);
 }

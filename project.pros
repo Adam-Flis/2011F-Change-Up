@@ -287,6 +287,11 @@
                 "version": "4.0.3"
             }
         },
-        "upload_options": {}
+        "upload_options": {
+            "compress_bin": true,
+            "description": "\"Never bet against FaZe Clan\" -Grant Cox",
+            "remote_name": "2011 FaZe Clan",
+            "slot": 1
+        }
     }
 }

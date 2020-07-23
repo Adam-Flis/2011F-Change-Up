@@ -2,6 +2,9 @@
 #include "define.hpp"
 #include "functions/chassis.hpp"
 
+Chassis::Chassis() {}
+Chassis::~Chassis() {}
+
 /**
  * Stops the drivetrain
  */

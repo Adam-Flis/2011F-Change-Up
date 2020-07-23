@@ -18,6 +18,6 @@ extern ADIPotentiometer ArmPot; // Arm potentiometer
 
 /* ********** Declare Controller ********** */
 
-extern Controller Master; // Master controller
+extern Controller Main; // Main controller
 
 #endif

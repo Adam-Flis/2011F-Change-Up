@@ -3,8 +3,12 @@
 
 // Code that runs when you start the program
 void initialize(){
+  lcd::initialize();
   Lift lift;
-  Task liftController(lift.start, NULL, "Lift Controller");
+  Task liftTask(lift.startTask, NULL, "Lift Task");
+  delay(1000);
+  cout<<"Tasks initialized"<<endl;
+  //Task chassisController(chassis.start, NULL, "Chassis Controller");
 }
 
 // Code that runs when the robot is in the disabled state by the competition switch or the field controller

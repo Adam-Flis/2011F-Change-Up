@@ -2,6 +2,9 @@
 #include "define.hpp"
 #include "functions/intake.hpp"
 
+Intake::Intake() {}
+Intake::~Intake() {}
+
 /* ********** Both Ball Intakes ********** */
 
 /**
