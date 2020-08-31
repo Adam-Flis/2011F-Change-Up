@@ -3,7 +3,7 @@
 #ifndef LIFT_HPP
 #define LIFT_HPP
 
-class Lift {
+class Lift{
   public:
     Lift();
     ~Lift();
@@ -11,15 +11,23 @@ class Lift {
     static void startTask(void *param);
     void endTask();
 
-    Lift& move(int velocity, int target, int timeOut);
+    Lift& move(int velocity_, int target_, int timeOut_);
+    Lift& setVelocity(int velocity_);
+    Lift& setTarget(int target_);
+    Lift& setTimeOut(int timeOut_);
+
+    int getVelocity();
+    int getTarget();
+    int getTimeOut();
+
     void reset();
+    void waitUntilTime(int time_);
+    void waitUntilTarget(int target_);
     void waitUntilSettled();
 
     Lift& stop();
-    void setBrakeMode();
-
     int getPot();
-    void move(int velocity);
+    void setBrakeMode();
 
     static int topLimit, bottomLimit, bothIntakesLimit;
 

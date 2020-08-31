@@ -2,13 +2,13 @@
 #include "define.hpp"
 #include "functions/chassis.hpp"
 
-Chassis::Chassis() {}
-Chassis::~Chassis() {}
+Chassis::Chassis(){}
+Chassis::~Chassis(){}
 
 /**
  * Stops the drivetrain
  */
-Chassis& Chassis::stop() {
+Chassis& Chassis::stop(){
   LFD.move_velocity(0);
   LBD.move_velocity(0);
   RFD.move_velocity(0);
@@ -19,7 +19,7 @@ Chassis& Chassis::stop() {
 /**
  * Sets the brake mode of the drivetrain to brake
  */
-void Chassis::brake() {
+void Chassis::brake(){
   LFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
   LBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
   RFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
@@ -29,7 +29,7 @@ void Chassis::brake() {
 /**
  * Sets the brake mode of the drivetrain to hold
  */
-void Chassis::hold() {
+void Chassis::hold(){
   LFD.set_brake_mode(MOTOR_BRAKE_HOLD);
   LBD.set_brake_mode(MOTOR_BRAKE_HOLD);
   RFD.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -39,7 +39,7 @@ void Chassis::hold() {
 /**
  * Sets the brake mode of the drivetrain to coast
  */
-void Chassis::coast() {
+void Chassis::coast(){
   LFD.set_brake_mode(MOTOR_BRAKE_COAST);
   LBD.set_brake_mode(MOTOR_BRAKE_COAST);
   RFD.set_brake_mode(MOTOR_BRAKE_COAST);
@@ -51,16 +51,16 @@ void Chassis::coast() {
  * @param side = "left", "right", "both"
  * @param volatge = +- 12000
  */
-void Chassis::move(string side, int voltage) {
-  if (side == "left") {
+void Chassis::moveVolt(string side, int voltage){
+  if (side == "left"){
     LFD.move_voltage(voltage);
     LBD.move_voltage(voltage);
   }
-  if (side == "right") {
+  else if (side == "right"){
     RFD.move_voltage(voltage);
     RBD.move_voltage(voltage);
   }
-  if (side == "both") {
+  else if (side == "both"){
     LFD.move_voltage(voltage);
     LBD.move_voltage(voltage);
   }

@@ -3,25 +3,25 @@
 #ifndef INTAKE_HPP
 #define INTAKE_HPP
 
-class Intake {
+class Intake{
   public:
     Intake();
     ~Intake();
 
     Intake& stop();
     void brake();
-    void move(int velocity);
+    void setVelocity(int velocity_);
 
-    class Bottom {
+    class Bottom{
       public:
         void stop();
-        void move(int velocity);
+        void setVelocity(int velocity_);
     };
 
-    class Top {
+    class Top{
       public:
         void stop();
-        void move(int velocity);
+        void setVelocity(int velocity_);
     };
 };
 

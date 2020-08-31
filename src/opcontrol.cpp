@@ -15,12 +15,15 @@ void opcontrol() {
   chassis.brake();
   intakes.brake();
 
-  lift.move(-100, 500, 5000).waitUntilSettled();
-
-  top.move(200);
+  lift.move(200, 500, 5000).waitUntilTime(2000);
+  lift.setVelocity(100);
+  top.setVelocity(200);
 
   delay(10000);
+  lift.reset();
+  delay(2000);
 
+  lift.endTask();
 
   while(1){
 
@@ -33,46 +36,46 @@ void opcontrol() {
 
     /* ********** Lift ********** */
 
-    if (Main.get_digital(DIGITAL_R1)) { // Button R1 pressed, lift up
-      lift.move(200);
-    } else if (Main.get_digital(DIGITAL_R2)) { // Button R2 pressed, lift down
-      lift.move(-200);
-    } else {
+    if (Main.get_digital(DIGITAL_R1)){ // Button R1 pressed, lift up
+      lift.setVelocity(200);
+    } else if (Main.get_digital(DIGITAL_R2)){ // Button R2 pressed, lift down
+      lift.setVelocity(-200);
+    } else{
       lift.stop().setBrakeMode(); // Stops lift and sets brake mode
     }
 
     /* ********** Both Ball Intakes ********** */
 
-    if (lift.getPot() <= lift.bothIntakesLimit) {
+    if (lift.getPot() <= lift.bothIntakesLimit){
       if (Main.get_digital(DIGITAL_L1) || Main.get_digital(DIGITAL_A)){ // Button L1 or A pressed, intake on both intakes
-        intakes.move(600);
+        intakes.setVelocity(600);
       } else if (Main.get_digital(DIGITAL_L2) || Main.get_digital(DIGITAL_B)){ // Button L2 or B pressed, outake on both intakes
-        intakes.move(-600);
-      } else {
+        intakes.setVelocity(-600);
+      } else{
         intakes.stop(); //Stops both intakes
       }
     }
 
     /* ********** Bottom Ball Intake ********** */
 
-    if (lift.getPot() > lift.bothIntakesLimit) {
+    if (lift.getPot() > lift.bothIntakesLimit){
       if (Main.get_digital(DIGITAL_L1)) { // Button L1 pressed, intake balls
-        bottom.move(600);
-      } else if (Main.get_digital(DIGITAL_L2)) { // Button L2 pressed, outtake balls
-        bottom.move(-600);
-      } else {
+        bottom.setVelocity(600);
+      } else if (Main.get_digital(DIGITAL_L2)){ // Button L2 pressed, outtake balls
+        bottom.setVelocity(-600);
+      } else{
         bottom.stop(); // Stops bottom intakes
       }
     }
 
     /* ********** Top Ball Intake ********** */
 
-    if (lift.getPot() > lift.bothIntakesLimit) {
-      if (Main.get_digital(DIGITAL_A)) { // Button A pressed, intake balls
-        top.move(600);
-      } else if (Main.get_digital(DIGITAL_B)) { // Button B pressed, outake balls
-        top.move(-600);
-      } else {
+    if (lift.getPot() > lift.bothIntakesLimit){
+      if (Main.get_digital(DIGITAL_A)){ // Button A pressed, intake balls
+        top.setVelocity(600);
+      } else if (Main.get_digital(DIGITAL_B)){ // Button B pressed, outake balls
+        top.setVelocity(-600);
+      } else{
         top.stop(); // Stops top intake
       }
     }

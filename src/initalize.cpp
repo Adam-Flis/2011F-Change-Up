@@ -8,7 +8,6 @@ void initialize(){
   Task liftTask(lift.startTask, NULL, "Lift Task");
   delay(1000);
   cout<<"Tasks initialized"<<endl;
-  //Task chassisController(chassis.start, NULL, "Chassis Controller");
 }
 
 // Code that runs when the robot is in the disabled state by the competition switch or the field controller

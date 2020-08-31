@@ -2,15 +2,15 @@
 #include "define.hpp"
 #include "functions/intake.hpp"
 
-Intake::Intake() {}
-Intake::~Intake() {}
+Intake::Intake(){}
+Intake::~Intake(){}
 
 /* ********** Both Ball Intakes ********** */
 
 /**
  * Stops both the bottom and top ball intakes
  */
-Intake& Intake::stop() {
+Intake& Intake::stop(){
   BLI.move_velocity(0);
   BRI.move_velocity(0);
   TI.move_velocity(0);
@@ -19,18 +19,18 @@ Intake& Intake::stop() {
 
 /**
  * Set velocity of both the bottom and top ball intakes
- * @param velocity = +- 600
+ * @param velocity_ = +- 600
  */
-void Intake::move(int velocity) {
-  BLI.move_velocity(velocity);
-  BRI.move_velocity(velocity);
-  TI.move_velocity(velocity);
+void Intake::setVelocity(int velocity_){
+  BLI.move_velocity(velocity_);
+  BRI.move_velocity(velocity_);
+  TI.move_velocity(velocity_);
 }
 
 /**
  * Sets the brake mode of both the bottom and top ball intakes to brake
  */
-void Intake::brake() {
+void Intake::brake(){
   BLI.set_brake_mode(MOTOR_BRAKE_BRAKE);
   BRI.set_brake_mode(MOTOR_BRAKE_BRAKE);
   TI.set_brake_mode(MOTOR_BRAKE_BRAKE);
@@ -41,18 +41,18 @@ void Intake::brake() {
 /**
  * Stops the bottom ball intakes
  */
-void Intake::Bottom::stop() {
+void Intake::Bottom::stop(){
   BLI.move_velocity(0);
   BRI.move_velocity(0);
 }
 
 /**
  * Sets velocity of the bottom ball inatkes
- * @param velocity = +- 600
+ * @param velocity_ = +- 600
  */
-void Intake::Bottom::move(int velocity) {
-  BLI.move_velocity(velocity);
-  BRI.move_velocity(velocity);
+void Intake::Bottom::setVelocity(int velocity_){
+  BLI.move_velocity(velocity_);
+  BRI.move_velocity(velocity_);
 }
 
 /* ********** Top Ball Intake ********** */
@@ -60,14 +60,14 @@ void Intake::Bottom::move(int velocity) {
 /**
  * Stops the top ball inatke
  */
-void Intake::Top::stop() {
+void Intake::Top::stop(){
   TI.move_velocity(0);
 }
 
 /**
  * Sets velocity of the top ball inatke
- * @param velocity = +- 600
+ * @param velocity_ = +- 600
  */
-void Intake::Top::move(int velocity) {
-  TI.move_velocity(velocity);
+void Intake::Top::setVelocity(int velocity_){
+  TI.move_velocity(velocity_);
 }
