@@ -57,7 +57,6 @@ void opcontrol() {
       RI.set_brake_mode(MOTOR_BRAKE_BRAKE);
       LI.move_velocity(0);
       RI.move_velocity(0);
->>>>>>> Stashed changes
     }
 
     delay(10); // Loop speed, prevent overload

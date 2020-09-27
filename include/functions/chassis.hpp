@@ -12,7 +12,8 @@ class Chassis {
     void brake();
     void hold();
     void coast();
-    void moveVolt(string side, int voltage);
+    void leftVolt(int voltage);
+    void rightVolt(int voltage);
 
   private:
 

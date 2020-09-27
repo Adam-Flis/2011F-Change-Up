@@ -46,22 +46,12 @@ void Chassis::coast(){
   RBD.set_brake_mode(MOTOR_BRAKE_COAST);
 }
 
-/**
- * Sets the voltage of the drivetrain depending on selected side
- * @param side = "left", "right", "both"
- * @param volatge = +- 12000
- */
-void Chassis::moveVolt(string side, int voltage){
-  if (side == "left"){
-    LFD.move_voltage(voltage);
-    LBD.move_voltage(voltage);
-  }
-  else if (side == "right"){
-    RFD.move_voltage(voltage);
-    RBD.move_voltage(voltage);
-  }
-  else if (side == "both"){
-    LFD.move_voltage(voltage);
-    LBD.move_voltage(voltage);
-  }
+void Chassis::leftVolt(int voltage){
+  LFD.move_voltage(voltage);
+  LBD.move_voltage(voltage);
+}
+
+void Chassis::rightVolt(int voltage){
+  RFD.move_voltage(voltage);
+  RBD.move_voltage(voltage);
 }
