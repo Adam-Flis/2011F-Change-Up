@@ -6,13 +6,15 @@
 float trackLength;
 float wheelDiameter = 2.75;
 double wheelCircumference = wheelDiameter * M_PI;
+int ticksPerRev = 360;
+float gearRatio = 1;
 
 Odom odom;
 Odom::Odom(){};
 Odom::~Odom(){};
 
 int Odom::inchToTicks(int ticks){
-  double inches = ticks * wheelCircumference;
+  double inches = ticks/ticksPerRev * gearRatio * wheelCircumference;
   return inches;
 }
 
@@ -22,24 +24,42 @@ void Odom::reset(){
   odom.theta = 0;
 }
 
-void Odom::track(){
-  double lastTheta, lastIMUTheta, lastMiddle;
+int Odom::getX(){
+  return odom.x;
+}
+
+int Odom::getY(){
+  return odom.y;
+}
+
+int Odom::getTheta(){
+  return odom.theta;
+}
+
+void Odom::track(void* param){
+  //bool getIMU = true;
   LEnc.reset();
   REnc.reset();
-  MEnc.reset();
   odom.reset();
+  cout << "Encoders reset and odometry initalized";
+  lcd::set_text(1, "Encoders reset and odometry initalized");
   while (1){
     double currentTheta = odom.theta;
-    double currentIMUTheta = IMU.get_rotation();
-    int currentLeft = inchToTicks(LEnc.get_value());
-    int currentRight = inchToTicks(REnc.get_value());
+    double currentLeft = inchToTicks(LEnc.get_value());
+    double currentRight = inchToTicks(REnc.get_value());
+    double alpha = (currentRight - currentLeft)/trackLength;
+    double tangent = 2 * ((currentLeft/alpha) + (trackLength/2)) * sin(alpha/2);
+    double deltaX = tangent * cos(currentTheta + alpha/2);
+    double deltaY = tangent * sin(currentTheta + alpha/2);
+    odom.theta += alpha;
+    odom.x += deltaX;
+    odom.y += deltaY;
 
-    //Calculate theta
-
-    //Calculate distance left wheel traveled
-
-    //Calculate distance right wheel traveled
-
-
+    //IMU refreshes at 100hz or 20ms
+    // if (getIMU == true){
+    //   double currentIMUTheta = IMU.get_rotation();
+    // };
+    //getIMU = !getIMU;
+    delay(10);
   }
 }

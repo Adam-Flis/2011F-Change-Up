@@ -3,10 +3,12 @@
 #include "functions/chassis.hpp"
 #include "functions/intake.hpp"
 #include "functions/lift.hpp"
+#include "functions/odometry.hpp"
 
 void opcontrol() {
 
   Chassis chassis;
+  Odom odom;
   // Intake intakes;
   // Lift lift;
   //
@@ -21,6 +23,10 @@ void opcontrol() {
 
 
   while(1) {
+    
+    lcd::print(1, "X:", odom.getX());
+    lcd::print(1, "Y:", odom.getY());
+    lcd::print(1, "Theta:", odom.getTheta());
 
     /* ********** Drivetrain ********** */
 
