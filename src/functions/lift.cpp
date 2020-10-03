@@ -90,4 +90,3 @@
 // void Lift::move(int velocity){
 //   Arm.move_velocity(velocity);
 // }
->>>>>>> Stashed changes

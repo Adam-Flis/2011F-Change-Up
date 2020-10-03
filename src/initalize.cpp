@@ -11,12 +11,11 @@ void initialize(){
   // delay(1000);
   // cout<<"Tasks initialized"<<endl;
   //Task chassisController(chassis.start, NULL, "Chassis Controller");
-  Task trackingTask(odom.track, NULL, "Tracking Task");
+  Task tracking(odom.track);
   delay(1000);
   lcd::set_text(2, "Tasks Initalized");
   cout<<"Tasks Initialized"<<endl;
   delay(2000);
-  lcd::clear();
 }
 
 // Code that runs when the robot is in the disabled state by the competition switch or the field controller
