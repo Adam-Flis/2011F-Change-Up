@@ -23,11 +23,13 @@ void opcontrol() {
 
 
   while(1) {
-    lcd::print(1, "X: %lf \n", odom.getX());
-    lcd::print(2, "Y: %lf \n", odom.getY());
-    lcd::print(3, "Theta: %lf degress\n", odom.getTheta());
-    lcd::print(4, "L: %d ticks\n", LEnc.get_value());
-    lcd::print(5, "R: %d ticks\n", REnc.get_value());
+    lcd::print(1, "X: %f \n", odom.getX());
+    lcd::print(2, "Y: %f \n", odom.getY());
+    lcd::print(3, "Theta: %f degress\n", odom.getTheta());
+    lcd::print(4, "Left: %f in\n", odom.ticksToInch(LEnc.get_value()));
+    lcd::print(5, "Right: %f in\n", odom.ticksToInch(REnc.get_value()));
+    lcd::print(6, "L: %d ticks\n", LEnc.get_value());
+    lcd::print(7, "R: %d ticks\n", REnc.get_value());
 
     /* ********** Drivetrain ********** */
 
