@@ -2,18 +2,15 @@
 #include "define.hpp"
 #include "functions/chassis.hpp"
 #include "functions/intake.hpp"
-#include "functions/lift.hpp"
+#include "functions/uptake.hpp"
 #include "functions/odometry.hpp"
 
 void opcontrol() {
 
   Chassis chassis;
   Odom odom;
-  // Intake intakes;
-  // Lift lift;
-  //
+
   chassis.brake();
-  // intakes.brake();
   //
   // lift.move(-100, 500, 5000).waitUntilSettled();
   //
@@ -23,9 +20,10 @@ void opcontrol() {
 
 
   while(1) {
-    lcd::print(1, "X: %f \n", odom.getX());
-    lcd::print(2, "Y: %f \n", odom.getY());
-    lcd::print(3, "Theta: %f degress\n", odom.getTheta());
+    lcd::print(0, "X: %f \n", odom.getX());
+    lcd::print(1, "Y: %f \n", odom.getY());
+    lcd::print(2, "Theta: %f degress\n", odom.getTheta());
+    lcd::print(3, "IMURot: %f degress\n", odom.getIMURot());
     lcd::print(4, "Left: %f in\n", odom.ticksToInch(LEnc.get_value()));
     lcd::print(5, "Right: %f in\n", odom.ticksToInch(REnc.get_value()));
     lcd::print(6, "L: %d ticks\n", LEnc.get_value());

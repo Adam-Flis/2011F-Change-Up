@@ -1,4 +1,5 @@
 #include "main.h"
+#include "define.hpp"
 #include "functions/lift.hpp"
 #include "functions/odometry.hpp"
 
@@ -11,11 +12,12 @@ void initialize(){
   // delay(1000);
   // cout<<"Tasks initialized"<<endl;
   //Task chassisController(chassis.start, NULL, "Chassis Controller");
-  Task tracking(odom.track);
+  IMU.reset();
+  Task trackTask(odom.track, NULL, "Track Task");
+  while (IMU.is_calibrating()){}
+  lcd::set_text(1, "Tasks and IMU Initalized");
+  cout << "Tasks and IMU Initialized" << endl;
   delay(1000);
-  lcd::set_text(2, "Tasks Initalized");
-  cout<<"Tasks Initialized"<<endl;
-  delay(2000);
 }
 
 // Code that runs when the robot is in the disabled state by the competition switch or the field controller

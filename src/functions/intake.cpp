@@ -1,142 +1,23 @@
 #include "main.h"
 #include "define.hpp"
-// #include "functions/intake.hpp"
-//
-// Intake::Intake(){}
-// Intake::~Intake(){}
-//
-// /* ********** Both Ball Intakes ********** */
-//
-// /**
-//  * Stops both the bottom and top ball intakes
-//  */
-// Intake& Intake::stop(){
-//   BLI.move_velocity(0);
-//   BRI.move_velocity(0);
-//   TI.move_velocity(0);
-//   return *this;
-// };
-//
-// /**
-//  * Set velocity of both the bottom and top ball intakes
-//  * @param velocity_ = +- 600
-//  */
-// void Intake::setVelocity(int velocity_){
-//   BLI.move_velocity(velocity_);
-//   BRI.move_velocity(velocity_);
-//   TI.move_velocity(velocity_);
-// }
-//
-// /**
-//  * Sets the brake mode of both the bottom and top ball intakes to brake
-//  */
-// void Intake::brake(){
-//   BLI.set_brake_mode(MOTOR_BRAKE_BRAKE);
-//   BRI.set_brake_mode(MOTOR_BRAKE_BRAKE);
-//   TI.set_brake_mode(MOTOR_BRAKE_BRAKE);
-// }
-//
-// /* ********** Bottom Ball Intakes ********** */
-//
-// /**
-//  * Stops the bottom ball intakes
-//  */
-// void Intake::Bottom::stop(){
-//   BLI.move_velocity(0);
-//   BRI.move_velocity(0);
-// }
-//
-// /**
-//  * Sets velocity of the bottom ball inatkes
-//  * @param velocity_ = +- 600
-//  */
-// void Intake::Bottom::setVelocity(int velocity_){
-//   BLI.move_velocity(velocity_);
-//   BRI.move_velocity(velocity_);
-// }
-//
-// /* ********** Top Ball Intake ********** */
-//
-// /**
-//  * Stops the top ball inatke
-//  */
-// void Intake::Top::stop(){
-//   TI.move_velocity(0);
-// }
-//
-// /**
-//  * Sets velocity of the top ball inatke
-//  * @param velocity_ = +- 600
-//  */
-// void Intake::Top::setVelocity(int velocity_){
-//   TI.move_velocity(velocity_);
-// }
-// Intake::Intake() {}
-// Intake::~Intake() {}
-//
-// /* ********** Both Ball Intakes ********** */
-//
-// /**
-//  * Stops both the bottom and top ball intakes
-//  */
-// Intake& Intake::stop() {
-//   BLI.move_velocity(0);
-//   BRI.move_velocity(0);
-//   TI.move_velocity(0);
-//   return *this;
-// };
-//
-// /**
-//  * Set velocity of both the bottom and top ball intakes
-//  * @param velocity = +- 600
-//  */
-// void Intake::move(int velocity) {
-//   BLI.move_velocity(velocity);
-//   BRI.move_velocity(velocity);
-//   TI.move_velocity(velocity);
-// }
-//
-// /**
-//  * Sets the brake mode of both the bottom and top ball intakes to brake
-//  */
-// void Intake::brake() {
-//   BLI.set_brake_mode(MOTOR_BRAKE_BRAKE);
-//   BRI.set_brake_mode(MOTOR_BRAKE_BRAKE);
-//   TI.set_brake_mode(MOTOR_BRAKE_BRAKE);
-// }
-//
-// /* ********** Bottom Ball Intakes ********** */
-//
-// /**
-//  * Stops the bottom ball intakes
-//  */
-// void Intake::Bottom::stop() {
-//   BLI.move_velocity(0);
-//   BRI.move_velocity(0);
-// }
-//
-// /**
-//  * Sets velocity of the bottom ball inatkes
-//  * @param velocity = +- 600
-//  */
-// void Intake::Bottom::move(int velocity) {
-//   BLI.move_velocity(velocity);
-//   BRI.move_velocity(velocity);
-// }
-//
-// /* ********** Top Ball Intake ********** */
-//
-// /**
-//  * Stops the top ball inatke
-//  */
-// void Intake::Top::stop() {
-//   TI.move_velocity(0);
-// }
-//
-// /**
-//  * Sets velocity of the top ball inatke
-//  * @param velocity = +- 600
-//  */
-// void Intake::Top::move(int velocity) {
-//   TI.move_velocity(velocity);
-// }
+#include "functions/intake.hpp"
+
+Intake intake;
+Intake::Intake(){}
+Intake::~Intake(){}
+
+void Intake::move(int velocity){
+  LI.move_velocity(velocity);
+  RI.move_velocity(velocity);
+}
+
+Intake& Intake::stop(){
+  LI.move_velocity(0);
+  RI.move_velocity(0);
+  return *this;
+}
+
+void Intake::brake(){
+  LI.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  RI.set_brake_mode(MOTOR_BRAKE_BRAKE);
+}
