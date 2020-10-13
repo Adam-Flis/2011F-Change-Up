@@ -13,14 +13,13 @@ public:
   float getX();
   float getY();
   float getTheta();
-  float getIMURot();
   static void track(void* param);
 
 
 
 
 private:
-  float x, y, theta, IMURot;
+  float x, y, theta;
 };
 
 #endif

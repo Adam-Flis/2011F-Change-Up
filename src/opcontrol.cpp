@@ -23,11 +23,10 @@ void opcontrol() {
     lcd::print(0, "X: %f \n", odom.getX());
     lcd::print(1, "Y: %f \n", odom.getY());
     lcd::print(2, "Theta: %f degress\n", odom.getTheta());
-    lcd::print(3, "IMURot: %f degress\n", odom.getIMURot());
-    lcd::print(4, "Left: %f in\n", odom.ticksToInch(LEnc.get_value()));
-    lcd::print(5, "Right: %f in\n", odom.ticksToInch(REnc.get_value()));
-    lcd::print(6, "L: %d ticks\n", LEnc.get_value());
-    lcd::print(7, "R: %d ticks\n", REnc.get_value());
+    lcd::print(3, "Left: %f in\n", odom.ticksToInch(LEnc.get_value()));
+    lcd::print(4, "Right: %f in\n", odom.ticksToInch(REnc.get_value()));
+    lcd::print(5, "L: %d ticks\n", LEnc.get_value());
+    lcd::print(6, "R: %d ticks\n", REnc.get_value());
 
     /* ********** Drivetrain ********** */
 
@@ -44,7 +43,7 @@ void opcontrol() {
     } else if (Main.get_digital(DIGITAL_L2)) { // Button L2 pressed, downtake balls
       TU.move_velocity(-600);
       BU.move_velocity(-600);
-    } else {
+    } else { // Nothing pressed, stop uptake
       TU.set_brake_mode(MOTOR_BRAKE_BRAKE);
       BU.set_brake_mode(MOTOR_BRAKE_BRAKE);
       TU.move_velocity(0);
@@ -59,7 +58,7 @@ void opcontrol() {
     } else if (Main.get_digital(DIGITAL_R2)) { // Button L2 pressed, outtake balls
       LI.move_velocity(-600);
       RI.move_velocity(-600);
-    } else {
+    } else { //Nothing pressed, stop intake
       LI.set_brake_mode(MOTOR_BRAKE_BRAKE);
       RI.set_brake_mode(MOTOR_BRAKE_BRAKE);
       LI.move_velocity(0);
