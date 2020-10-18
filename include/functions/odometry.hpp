@@ -8,15 +8,11 @@ public:
   Odom();
   ~Odom();
 
-  static float ticksToInch(float ticks);
   void reset();
   float getX();
   float getY();
   float getTheta();
   static void track(void* param);
-
-
-
 
 private:
   float x, y, theta;

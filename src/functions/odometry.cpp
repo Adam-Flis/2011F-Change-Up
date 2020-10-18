@@ -2,21 +2,15 @@
 #include "define.hpp"
 #include "functions/chassis.hpp"
 #include "functions/odometry.hpp"
+#include "functions/math.hpp"
 
 float trackLength = 6; //In inches
-float wheelDiameter = 2.75; //In inches
-float wheelCircumference = wheelDiameter * M_PI;
-float gearRatio = 1/1; //Teeth of driver/Teeth of driven (N/A because of unpowered wheels)
-float ticksPerRevolution = 360; //Number of ticks in one full revolution of encoder/motor
 
 Odom odom;
+Math math;
+
 Odom::Odom(){};
 Odom::~Odom(){};
-
-float Odom::ticksToInch(float ticks) {
-  float inches = ticks/ticksPerRevolution * gearRatio * wheelCircumference;
-  return inches;
-}
 
 void Odom::reset() {
   odom.x = 0;
@@ -32,7 +26,7 @@ float Odom::getY() {
   return odom.y;
 }
 
-float Odom::getTheta(){
+float Odom::getTheta() {
   return odom.theta;
 }
 
@@ -56,8 +50,8 @@ void Odom::track(void* param) {
     lastLeft = currentLeft;
     lastRight = currentRight;
     odom.theta = currentTheta;
-    odom.x += ticksToInch(deltaX);
-    odom.y += ticksToInch(deltaY);
+    odom.x += math.ticksToInch(deltaX);
+    odom.y += math.ticksToInch(deltaY);
     delay(20); // IMU refreshes at 50hz or 20ms
               // Encoders/motors refresh at 100hz or 10ms
   }

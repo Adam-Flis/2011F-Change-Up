@@ -4,11 +4,13 @@
 #include "functions/intake.hpp"
 #include "functions/uptake.hpp"
 #include "functions/odometry.hpp"
+#include "functions/math.hpp"
 
 void opcontrol() {
 
   Chassis chassis;
   Odom odom;
+  Math math;
 
   chassis.brake();
   //
@@ -23,8 +25,8 @@ void opcontrol() {
     lcd::print(0, "X: %f \n", odom.getX());
     lcd::print(1, "Y: %f \n", odom.getY());
     lcd::print(2, "Theta: %f degress\n", odom.getTheta());
-    lcd::print(3, "Left: %f in\n", odom.ticksToInch(LEnc.get_value()));
-    lcd::print(4, "Right: %f in\n", odom.ticksToInch(REnc.get_value()));
+    lcd::print(3, "Left: %f in\n", math.ticksToInch(LEnc.get_value()));
+    lcd::print(4, "Right: %f in\n", math.ticksToInch(REnc.get_value()));
     lcd::print(5, "L: %d ticks\n", LEnc.get_value());
     lcd::print(6, "R: %d ticks\n", REnc.get_value());
 
