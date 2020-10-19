@@ -55,3 +55,31 @@ void Chassis::rightVolt(int voltage) {
   RFD.move_voltage(voltage);
   RBD.move_voltage(voltage);
 }
+
+void Chassis::startTask(void* param) {
+
+}
+
+void Chassis::endTask() {
+
+}
+
+void Chassis::drive(float distance, float maxSpeed, float timeOut) {
+
+}
+
+void Chassis::turn(float theta, float maxSpeed, float timeOut) {
+
+}
+
+void Chassis::driveToPoint(float x, float y, float maxSpeed, float timeOut) {
+
+}
+
+void Chassis::turnToPoint(float x, float y, float maxSpeed, float timeOut) {
+
+}
+
+void Chassis::turnToAngle(float theta, float maxSpeed, float timeOut) {
+
+}

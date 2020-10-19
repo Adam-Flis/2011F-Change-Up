@@ -26,7 +26,12 @@ float Math::percentToVoltage(float percent) {
 }
 
 // Makes sure angle is between -180 & 180 degress
-float Math::angleWrapper(float angle) {
+float Math::angleWrap(float angle) {
+  if (angle > 180 && angle < -180) {
+    angle =
+  }
+  else if (angle < 180) {
 
+  }
   return angle;
 }
