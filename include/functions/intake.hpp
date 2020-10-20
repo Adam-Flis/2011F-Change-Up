@@ -8,7 +8,7 @@ class Intake {
     Intake();
     ~Intake();
 
-    void move(int velocity);
+    void move(float velocity);
     Intake& stop();
     void brake();
 };

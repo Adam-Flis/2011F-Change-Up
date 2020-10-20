@@ -1,6 +1,13 @@
 #include "main.h"
 #include "define.hpp"
 #include "functions/chassis.hpp"
+#include "functions/math.hpp"
+#include "functions/odometry.hpp"
+#include "functions/pid.hpp"
+
+Math math;
+Odom odom;
+PID pid;
 
 Chassis::Chassis(){}
 Chassis::~Chassis(){}
@@ -64,22 +71,39 @@ void Chassis::endTask() {
 
 }
 
-void Chassis::drive(float distance, float maxSpeed, float timeOut) {
-
+void Chassis::drive(float distance_, float maxSpeed_, float timeOut_) {
+  distance = math.inchToTicks(distance_);
+  maxSpeed = math.percentToVoltage(maxSpeed_);
+  timeOut = math.timeOut(timeOut_);
+  pid.drive(distance, maxSpeed);
 }
 
-void Chassis::turn(float theta, float maxSpeed, float timeOut) {
-
+void Chassis::turn(float theta_, float maxSpeed_, float timeOut_) {
+  theta = math.angleWrap(theta_);
+  maxSpeed = math.percentToVoltage(maxSpeed_);
+  timeOut = math.timeOut(timeOut_);
+  pid.turn(theta, maxSpeed);
 }
 
-void Chassis::driveToPoint(float x, float y, float maxSpeed, float timeOut) {
-
+void Chassis::driveToPoint(float x_, float y_, float maxSpeed_, float timeOut_) {
+  x_ = x_ - odom.getX();
+  y_ = y_ - odom.getY();
+  theta = math.angleWrap(atan(y_/x_)*(180/M_PI));
+  distance = math.inchToTicks(sqrt((x_*x_) + (y_*y_)));
+  maxSpeed = math.percentToVoltage(maxSpeed_);
+  timeOut = math.timeOut(timeOut_);
 }
 
-void Chassis::turnToPoint(float x, float y, float maxSpeed, float timeOut) {
-
+void Chassis::turnToPoint(float x_, float y_, float maxSpeed_, float timeOut_) {
+  x_ = x_ - odom.getX();
+  y_ = y_ - odom.getY();
+  theta = math.angleWrap(atan(y_/x_)*(180/M_PI));
+  maxSpeed = math.percentToVoltage(maxSpeed_);
+  timeOut = math.timeOut(timeOut_);
 }
 
-void Chassis::turnToAngle(float theta, float maxSpeed, float timeOut) {
-
+void Chassis::turnToAngle(float theta_, float maxSpeed_, float timeOut_) {
+  theta = theta_;
+  maxSpeed = math.percentToVoltage(maxSpeed_);
+  timeOut = math.timeOut(timeOut_);
 }

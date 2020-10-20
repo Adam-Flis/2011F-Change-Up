@@ -8,7 +8,7 @@ class Uptake {
     Uptake();
     ~Uptake();
 
-    void move(int velocity);
+    void move(float velocity);
     Uptake& stop();
     void brake();
 };

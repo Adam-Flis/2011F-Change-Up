@@ -13,9 +13,7 @@ Odom::Odom(){};
 Odom::~Odom(){};
 
 void Odom::reset() {
-  odom.x = 0;
-  odom.y = 0;
-  odom.theta = 0;
+  odom.x = odom.y = odom.theta = 0;
 }
 
 float Odom::getX() {

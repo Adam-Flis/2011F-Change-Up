@@ -21,17 +21,33 @@ float Math::inchToTicks(float inches) {
   return ticks;
 }
 
+float Math::percentToVelocity(float percent, char cartColor) {
+  int multiplier;
+  if (cartColor == 'R') {
+    multiplier = 1;
+  }
+  else if (cartColor == 'G') {
+    multiplier = 2;
+  }
+  else if (cartColor == 'B') {
+    multiplier = 6;
+  }
+  return percent * multiplier;
+}
+
 float Math::percentToVoltage(float percent) {
   return percent * 120;
 }
 
 // Makes sure angle is between -180 & 180 degress
 float Math::angleWrap(float angle) {
-  if (angle > 180 && angle < -180) {
-    angle =
-  }
-  else if (angle < 180) {
+  angle = fmod(angle + 180, 360);
+  if (angle < 0) {
+      angle += 360;
+    }
+  return angle - 180;
+}
 
-  }
-  return angle;
+float Math::timeOut(float time) {
+  return time*1000 + millis();
 }

@@ -1,13 +1,15 @@
 #include "main.h"
 #include "define.hpp"
 #include "functions/uptake.hpp"
+#include "functions/math.hpp"
 
+Math math;
 Uptake::Uptake(){}
 Uptake::~Uptake(){}
 
-void Uptake::move(int velocity) {
-  BU.move_velocity(velocity);
-  TU.move_velocity(velocity);
+void Uptake::move(float velocity) {
+  BU.move_velocity(math.percentToVelocity(velocity, 'B'));
+  TU.move_velocity(math.percentToVelocity(velocity, 'B'));
 }
 
 Uptake& Uptake::stop() {
