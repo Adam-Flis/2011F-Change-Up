@@ -2,18 +2,18 @@
 
 /* ********** Define Motor Ports ********** */
 
-#define LFD_Port 14
-#define LBD_Port 15
-#define RFD_Port 17
-#define RBD_Port 16
-#define Intake_Left_Port 11
-#define Intake_Right_Port 20
-#define Uptake_Top_Port 2
-#define Uptake_Bottom_Port 1
+#define LFD_Port 13
+#define LBD_Port 14
+#define RFD_Port 19
+#define RBD_Port 18
+#define Intake_Left_Port 1
+#define Intake_Right_Port 10
+#define Uptake_Top_Port 3
+#define Uptake_Bottom_Port 2
 
 /* ********** Define Sensor Ports ********** */
 
-#define IMU_Port 9
+#define IMU_Port 17
 #define Left_Encoder_Top_Port 'e'
 #define Left_Encoder_Bottom_Port 'f'
 #define Right_Encoder_Top_Port 'g'

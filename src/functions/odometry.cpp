@@ -1,13 +1,7 @@
 #include "main.h"
 #include "define.hpp"
-#include "functions/chassis.hpp"
-#include "functions/odometry.hpp"
-#include "functions/math.hpp"
 
 float trackLength = 6; //In inches
-
-Odom odom;
-Math math;
 
 Odom::Odom(){};
 Odom::~Odom(){};

@@ -1,4 +1,10 @@
 #include "main.h"
+#include "functions/chassis.hpp"
+#include "functions/intake.hpp"
+#include "functions/uptake.hpp"
+#include "functions/odometry.hpp"
+#include "functions/pid.hpp"
+#include "functions/math.hpp"
 
 #ifndef DEFINE_HPP
 #define DEFINE_HPP
@@ -18,5 +24,12 @@ extern ADIPotentiometer ArmPot; // Arm potentiometer
 /* ********** Declare Controller ********** */
 
 extern Controller Main; // Main controller
+
+extern Math math;
+extern Odom odom;
+extern Chassis chassis;
+extern PID pid;
+extern Uptake uptake;
+extern Intake intake;
 
 #endif

@@ -1,22 +1,19 @@
 #include "main.h"
 #include "define.hpp"
-#include "functions/lift.hpp"
-#include "functions/odometry.hpp"
 
 // Code that runs when you start the program
 void initialize() {
   lcd::initialize();
-  Odom odom;
   // Lift lift;
   // Task liftTask(lift.startTask, NULL, "Lift Task");
   // delay(1000);
   // cout<<"Tasks initialized"<<endl;
   //Task chassisController(chassis.start, NULL, "Chassis Controller");
   IMU.reset();
-  Task trackTask(odom.track, NULL, "Track Task");
+  //Task trackTask(odom.track, NULL, "Track Task");
   while (IMU.is_calibrating()){}
-  lcd::set_text(1, "Tasks and IMU Initalized");
-  cout << "Tasks and IMU Initialized" << endl;
+  //lcd::set_text(1, "Tasks and IMU Initalized");
+  //cout << "Tasks and IMU Initialized" << endl;
   delay(1000);
 }
 

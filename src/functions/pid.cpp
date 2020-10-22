@@ -1,13 +1,5 @@
 #include "main.h"
 #include "define.hpp"
-#include "functions/chassis.hpp"
-#include "functions/odometry.hpp"
-#include "functions/math.hpp"
-#include "functions/pid.hpp"
-
-
-Odom odom;
-Math math;
 
 PID::PID(){}
 PID::~PID(){}

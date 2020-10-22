@@ -1,6 +1,5 @@
 #include "main.h"
 #include "define.hpp"
-#include "functions/math.hpp"
 
 Math::Math(){};
 Math::~Math(){};

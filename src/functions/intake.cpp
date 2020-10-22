@@ -1,9 +1,6 @@
 #include "main.h"
 #include "define.hpp"
-#include "functions/intake.hpp"
-#include "functions/math.hpp"
 
-Math math;
 Intake::Intake(){}
 Intake::~Intake(){}
 

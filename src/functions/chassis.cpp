@@ -1,13 +1,5 @@
 #include "main.h"
 #include "define.hpp"
-#include "functions/chassis.hpp"
-#include "functions/math.hpp"
-#include "functions/odometry.hpp"
-#include "functions/pid.hpp"
-
-Math math;
-Odom odom;
-PID pid;
 
 Chassis::Chassis(){}
 Chassis::~Chassis(){}

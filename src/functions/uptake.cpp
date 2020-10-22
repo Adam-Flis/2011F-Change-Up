@@ -1,9 +1,6 @@
 #include "main.h"
 #include "define.hpp"
-#include "functions/uptake.hpp"
-#include "functions/math.hpp"
 
-Math math;
 Uptake::Uptake(){}
 Uptake::~Uptake(){}
 
