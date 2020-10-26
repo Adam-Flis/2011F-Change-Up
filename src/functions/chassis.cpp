@@ -67,8 +67,6 @@ void Chassis::reset() {
   chassis.brake();
 }
 
-//Fix this; bad logical sense, need to wait for turn to finish then drive.
-
 void Chassis::startTask(void* param) {
   delay(300);
   isRunning = true;
@@ -78,20 +76,22 @@ void Chassis::startTask(void* param) {
     chassis.setLeftVolt(leftVolt);
     chassis.setRightVolt(rightVolt);
     if (!isSettled) {
-      if (isTurning == true) {
+      if (isTurning) {
         pid.turn(math.angleWrap(targetTheta), maxSpeed);
-      } else if (isDriving == true) {
+        if (targetTheta - 0.1 < odom.getTheta() < targetTheta + 0.1) {
+         isTurning = false;
+        }
+      } else if (isDriving && !isTurning) {
+        if (targetTicks - 0.1 < (LEnc.get_value() + REnc.get_value())/2 < targetTicks + 0.1) {
+          isDriving = false;
+        }
         pid.drive(targetTicks, maxSpeed);
       }
-      if (targetTicks - 0.1 < (LEnc.get_value() + REnc.get_value())/2 < targetTicks + 0.1) {
-        chassis.reset();
-        isDriving = false;
-      } else if (targetTheta - 0.1 < odom.getTheta() < targetTheta + 0.1) {
-        chassis.reset();
-        isTurning = false;
-      } else if (millis() >= timeOut) {
+      if (millis() >= timeOut) {
         chassis.reset();
         isDriving = isTurning = false;
+      } else if (!isTurning && !isDriving) {
+        chassis.reset();
       }
     }
     delay(20);
@@ -104,47 +104,62 @@ void Chassis::endTask() {
   cout<<"Chassis task ended"<<endl;
 }
 
-void Chassis::drive(float distance_, float maxSpeed_, float timeOut_) {
-  targetTicks = math.inchToTicks(distance_);
-  maxSpeed = math.percentToVoltage(maxSpeed_);
-  timeOut = math.timeOut(timeOut_);
-  isDriving = true;
-  isTurning = false;
+Chassis& Chassis::drive(float distance, float maxSpeed_, float timeOut_) {
+  if (isRunning) {
+    targetTicks = math.inchToTicks(distance);
+    maxSpeed = math.percentToVoltage(maxSpeed_);
+    timeOut = math.timeOut(timeOut_);
+    isDriving = true;
+    isTurning = false;
+  }
+  return *this;
 }
 
-void Chassis::turn(float theta_, float maxSpeed_, float timeOut_) {
-  targetTheta = math.angleWrap(theta_) + odom.getTheta();
+Chassis& Chassis::turn(float theta, float maxSpeed_, float timeOut_) {
+  if (isRunning) {
+  targetTheta = math.angleWrap(theta) + odom.getTheta();
   maxSpeed = math.percentToVoltage(maxSpeed_);
   timeOut = math.timeOut(timeOut_);
   isTurning = true;
   isDriving = false;
+  }
+  return *this;
 }
 
-void Chassis::driveToPoint(float x_, float y_, float maxSpeed_, float timeOut_) {
-  float targetX = x_ + odom.getX();
-  float targetY = y_ + odom.getY();
-  targetTheta = math.angleWrap(atan(targetY/targetX)*(180/M_PI)) - odom.getTheta();
-  targetTicks = math.inchToTicks(sqrt((targetX*targetX) + (targetY*targetY)));
-  maxSpeed = math.percentToVoltage(maxSpeed_);
-  timeOut = math.timeOut(timeOut_);
-  isTurning = true;
-  isDriving = true;
+Chassis& Chassis::driveToPoint(float x, float y, float maxSpeed_, float timeOut_) {
+  if (isRunning) {
+    float targetX = x + odom.getX();
+    float targetY = y + odom.getY();
+    targetTheta = math.angleWrap(atan(targetY/targetX)*(180/M_PI)) - odom.getTheta();
+    targetTicks = math.inchToTicks(sqrt((targetX*targetX) + (targetY*targetY)));
+    maxSpeed = math.percentToVoltage(maxSpeed_);
+    timeOut = math.timeOut(timeOut_);
+    isTurning = true;
+    isDriving = true;
+  }
+  return *this;
 }
 
-void Chassis::turnToPoint(float x_, float y_, float maxSpeed_, float timeOut_) {
-  float targetX = x_ + odom.getX();
-  float targetY = y_ + odom.getY();
-  targetTheta = math.angleWrap(atan(targetY/targetX)*(180/M_PI)) - odom.getTheta();
-  maxSpeed = math.percentToVoltage(maxSpeed_);
-  timeOut = math.timeOut(timeOut_);
-  isTurning = true;
-  isDriving = false;
+Chassis& Chassis::turnToPoint(float x, float y, float maxSpeed_, float timeOut_) {
+  if (isRunning) {
+    float targetX = x + odom.getX();
+    float targetY = y + odom.getY();
+    targetTheta = math.angleWrap(atan(targetY/targetX)*(180/M_PI)) - odom.getTheta();
+    maxSpeed = math.percentToVoltage(maxSpeed_);
+    timeOut = math.timeOut(timeOut_);
+    isTurning = true;
+    isDriving = false;
+  }
+  return *this;
 }
 
-void Chassis::turnToAngle(float theta_, float maxSpeed_, float timeOut_) {
-  targetTheta = math.angleWrap(theta_) - odom.getTheta();
-  maxSpeed = math.percentToVoltage(maxSpeed_);
-  timeOut = math.timeOut(timeOut_);
-  isTurning = true;
-  isDriving = false;
+Chassis& Chassis::turnToAngle(float theta, float maxSpeed_, float timeOut_) {
+  if (isRunning) {
+    targetTheta = math.angleWrap(theta) - odom.getTheta();
+    maxSpeed = math.percentToVoltage(maxSpeed_);
+    timeOut = math.timeOut(timeOut_);
+    isTurning = true;
+    isDriving = false;
+  }
+  return *this;
 }

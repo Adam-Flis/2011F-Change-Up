@@ -17,11 +17,16 @@ class Chassis {
     void reset();
     static void startTask(void *param);
     static void endTask();
-    void drive(float distance_, float maxSpeed_, float timeOut_);
-    void turn(float theta_, float maxSpeed_, float timeOut_);
-    void driveToPoint(float x_, float y_, float maxSpeed_, float timeOut_);
-    void turnToPoint(float x_, float y_, float maxSpeed_, float timeOut_);
-    void turnToAngle(float theta_, float maxSpeed_, float timeOut_);
+    Chassis& drive(float distance, float maxSpeed_, float timeOut_);
+    Chassis& turn(float theta, float maxSpeed_, float timeOut_);
+    Chassis& driveToPoint(float x, float y, float maxSpeed_, float timeOut_);
+    Chassis& turnToPoint(float x, float y, float maxSpeed_, float timeOut_);
+    Chassis& turnToAngle(float theta, float maxSpeed_, float timeOut_);
+    void waitUntilSettled();
+    void waitUntillPoint(float x, float y);
+    void waitUntillAngle(float theta);
+    void waitForSec(float time);
+
 
   private:
     static float leftVolt, rightVolt, maxSpeed, timeOut;
