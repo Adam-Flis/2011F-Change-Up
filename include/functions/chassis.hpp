@@ -12,8 +12,9 @@ class Chassis {
     void brake();
     void hold();
     void coast();
-    void leftVolt(int voltage);
-    void rightVolt(int voltage);
+    void setLeftVolt(float voltage);
+    void setRightVolt(float voltage);
+    void reset();
     static void startTask(void *param);
     static void endTask();
     void drive(float distance_, float maxSpeed_, float timeOut_);
@@ -23,8 +24,9 @@ class Chassis {
     void turnToAngle(float theta_, float maxSpeed_, float timeOut_);
 
   private:
-    static float distance, theta, maxSpeed, timeOut;
-    static bool isRunning, isSettled;
+    static float leftVolt, rightVolt, maxSpeed, timeOut;
+    static float targetTheta, targetTicks;
+    static bool isRunning, isSettled, isTurning, isDriving;
 };
 
 #endif

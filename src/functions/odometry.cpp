@@ -7,6 +7,8 @@ Odom::Odom(){};
 Odom::~Odom(){};
 
 void Odom::reset() {
+  LEnc.reset();
+  REnc.reset();
   odom.x = odom.y = odom.theta = 0;
 }
 
@@ -24,14 +26,12 @@ float Odom::getTheta() {
 
 void Odom::track(void* param) {
   delay(300);
-  LEnc.reset();
-  REnc.reset();
   odom.reset();
   float lastTheta, lastLeft, lastRight;
   cout << "Encoders reset and odometry initalized" << endl;
   lcd::set_text(0, "Encoders reset and odometry initalized");
   while (1){
-    float currentTheta = IMU.get_rotation();
+    float currentTheta = math.angleWrap(IMU.get_rotation());
     float currentLeft = LEnc.get_value();
     float currentRight = REnc.get_value();
     float deltaLeft = currentLeft - lastLeft;
