@@ -8,8 +8,8 @@ public:
   PID();
   ~PID();
 
-  void drive(float distance, float maxSpeed);
-  void turn(float theta, float maxSpeed);
+  void drive(float targetTicks_, float maxSpeed_);
+  void turn(float targetTheta_, float maxSpeed_);
 
 private:
 

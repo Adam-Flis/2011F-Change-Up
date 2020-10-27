@@ -25,11 +25,11 @@ extern ADIPotentiometer ArmPot; // Arm potentiometer
 
 extern Controller Main; // Main controller
 
-extern Math math;
-extern Odom odom;
-extern Chassis chassis;
-extern PID pid;
-extern Uptake uptake;
-extern Intake intake;
+extern class Math math;
+extern class Odom odom;
+extern class Chassis chassis;
+extern class PID pid;
+extern class Uptake uptake;
+extern class Intake intake;
 
 #endif

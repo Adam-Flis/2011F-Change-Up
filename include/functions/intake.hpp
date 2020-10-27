@@ -4,13 +4,13 @@
 #define INTAKE_HPP
 
 class Intake {
-  public:
-    Intake();
-    ~Intake();
+public:
+  Intake();
+  ~Intake();
 
-    void move(float velocity);
-    Intake& stop();
-    void brake();
+  void move(float velocity);
+  Intake& stop();
+  void brake();
 };
 
 #endif

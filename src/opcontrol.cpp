@@ -3,7 +3,8 @@
 
 void opcontrol() {
 
-  chassis.brake();
+  //chassis.drive(1, 30, 2000).waitUntilSettled();
+  //chassis.brake();
 
   while(1) {
     //lcd::print(0, "X: %f \n", odom.getX());
