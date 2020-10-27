@@ -12,10 +12,12 @@ public:
   float getX();
   float getY();
   float getTheta();
-  static void track(void* param);
+  static void startTask(void* param);
+  void endTask();
 
 private:
   float x, y, theta;
+  static bool isRunning;
 };
 
 #endif

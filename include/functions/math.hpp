@@ -13,7 +13,7 @@ public:
   static float ticksToInch(float ticks);
   static float inchToTicks(float inches);
   static float angleWrap(float angle);
-  static float timeOut(float time);
+  static float secToMillis(float seconds);
 
 private:
 };

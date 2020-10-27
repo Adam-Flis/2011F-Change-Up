@@ -47,6 +47,6 @@ float Math::angleWrap(float angle) {
   return angle - 180;
 }
 
-float Math::timeOut(float time) {
-  return time*1000 + millis();
+float Math::secToMillis(float seconds) {
+  return seconds*1000;
 }

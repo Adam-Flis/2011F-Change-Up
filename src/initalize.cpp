@@ -4,17 +4,15 @@
 // Code that runs when you start the program
 void initialize() {
   lcd::initialize();
-  // Lift lift;
-  // Task liftTask(lift.startTask, NULL, "Lift Task");
-  // delay(1000);
-  // cout<<"Tasks initialized"<<endl;
-  //Task chassisController(chassis.start, NULL, "Chassis Controller");
+  Task chassisTask(chassis.startTask, NULL, "Chassis Task");
+  Task trackTask(odom.startTask, NULL, "Track Task");
+  cout<<"Tasks initialized"<<endl;
   IMU.reset();
-  //Task trackTask(odom.track, NULL, "Track Task");
   while (IMU.is_calibrating()){}
-  //lcd::set_text(1, "Tasks and IMU Initalized");
-  //cout << "Tasks and IMU Initialized" << endl;
+  cout << "IMU Initialized" << endl;
+  lcd::set_text(0, "Tasks and IMU Initalized");
   delay(1000);
+  lcd::clear_line(0);
 }
 
 // Code that runs when the robot is in the disabled state by the competition switch or the field controller

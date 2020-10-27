@@ -2,6 +2,7 @@
 #include "define.hpp"
 
 float trackLength = 6; //In inches
+bool Chassis::isRunning = false;
 
 Odom::Odom(){};
 Odom::~Odom(){};
@@ -24,13 +25,14 @@ float Odom::getTheta() {
   return odom.theta;
 }
 
-void Odom::track(void* param) {
+void Odom::startTask(void* param) {
   delay(300);
+  isRunning = true;
   odom.reset();
   float lastTheta, lastLeft, lastRight;
-  cout << "Encoders reset and odometry initalized" << endl;
-  lcd::set_text(0, "Encoders reset and odometry initalized");
-  while (1){
+  cout<<"Encoders and odometry reset"<<endl;
+  cout<<"Odometry Task Started"<<endl;
+  while (isRunning) {
     float currentTheta = math.angleWrap(IMU.get_rotation());
     float currentLeft = LEnc.get_value();
     float currentRight = REnc.get_value();
@@ -47,4 +49,10 @@ void Odom::track(void* param) {
     delay(20); // IMU refreshes at 50hz or 20ms
               // Encoders/motors refresh at 100hz or 10ms
   }
+}
+
+void Odom::endTask() {
+  isRunning = false;
+  odom.reset();
+  cout<<"Odometry task ended"<<endl;
 }

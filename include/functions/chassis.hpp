@@ -23,10 +23,6 @@ class Chassis {
     Chassis& turnToPoint(float x, float y, float maxSpeed_, float timeOut_);
     Chassis& turnToAngle(float theta, float maxSpeed_, float timeOut_);
     void waitUntilSettled();
-    void waitUntillPoint(float x, float y);
-    void waitUntillAngle(float theta);
-    void waitForSec(float time);
-
 
   private:
     static float leftVolt, rightVolt, maxSpeed, timeOut;

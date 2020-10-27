@@ -3,27 +3,16 @@
 
 void opcontrol() {
 
-  //chassis.brake();
-  LFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
-  LBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
-  RFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
-  RBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
-  //
-  // lift.move(-100, 500, 5000).waitUntilSettled();
-  //
-  // top.move(200);
-  //
-  // delay(10000);
-
+  chassis.brake();
 
   while(1) {
     //lcd::print(0, "X: %f \n", odom.getX());
     //lcd::print(1, "Y: %f \n", odom.getY());
-    lcd::print(4, "Theta: %f degress\n", IMU.get_rotation());
+    //lcd::print(4, "Theta: %f degress\n", IMU.get_rotation());
     //lcd::print(3, "Left: %f in\n", math.ticksToInch(LEnc.get_value()));
     //lcd::print(4, "Right: %f in\n", math.ticksToInch(REnc.get_value()));
-    lcd::print(5, "L: %d ticks\n", LEnc.get_value());
-    lcd::print(6, "R: %d ticks\n", REnc.get_value());
+    //lcd::print(5, "L: %d ticks\n", LEnc.get_value());
+    //lcd::print(6, "R: %d ticks\n", REnc.get_value());
 
     /* ********** Drivetrain ********** */
 
