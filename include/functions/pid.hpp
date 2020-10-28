@@ -5,8 +5,6 @@
 
 class PID {
 public:
-  PID();
-  ~PID();
 
   void drive(float targetTicks_, float maxSpeed_);
   void turn(float targetTheta_, float maxSpeed_);

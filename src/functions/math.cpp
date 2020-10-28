@@ -1,8 +1,6 @@
 #include "main.h"
 #include "define.hpp"
-
-Math::Math(){};
-Math::~Math(){};
+#include "functions/math.hpp"
 
 float wheelDiameter = 2.75; //In inches
 float wheelCircumference = wheelDiameter * M_PI;

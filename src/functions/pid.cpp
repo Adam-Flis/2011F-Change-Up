@@ -1,8 +1,14 @@
 #include "main.h"
 #include "define.hpp"
+#include "functions/pid.hpp"
+#include "functions/math.hpp"
+#include "functions/chassis.hpp"
+#include "functions/odometry.hpp"
 
-PID::PID(){}
-PID::~PID(){}
+PID pid;
+static Math math;
+static Chassis chassis;
+static Odom odom;
 
 float kP = 20, kI = 0.01, kD = 5;
 float kP_t = 6, kI_t = 0.01, kD_t = 30;

@@ -5,8 +5,6 @@
 
 class Math {
 public:
-  Math();
-  ~Math();
 
   static float percentToVelocity(float percent, char cartColor);
   static float percentToVoltage(float percent);

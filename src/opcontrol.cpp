@@ -1,10 +1,14 @@
 #include "main.h"
 #include "define.hpp"
+#include "functions/chassis.hpp"
+
 
 void opcontrol() {
 
+  Chassis chassis;
+
   //chassis.drive(1, 30, 2000).waitUntilSettled();
-  //chassis.brake();
+  chassis.brake();
 
   while(1) {
     //lcd::print(0, "X: %f \n", odom.getX());

@@ -5,8 +5,6 @@
 
 class Odom {
 public:
-  Odom();
-  ~Odom();
 
   void reset();
   float getX();

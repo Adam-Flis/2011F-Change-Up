@@ -1,11 +1,13 @@
 #include "main.h"
 #include "define.hpp"
+#include "functions/odometry.hpp"
+#include "functions/math.hpp"
+
+Odom odom;
+static Math math;
 
 float trackLength = 6; //In inches
-bool Chassis::isRunning = false;
-
-Odom::Odom(){};
-Odom::~Odom(){};
+bool Odom::isRunning = false;
 
 void Odom::reset() {
   LEnc.reset();
@@ -44,7 +46,7 @@ void Odom::startTask(void* param) {
     lastLeft = currentLeft;
     lastRight = currentRight;
     odom.theta = currentTheta;
-    odom.x += math.ticksToInch(deltaX);
+    odom.x += Math::ticksToInch(deltaX);
     odom.y += math.ticksToInch(deltaY);
     delay(20); // IMU refreshes at 50hz or 20ms
               // Encoders/motors refresh at 100hz or 10ms

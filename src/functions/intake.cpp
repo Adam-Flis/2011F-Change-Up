@@ -1,8 +1,12 @@
 #include "main.h"
 #include "define.hpp"
+#include "functions/intake.hpp"
+#include "functions/math.hpp"
 
 Intake::Intake(){}
 Intake::~Intake(){}
+
+static Math math;
 
 void Intake::move(float velocity) {
   LI.move_velocity(math.percentToVelocity(velocity, 'B'));

@@ -1,13 +1,31 @@
 #include "main.h"
 #include "define.hpp"
+#include "functions/chassis.hpp"
+#include "functions/odometry.hpp"
+#include "functions/pid.hpp"
+#include "functions/math.hpp"
+
+
+Chassis::Chassis(){}
+Chassis::~Chassis(){}
+
+Chassis chassis;
+static Math math;
+static PID pid;
+static Odom odom;
 
 bool Chassis::isRunning = false,
      Chassis::isSettled = true,
      Chassis::isTurning = false,
      Chassis::isDriving = false;
 
-Chassis::Chassis(){}
-Chassis::~Chassis(){}
+float Chassis::targetTheta,
+      Chassis::targetTicks;
+
+float Chassis::leftVolt,
+      Chassis::rightVolt,
+      Chassis::maxSpeed,
+      Chassis::timeOut;
 
 /**
  * Stops the drivetrain

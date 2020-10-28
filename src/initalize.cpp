@@ -1,9 +1,13 @@
 #include "main.h"
 #include "define.hpp"
+#include "functions/chassis.hpp"
+#include "functions/odometry.hpp"
 
 // Code that runs when you start the program
 void initialize() {
   lcd::initialize();
+  Chassis chassis;
+  Odom odom;
   Task chassisTask(chassis.startTask, NULL, "Chassis Task");
   Task trackTask(odom.startTask, NULL, "Track Task");
   cout<<"Tasks initialized"<<endl;
