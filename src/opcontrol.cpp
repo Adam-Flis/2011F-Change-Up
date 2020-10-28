@@ -1,23 +1,27 @@
 #include "main.h"
 #include "define.hpp"
 #include "functions/chassis.hpp"
+#include "functions/odometry.hpp"
+#include "functions/math.hpp"
 
 
 void opcontrol() {
 
   Chassis chassis;
+  Odom odom;
+  Math math;
 
-  //chassis.drive(1, 30, 2000).waitUntilSettled();
+  chassis.drive(-12, 50, 20).waitUntilSettled();
   chassis.brake();
 
   while(1) {
-    //lcd::print(0, "X: %f \n", odom.getX());
-    //lcd::print(1, "Y: %f \n", odom.getY());
-    //lcd::print(4, "Theta: %f degress\n", IMU.get_rotation());
-    //lcd::print(3, "Left: %f in\n", math.ticksToInch(LEnc.get_value()));
-    //lcd::print(4, "Right: %f in\n", math.ticksToInch(REnc.get_value()));
-    //lcd::print(5, "L: %d ticks\n", LEnc.get_value());
-    //lcd::print(6, "R: %d ticks\n", REnc.get_value());
+    lcd::print(0, "X: %f \n", odom.getX());
+    lcd::print(1, "Y: %f \n", odom.getY());
+    lcd::print(2, "Theta: %f degress\n", odom.getTheta());
+    lcd::print(3, "Left: %f in\n", math.ticksToInch(LEnc.get_value()));
+    lcd::print(4, "Right: %f in\n", math.ticksToInch(REnc.get_value()));
+    lcd::print(5, "L: %d ticks\n", LEnc.get_value());
+    lcd::print(6, "R: %d ticks\n", REnc.get_value());
 
     /* ********** Drivetrain ********** */
 

@@ -10,10 +10,11 @@ void initialize() {
   Odom odom;
   Task chassisTask(chassis.startTask, NULL, "Chassis Task");
   Task trackTask(odom.startTask, NULL, "Track Task");
+  delay(500);
   cout<<"Tasks initialized"<<endl;
   IMU.reset();
   while (IMU.is_calibrating()){}
-  cout << "IMU Initialized" << endl;
+  cout<<"IMU Initialized"<<endl;
   lcd::set_text(0, "Tasks and IMU Initalized");
   delay(1000);
   lcd::clear_line(0);

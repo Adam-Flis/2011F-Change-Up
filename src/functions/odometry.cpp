@@ -46,10 +46,9 @@ void Odom::startTask(void* param) {
     lastLeft = currentLeft;
     lastRight = currentRight;
     odom.theta = currentTheta;
-    odom.x += Math::ticksToInch(deltaX);
+    odom.x += math.ticksToInch(deltaX);
     odom.y += math.ticksToInch(deltaY);
-    delay(20); // IMU refreshes at 50hz or 20ms
-              // Encoders/motors refresh at 100hz or 10ms
+    delay(10);
   }
 }
 

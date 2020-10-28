@@ -96,14 +96,15 @@ void Chassis::startTask(void* param) {
     if (!isSettled) {
       if (isTurning) {
         pid.turn(math.angleWrap(targetTheta), maxSpeed);
-        if (targetTheta - 0.1 < odom.getTheta() < targetTheta + 0.1) {
+        if (abs(targetTheta) <= abs(odom.getTheta())) {
          isTurning = false;
         }
-      } else if (isDriving && !isTurning) {
-        if (targetTicks - 0.1 < (LEnc.get_value() + REnc.get_value())/2 < targetTicks + 0.1) {
+      }
+      if (isDriving && !isTurning) {
+        pid.drive(targetTicks, maxSpeed);
+        if (abs(targetTicks) <= abs(LEnc.get_value() + REnc.get_value())/2) {
           isDriving = false;
         }
-        pid.drive(targetTicks, maxSpeed);
       }
       if (millis() >= timeOut) {
         chassis.reset();
@@ -112,7 +113,7 @@ void Chassis::startTask(void* param) {
         chassis.reset();
       }
     }
-    delay(20);
+    delay(10);
   }
 }
 
@@ -129,17 +130,19 @@ Chassis& Chassis::drive(float distance, float maxSpeed_, float timeOut_) {
     timeOut = math.secToMillis(timeOut_) + millis();
     isDriving = true;
     isTurning = false;
+    isSettled = false;
   }
   return *this;
 }
 
 Chassis& Chassis::turn(float theta, float maxSpeed_, float timeOut_) {
   if (isRunning) {
-  targetTheta = math.angleWrap(theta) + odom.getTheta();
-  maxSpeed = math.percentToVoltage(maxSpeed_);
-  timeOut = math.secToMillis(timeOut_) + millis();
-  isTurning = true;
-  isDriving = false;
+    targetTheta = math.angleWrap(theta) + odom.getTheta();
+    maxSpeed = math.percentToVoltage(maxSpeed_);
+    timeOut = math.secToMillis(timeOut_) + millis();
+    isTurning = true;
+    isDriving = false;
+    isSettled = false;
   }
   return *this;
 }
@@ -154,6 +157,7 @@ Chassis& Chassis::driveToPoint(float x, float y, float maxSpeed_, float timeOut_
     timeOut = math.secToMillis(timeOut_) + millis();
     isTurning = true;
     isDriving = true;
+    isSettled = false;
   }
   return *this;
 }
@@ -167,6 +171,7 @@ Chassis& Chassis::turnToPoint(float x, float y, float maxSpeed_, float timeOut_)
     timeOut = math.secToMillis(timeOut_) + millis();
     isTurning = true;
     isDriving = false;
+    isSettled = false;
   }
   return *this;
 }
@@ -178,12 +183,13 @@ Chassis& Chassis::turnToAngle(float theta, float maxSpeed_, float timeOut_) {
     timeOut = math.secToMillis(timeOut_) + millis();
     isTurning = true;
     isDriving = false;
+    isSettled = false;
   }
   return *this;
 }
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
-    delay(20);
+    delay(10);
   }
 }
