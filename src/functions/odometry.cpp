@@ -35,7 +35,7 @@ void Odom::startTask(void* param) {
   cout<<"Encoders and odometry reset"<<endl;
   cout<<"Odometry Task Started"<<endl;
   while (isRunning) {
-    float currentTheta = math.angleWrap(IMU.get_rotation());
+    float currentTheta = math.angleWrap(IMU.get_rotation()) * (M_PI/180);
     float currentLeft = LEnc.get_value();
     float currentRight = REnc.get_value();
     float deltaLeft = currentLeft - lastLeft;
@@ -45,7 +45,7 @@ void Odom::startTask(void* param) {
     lastTheta = currentTheta;
     lastLeft = currentLeft;
     lastRight = currentRight;
-    odom.theta = currentTheta;
+    odom.theta = currentTheta * (180/M_PI);
     odom.x += math.ticksToInch(deltaX);
     odom.y += math.ticksToInch(deltaY);
     delay(10);
