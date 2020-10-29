@@ -19,13 +19,15 @@ bool Chassis::isRunning = false,
      Chassis::isTurning = false,
      Chassis::isDriving = false;
 
-float Chassis::targetTheta,
-      Chassis::targetTicks;
+float Chassis::targetTheta = 0,
+      Chassis::targetTicks = 0;
 
-float Chassis::leftVolt,
-      Chassis::rightVolt,
-      Chassis::maxSpeed,
-      Chassis::timeOut;
+float Chassis::leftVolt = 0,
+      Chassis::rightVolt = 0,
+      Chassis::maxSpeed = 0,
+      Chassis::timeOut = 0;
+
+float targetX = 0, targetY = 0;
 
 /**
  * Stops the drivetrain
@@ -96,8 +98,8 @@ void Chassis::startTask(void* param) {
     if (!isSettled) {
       if (isTurning) {
         pid.turn(math.angleWrap(targetTheta), maxSpeed);
-        if (abs(targetTheta) <= abs(odom.getTheta())) {
-         isTurning = false;
+        if (abs(targetTheta) <= odom.getTheta()) {
+          isTurning = false;
         }
       }
       if (isDriving && !isTurning) {
@@ -137,7 +139,7 @@ Chassis& Chassis::drive(float distance, float maxSpeed_, float timeOut_) {
 
 Chassis& Chassis::turn(float theta, float maxSpeed_, float timeOut_) {
   if (isRunning) {
-    targetTheta = math.angleWrap(theta) + odom.getTheta();
+    targetTheta = math.angleWrap(theta);
     maxSpeed = math.percentToVoltage(maxSpeed_);
     timeOut = math.secToMillis(timeOut_) + millis();
     isTurning = true;
@@ -149,9 +151,11 @@ Chassis& Chassis::turn(float theta, float maxSpeed_, float timeOut_) {
 
 Chassis& Chassis::driveToPoint(float x, float y, float maxSpeed_, float timeOut_) {
   if (isRunning) {
-    float targetX = x + odom.getX();
-    float targetY = y + odom.getY();
-    targetTheta = math.angleWrap(atan(targetY/targetX)*(180/M_PI)) - odom.getTheta();
+    targetX = x + odom.getX();
+    targetY = y + odom.getY();
+    if (targetY != 0) {
+      targetTheta = math.angleWrap(atan(targetX/targetY)*(180/M_PI)) - odom.getTheta();
+    }
     targetTicks = math.inchToTicks(sqrt((targetX*targetX) + (targetY*targetY)));
     maxSpeed = math.percentToVoltage(maxSpeed_);
     timeOut = math.secToMillis(timeOut_) + millis();
@@ -164,9 +168,11 @@ Chassis& Chassis::driveToPoint(float x, float y, float maxSpeed_, float timeOut_
 
 Chassis& Chassis::turnToPoint(float x, float y, float maxSpeed_, float timeOut_) {
   if (isRunning) {
-    float targetX = x + odom.getX();
-    float targetY = y + odom.getY();
-    targetTheta = math.angleWrap(atan(targetY/targetX)*(180/M_PI)) - odom.getTheta();
+    targetX = x + odom.getX();
+    targetY = y + odom.getY();
+    if (targetY != 0) {
+      targetTheta = math.angleWrap(atan(targetX/targetY)*(180/M_PI)) - odom.getTheta();
+    }
     maxSpeed = math.percentToVoltage(maxSpeed_);
     timeOut = math.secToMillis(timeOut_) + millis();
     isTurning = true;

@@ -27,21 +27,24 @@ float Odom::getTheta() {
   return odom.theta;
 }
 
+float lastTheta = 0, lastLeft = 0, lastRight = 0;
+float currentTheta = 0, currentLeft = 0, currentRight = 0;
+float deltaLeft = 0, deltaRight = 0, deltaX = 0, deltaY = 0;
+
 void Odom::startTask(void* param) {
   delay(300);
   isRunning = true;
   odom.reset();
-  float lastTheta, lastLeft, lastRight;
   cout<<"Encoders and odometry reset"<<endl;
   cout<<"Odometry Task Started"<<endl;
   while (isRunning) {
-    float currentTheta = math.angleWrap(IMU.get_rotation()) * (M_PI/180);
-    float currentLeft = LEnc.get_value();
-    float currentRight = REnc.get_value();
-    float deltaLeft = currentLeft - lastLeft;
-    float deltaRight = currentRight - lastRight;
-    float deltaX = sin((currentTheta + lastTheta)/2) * ((deltaLeft + deltaRight)/2);
-    float deltaY = cos((currentTheta + lastTheta)/2) * ((deltaLeft + deltaRight)/2);
+    currentTheta = math.angleWrap(IMU.get_rotation()) * (M_PI/180);
+    currentLeft = LEnc.get_value();
+    currentRight = REnc.get_value();
+    deltaLeft = currentLeft - lastLeft;
+    deltaRight = currentRight - lastRight;
+    deltaX = (deltaLeft + deltaRight)/2 * sin((currentTheta + lastTheta)/2);
+    deltaY = (deltaLeft + deltaRight)/2 * cos((currentTheta + lastTheta)/2);
     lastTheta = currentTheta;
     lastLeft = currentLeft;
     lastRight = currentRight;

@@ -11,7 +11,7 @@ static Chassis chassis;
 static Odom odom;
 
 float kP = 20, kI = 0.01, kD = 5;
-float kP_t = 6, kI_t = 0.01, kD_t = 30;
+float kP_t = 100, kI_t = 0.01, kD_t = 0.01;
 float kP_d = 500, kD_d = 300;
 
 float intergralActive = math.inchToTicks(3);
@@ -36,10 +36,10 @@ float targetVoltage;
 float finalVoltage;
 
 void PID::drive(float targetTicks_, float maxSpeed_) {
-  float intergralLimit = (maxSpeed_ / kI) / 50;
+  float intergralLimit = (maxSpeed_/kI)/50;
 
   //Error reestablished at the start of the loop
-  error = targetTicks_ - (REnc.get_value() + LEnc.get_value() / 2);
+  error = targetTicks_ - (REnc.get_value() + LEnc.get_value()/2);
   //Proportion stores the error until it can be multiplied by the constant
   proportion = error;
   //Intergral takes area under the error and is useful for major adjustment
@@ -90,7 +90,7 @@ void PID::drive(float targetTicks_, float maxSpeed_) {
 
 void PID::turn(float targetTheta_, float maxSpeed_) {
 
-  float intergralLimit_t = (maxSpeed_ / kI_t) / 50;
+  float intergralLimit_t = (maxSpeed_/kI_t)/50;
 
   //Error reestablished at the start of the loop
   error = targetTheta_ - odom.getTheta();

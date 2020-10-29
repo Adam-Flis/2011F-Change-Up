@@ -8,15 +8,21 @@ void initialize() {
   lcd::initialize();
   Chassis chassis;
   Odom odom;
+  IMU.reset();
+  delay(20);
+  while (IMU.is_calibrating()){
+    lcd::set_text(0, "IMU Calibrating");
+    delay(10);
+  }
+  cout<<"IMU Calibrated"<<endl;
   Task chassisTask(chassis.startTask, NULL, "Chassis Task");
   Task trackTask(odom.startTask, NULL, "Track Task");
+  lcd::set_text(0, "Tasks Initalizing");
+  cout<<"Tasks initializing"<<endl;
   delay(500);
-  cout<<"Tasks initialized"<<endl;
-  IMU.reset();
-  while (IMU.is_calibrating()){}
-  cout<<"IMU Initialized"<<endl;
-  lcd::set_text(0, "Tasks and IMU Initalized");
-  delay(1000);
+  lcd::set_text(0, "Ready To Go!");
+  cout<<"Ready"<<endl;
+  delay(500);
   lcd::clear_line(0);
 }
 
