@@ -45,6 +45,10 @@ float Math::angleWrap(float angle) {
   return angle - 180;
 }
 
+float Math::encoderAverage() {
+  return (LEnc.get_value() + REnc.get_value())/2;
+}
+
 float Math::secToMillis(float seconds) {
   return seconds*1000;
 }

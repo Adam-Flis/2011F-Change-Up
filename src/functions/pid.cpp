@@ -10,12 +10,14 @@ static Math math;
 static Chassis chassis;
 static Odom odom;
 
-float kP = 20, kI = 0.01, kD = 5;
+float kP = 10.0, kI = 0.01, kD = 0.01;
 float kP_t = 100, kI_t = 0.01, kD_t = 0.01;
-float kP_d = 500, kD_d = 300;
+float kP_d = 600, kD_d = 200;
 
 float intergralActive = math.inchToTicks(3);
 float intergralActive_t = 3;
+float intergralLimit;
+float intergralLimit_t;
 
 float lastIMURotation;
 //Error var declarations//
@@ -36,7 +38,7 @@ float targetVoltage;
 float voltage;
 
 float PID::drive(float targetTicks_, float targetVoltage_) {
-  float intergralLimit = (targetVoltage_/kI)/50;
+  intergralLimit = (targetVoltage_/kI)/50;
 
   //Error reestablished at the start of the loop
   error = targetTicks_ - (REnc.get_value() + LEnc.get_value()/2);
@@ -86,7 +88,7 @@ float PID::drift() {
 
 float PID::turn(float targetTheta_, float targetVoltage_) {
   lastIMURotation = 0;
-  float intergralLimit_t = (targetVoltage_/kI_t)/50;
+  intergralLimit_t = (targetVoltage_/kI_t)/50;
 
   //Error reestablished at the start of the loop
   error = targetTheta_ - odom.getTheta();

@@ -19,20 +19,20 @@ bool Chassis::isRunning = false,
      Chassis::isTurning = false,
      Chassis::isDriving = false;
 
-float Chassis::targetTheta = 0,
-      Chassis::targetTicks = 0,
-      Chassis::targetVoltage = 0;
+float Chassis::targetTheta,
+      Chassis::targetTicks,
+      Chassis::targetVoltage;
 
-float Chassis::leftVoltage = 0,
-      Chassis::rightVoltage = 0,
-      Chassis::timeOut = 0;
+float Chassis::leftVoltage,
+      Chassis::rightVoltage,
+      Chassis::timeOut;
 
-float targetX = 0, 
-      targetY = 0,
-      finalVoltage = 0,
-      ticks = 0,
-      theta = 0,
-      drift = 0;
+float targetX,
+      targetY,
+      finalVoltage,
+      ticks,
+      theta,
+      drift;
 
 /**
  * Stops the drivetrain
@@ -89,10 +89,6 @@ void Chassis::startTask(void* param) {
   chassis.reset();
   cout<<"Chassis Task Started"<<endl;
   while(isRunning) {
-    LFD.move_voltage(leftVoltage);
-    RFD.move_voltage(rightVoltage);
-    LBD.move_voltage(leftVoltage);
-    RBD.move_voltage(rightVoltage);
     if (!isSettled) {
       if (isTurning) {
         finalVoltage = pid.turn(math.angleWrap(theta), targetVoltage);
@@ -104,16 +100,20 @@ void Chassis::startTask(void* param) {
         leftVoltage = finalVoltage - drift;
         rightVoltage = finalVoltage + drift;
       }
-      if (targetTheta <= odom.getTheta()) {
+      if (odom.getTheta() >= targetTheta && isTurning) {
         isTurning = false;
-      } else if (targetTicks <= (LEnc.get_value() + REnc.get_value())/2) {
+      } else if (math.encoderAverage() >= targetTicks && isDriving) {
         isDriving = false;
       } else if (millis() >= timeOut) {
-        chassis.reset();
         isDriving = isTurning = false;
+        chassis.reset();
       } else if (!isTurning && !isDriving) {
         chassis.reset();
       }
+      LFD.move_voltage(leftVoltage);
+      RFD.move_voltage(rightVoltage);
+      LBD.move_voltage(leftVoltage);
+      RBD.move_voltage(rightVoltage);
     }
     delay(10);
   }
@@ -128,7 +128,7 @@ void Chassis::endTask() {
 Chassis& Chassis::drive(float distance, float targetVoltage_, float timeOut_) {
   if (isRunning) {
     ticks = math.inchToTicks(distance);
-    targetTicks = ticks + (LEnc.get_value() + REnc.get_value())/2;
+    targetTicks = ticks + math.encoderAverage();
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
     isDriving = true;
@@ -160,7 +160,7 @@ Chassis& Chassis::driveToPoint(float x, float y, float targetVoltage_, float tim
       targetTheta = math.angleWrap(atan(targetX/targetY)*(180/M_PI)) + odom.getTheta();
     }
     ticks = math.inchToTicks(sqrt(pow(targetX, 2) + pow(targetY, 2)));
-    targetTicks = math.inchToTicks(sqrt(pow(targetX, 2) + pow(targetY, 2))) + (LEnc.get_value() + REnc.get_value())/2;
+    targetTicks = ticks + math.encoderAverage();
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
     isTurning = true;

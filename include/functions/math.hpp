@@ -12,6 +12,7 @@ public:
   static float inchToTicks(float inches);
   static float angleWrap(float angle);
   static float secToMillis(float seconds);
+  static float encoderAverage();
 
 private:
 };
