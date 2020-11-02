@@ -12,21 +12,19 @@ public:
   void brake();
   void hold();
   void coast();
-  void setLeftVolt(float voltage);
-  void setRightVolt(float voltage);
   void reset();
   static void startTask(void *param);
   static void endTask();
-  Chassis& drive(float distance, float maxSpeed_, float timeOut_);
-  Chassis& turn(float theta, float maxSpeed_, float timeOut_);
-  Chassis& driveToPoint(float x, float y, float maxSpeed_, float timeOut_);
-  Chassis& turnToPoint(float x, float y, float maxSpeed_, float timeOut_);
-  Chassis& turnToAngle(float theta, float maxSpeed_, float timeOut_);
+  Chassis& drive(float distance, float targetVoltage_, float timeOut_);
+  Chassis& turn(float theta, float targetVoltage_, float timeOut_);
+  Chassis& driveToPoint(float x, float y, float targetVoltage_, float timeOut_);
+  Chassis& turnToPoint(float x, float y, float targetVoltage_, float timeOut_);
+  Chassis& turnToAngle(float theta, float targetVoltage_, float timeOut_);
   void waitUntilSettled();
 
 private:
-  static float leftVolt, rightVolt, maxSpeed, timeOut;
-  static float targetTheta, targetTicks;
+  static float leftVoltage, rightVoltage, timeOut;
+  static float targetTheta, targetTicks, targetVoltage;
   static bool isRunning, isSettled, isTurning, isDriving;
 };
 

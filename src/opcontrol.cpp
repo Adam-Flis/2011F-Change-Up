@@ -13,6 +13,8 @@ void opcontrol() {
 
   // chassis.turnToAngle(-45, 50, 2).waitUntilSettled();
   // delay(1000);
+  odom.endTask();
+  chassis.endTask();
   chassis.brake();
 
   while(1) {

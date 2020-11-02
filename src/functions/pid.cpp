@@ -17,7 +17,7 @@ float kP_d = 500, kD_d = 300;
 float intergralActive = math.inchToTicks(3);
 float intergralActive_t = 3;
 
-float lastIMURot;
+float lastIMURotation;
 //Error var declarations//
 float error;
 float error_drift;
@@ -33,10 +33,10 @@ float derivative_d;
 
 //Motor output var declarations//
 float targetVoltage;
-float finalVoltage;
+float voltage;
 
-void PID::drive(float targetTicks_, float maxSpeed_) {
-  float intergralLimit = (maxSpeed_/kI)/50;
+float PID::drive(float targetTicks_, float targetVoltage_) {
+  float intergralLimit = (targetVoltage_/kI)/50;
 
   //Error reestablished at the start of the loop
   error = targetTicks_ - (REnc.get_value() + LEnc.get_value()/2);
@@ -63,34 +63,30 @@ void PID::drive(float targetTicks_, float maxSpeed_) {
     derivative = 0;
   }
 
-  //Convert target velocity to voltage
-  targetVoltage = maxSpeed_;
-
   //Final output of drive alg that applies constants to the PID factors
-  finalVoltage = kP * proportion + kI * intergral + kD * derivative;
+  voltage = kP * proportion + kI * intergral + kD * derivative;
 
-  if (finalVoltage > targetVoltage) {
-    finalVoltage = targetVoltage;
-  } else if (finalVoltage < -targetVoltage) {
-    finalVoltage = -targetVoltage;
+  if (voltage > targetVoltage_) {
+    voltage = targetVoltage_;
+  } else if (voltage < -targetVoltage_) {
+    voltage = -targetVoltage_;
   }
-
-  //Establishes the initial error simply as the value of the IMU since its supposed to be 0
-  error_drift = odom.getTheta() - lastIMURot;
-  lastIMURot = odom.getTheta();
-  //Derivative finds difference between current error and last recrded to recieve ROC, good for fine adjustment
-  derivative = error_drift - lastError_d;
-
-  proportion_drift = error_drift * kP_d;
-
-  chassis.setRightVolt(finalVoltage + proportion_drift); //Sets voltage of right side
-  chassis.setLeftVolt(finalVoltage - proportion_drift); //Sets voltage on left side
-
+  return voltage;
 }
 
-void PID::turn(float targetTheta_, float maxSpeed_) {
+float PID::drift() {
+  //Establishes the initial error simply as the value of the IMU since its supposed to be 0
+  error_drift = odom.getTheta() - lastIMURotation;
+  //Derivative finds difference between current error and last recrded to recieve ROC, good for fine adjustment
+  derivative_d = error_drift - lastError_d;
+  lastError_d = IMU.get_rotation();
 
-  float intergralLimit_t = (maxSpeed_/kI_t)/50;
+  return proportion_drift = error_drift * kP_d + derivative_d * kD_d;
+}
+
+float PID::turn(float targetTheta_, float targetVoltage_) {
+  lastIMURotation = 0;
+  float intergralLimit_t = (targetVoltage_/kI_t)/50;
 
   //Error reestablished at the start of the loop
   error = targetTheta_ - odom.getTheta();
@@ -117,18 +113,13 @@ void PID::turn(float targetTheta_, float maxSpeed_) {
     derivative = 0;
   }
 
-  //Convert target velocity to voltage
-  targetVoltage = maxSpeed_;
-
   //Final output of drive alg that applies constants to the PID factors
-  finalVoltage = kP_t * proportion + kI_t * intergral + kD_t * derivative;
+  voltage = kP_t * proportion + kI_t * intergral + kD_t * derivative;
 
-  if (finalVoltage > targetVoltage) {
-    finalVoltage = targetVoltage;
-  } else if (finalVoltage < -targetVoltage) {
-    finalVoltage = -targetVoltage;
+  if (voltage > targetVoltage_) {
+    voltage = targetVoltage_;
+  } else if (voltage < -targetVoltage_) {
+    voltage = -targetVoltage_;
   }
-
-    chassis.setRightVolt(-finalVoltage); //Sets voltage of right side
-    chassis.setLeftVolt(finalVoltage); //Sets voltage on left side
-  }
+  return voltage;
+}
