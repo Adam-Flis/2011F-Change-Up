@@ -10,9 +10,9 @@ static Math math;
 static Chassis chassis;
 static Odom odom;
 
-float kP = 10.0, kI = 0.01, kD = 0.01;
-float kP_t = 100, kI_t = 0.01, kD_t = 0.01;
-float kP_d = 600, kD_d = 200;
+float kP = 12.5, kI = 0.1, kD = 3.0;
+float kP_t = 100, kI_t = 0.1, kD_t = 50;
+float kP_d = 1200, kD_d = 600;
 
 float intergralActive = math.inchToTicks(3);
 float intergralActive_t = 3;
@@ -41,7 +41,7 @@ float PID::drive(float targetTicks_, float targetVoltage_) {
   intergralLimit = (targetVoltage_/kI)/50;
 
   //Error reestablished at the start of the loop
-  error = targetTicks_ - (REnc.get_value() + LEnc.get_value()/2);
+  error = targetTicks_ - math.encoderAverage();
   //Proportion stores the error until it can be multiplied by the constant
   proportion = error;
   //Intergral takes area under the error and is useful for major adjustment
@@ -81,17 +81,17 @@ float PID::drift() {
   error_drift = odom.getTheta() - lastIMURotation;
   //Derivative finds difference between current error and last recrded to recieve ROC, good for fine adjustment
   derivative_d = error_drift - lastError_d;
-  lastError_d = IMU.get_rotation();
+  lastIMURotation = odom.getTheta();
+  lastError_d = error_drift;
 
   return proportion_drift = error_drift * kP_d + derivative_d * kD_d;
 }
 
 float PID::turn(float targetTheta_, float targetVoltage_) {
-  lastIMURotation = 0;
   intergralLimit_t = (targetVoltage_/kI_t)/50;
 
   //Error reestablished at the start of the loop
-  error = targetTheta_ - odom.getTheta();
+  error = math.angleWrap(targetTheta_ - odom.getTheta());
   //Proportion stores the error until it can be multiplied by the constant
   proportion = error;
   //Intergral takes area under the error and is useful for major adjustment

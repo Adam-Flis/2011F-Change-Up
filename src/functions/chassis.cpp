@@ -77,7 +77,7 @@ void Chassis::coast() {
 
 void Chassis::reset() {
   isSettled = true;
-  targetX = 0, targetY = 0, finalVoltage = 0, ticks = 0, theta = 0, drift = 0;
+  targetX = targetY = finalVoltage = ticks = theta = drift = 0;
   leftVoltage = rightVoltage = timeOut = 0;
   targetTheta = targetTicks = targetVoltage = 0;
   chassis.stop().brake();
@@ -91,20 +91,30 @@ void Chassis::startTask(void* param) {
   while(isRunning) {
     if (!isSettled) {
       if (isTurning) {
-        finalVoltage = pid.turn(math.angleWrap(theta), targetVoltage);
+        finalVoltage = pid.turn(targetTheta, targetVoltage);
         leftVoltage = finalVoltage;
         rightVoltage = -finalVoltage;
-      } else if (isDriving) {
-        finalVoltage = pid.drive(ticks, targetVoltage);
+        if (millis() >= timeOut/3 && isDriving) {
+          isTurning = false;
+        }
+      } else if (isDriving && !isTurning) {
+        finalVoltage = pid.drive(targetTicks, targetVoltage);
         drift = pid.drift();
-        leftVoltage = finalVoltage - drift;
-        rightVoltage = finalVoltage + drift;
+        if (finalVoltage > 0) {
+          leftVoltage = finalVoltage - drift;
+          rightVoltage = finalVoltage + drift;
+        }
+        else {
+          leftVoltage = finalVoltage;
+          rightVoltage = finalVoltage;
+        }
       }
-      if (odom.getTheta() >= targetTheta && isTurning) {
-        isTurning = false;
-      } else if (math.encoderAverage() >= targetTicks && isDriving) {
-        isDriving = false;
-      } else if (millis() >= timeOut) {
+      if (odom.getTheta() == targetTheta && isTurning && targetTheta != 0) {
+          isTurning = false;
+        } else if (math.encoderAverage() == targetTicks && isDriving && targetTicks != 0) {
+          isDriving = false;
+        }
+      if (millis() >= timeOut) {
         isDriving = isTurning = false;
         chassis.reset();
       } else if (!isTurning && !isDriving) {
@@ -138,9 +148,9 @@ Chassis& Chassis::drive(float distance, float targetVoltage_, float timeOut_) {
   return *this;
 }
 
-Chassis& Chassis::turn(float theta, float targetVoltage_, float timeOut_) {
+Chassis& Chassis::turn(float theta_, float targetVoltage_, float timeOut_) {
   if (isRunning) {
-    theta = math.angleWrap(theta);
+    theta = math.angleWrap(theta_);
     targetTheta = theta + odom.getTheta();
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
@@ -153,17 +163,19 @@ Chassis& Chassis::turn(float theta, float targetVoltage_, float timeOut_) {
 
 Chassis& Chassis::driveToPoint(float x, float y, float targetVoltage_, float timeOut_) {
   if (isRunning) {
-    targetX = x + odom.getX();
-    targetY = y + odom.getY();
+    targetX = x - odom.getX();
+    targetY = y - odom.getY();
     if (targetY != 0) {
-      theta = math.angleWrap(atan(targetX/targetY)*(180/M_PI)) - odom.getTheta();
-      targetTheta = math.angleWrap(atan(targetX/targetY)*(180/M_PI)) + odom.getTheta();
+      theta = math.angleWrap(atan(targetX/targetY)*(180/M_PI));
+      targetTheta = theta + odom.getTheta();
+      isTurning = true;
+    } else {
+      isTurning = false;
     }
     ticks = math.inchToTicks(sqrt(pow(targetX, 2) + pow(targetY, 2)));
     targetTicks = ticks + math.encoderAverage();
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
-    isTurning = true;
     isDriving = true;
     isSettled = false;
   }
@@ -172,11 +184,11 @@ Chassis& Chassis::driveToPoint(float x, float y, float targetVoltage_, float tim
 
 Chassis& Chassis::turnToPoint(float x, float y, float targetVoltage_, float timeOut_) {
   if (isRunning) {
-    targetX = x + odom.getX();
-    targetY = y + odom.getY();
+    targetX = x - odom.getX();
+    targetY = y - odom.getY();
     if (targetY != 0) {
-      theta = math.angleWrap(atan(targetX/targetY)*(180/M_PI)) - odom.getTheta();
-      targetTheta = math.angleWrap(atan(targetX/targetY)*(180/M_PI)) + odom.getTheta();
+      theta = math.angleWrap(atan(targetX/targetY)*(180/M_PI));
+      targetTheta = theta + odom.getTheta();
     }
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
@@ -187,10 +199,10 @@ Chassis& Chassis::turnToPoint(float x, float y, float targetVoltage_, float time
   return *this;
 }
 
-Chassis& Chassis::turnToAngle(float theta, float targetVoltage_, float timeOut_) {
+Chassis& Chassis::turnToAngle(float theta_, float targetVoltage_, float timeOut_) {
   if (isRunning) {
-    theta = math.angleWrap(theta) - odom.getTheta();
-    targetTheta = math.angleWrap(theta) + odom.getTheta();
+    targetTheta = math.angleWrap(theta_);
+    theta = 180 - abs(theta + odom.getTheta());
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
     isTurning = true;

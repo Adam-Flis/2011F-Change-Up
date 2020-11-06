@@ -4,6 +4,7 @@
 #include "functions/odometry.hpp"
 #include "functions/math.hpp"
 #include "functions/intake.hpp"
+#include "functions/uptake.hpp"
 
 
 void opcontrol() {
@@ -12,13 +13,41 @@ void opcontrol() {
   Intake intake;
   Odom odom;
   Math math;
+  Uptake uptake;
 
-  //chassis.drive(48, 80, 4).waitUntilSettled();
-  //intake.move(100);
-  //delay(1000);
-  odom.endTask();
+  uptake.move(100);
+  delay(500);
+  uptake.stop();
+  chassis.driveToPoint(0, 33.5, 75, 1.5).waitUntilSettled();
+  chassis.turnToAngle(90, 70, 1.2).waitUntilSettled();
+  intake.move(100);
+  chassis.driveToPoint(33, 36, 65, 1.3).waitUntilSettled();
+  intake.stop();
+  uptake.move(100);
+  delay(1800);
+  uptake.move(-100);
+  intake.move(-100);
+  chassis.drive(-24, 50, 1.3).waitUntilSettled();
+  uptake.stop();
+  intake.stop();
+  chassis.turnToAngle(-140, 80, 1.0).waitUntilSettled();
+  chassis.driveToPoint(-44, -16, 80, 2.0).waitUntilSettled();
+  chassis.turnToAngle(175, 80, 0.5).waitUntilSettled();
+  intake.move(100);
+  chassis.driveToPoint(-35, -53, 80, 1.0).waitUntilSettled();
+  intake.stop();
+  uptake.move(100);
+  delay(2000);
+  uptake.move(-100);
+  intake.move(-100);
+  chassis.drive(-12, 50, 1.0).waitUntilSettled();
+  uptake.stop();
+  intake.stop();
+
+
+  //odom.endTask();
   chassis.endTask();
-  chassis.brake();
+  chassis.coast();
 
   while(1) {
     lcd::print(0, "X: %f \n", odom.getX());
