@@ -12,6 +12,7 @@ public:
   void brake();
   void hold();
   void coast();
+  void move(float velocity, char side);
   void reset();
   static void startTask(void *param);
   static void endTask();
