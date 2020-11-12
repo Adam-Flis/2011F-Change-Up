@@ -12,7 +12,7 @@ static Odom odom;
 
 float kP = 12.5, kI = 0.1, kD = 3.0;
 float kP_t = 100, kI_t = 0.1, kD_t = 50;
-float kP_d = 1200, kD_d = 600;
+float kP_d = 1800, kD_d = 900;
 
 float intergralActive = math.inchToTicks(3);
 float intergralActive_t = 3;

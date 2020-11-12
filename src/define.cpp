@@ -14,10 +14,10 @@
 /* ********** Define Sensor Ports ********** */
 
 #define IMU_Port 17
-#define Left_Encoder_Top_Port 'e'
-#define Left_Encoder_Bottom_Port 'f'
-#define Right_Encoder_Top_Port 'g'
-#define Right_Encoder_Bottom_Port 'h'
+#define Left_Encoder_Top_Port 'g'
+#define Left_Encoder_Bottom_Port 'h'
+#define Right_Encoder_Top_Port 'e'
+#define Right_Encoder_Bottom_Port 'f'
 
 /* ********** Creates Motors ********** */
 

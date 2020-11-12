@@ -54,8 +54,8 @@ void Chassis::move(float velocity, char side) {
     RBD.move_velocity(math.percentToVelocity(velocity, 'G'));
   } else if (side == 'B') {
     LFD.move_velocity(math.percentToVelocity(velocity, 'G'));
-    LBD.move_velocity(math.percentToVelocity(velocity, 'G'));
     RFD.move_velocity(math.percentToVelocity(velocity, 'G'));
+    LBD.move_velocity(math.percentToVelocity(velocity, 'G'));
     RBD.move_velocity(math.percentToVelocity(velocity, 'G'));
   }
 }
@@ -110,7 +110,7 @@ void Chassis::startTask(void* param) {
         finalVoltage = pid.turn(targetTheta, targetVoltage);
         leftVoltage = finalVoltage;
         rightVoltage = -finalVoltage;
-        if (millis() >= timeOut/3 && isDriving) {
+        if (millis() >= timeOut/2 && isDriving) {
           isTurning = false;
         }
       } else if (isDriving && !isTurning) {
@@ -166,7 +166,6 @@ Chassis& Chassis::drive(float distance, float targetVoltage_, float timeOut_) {
 
 Chassis& Chassis::turn(float theta_, float targetVoltage_, float timeOut_) {
   if (isRunning) {
-    //theta = math.angleWrap(theta_);
     targetTheta = math.angleWrap(theta_) + odom.getTheta();
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
@@ -177,24 +176,28 @@ Chassis& Chassis::turn(float theta_, float targetVoltage_, float timeOut_) {
   return *this;
 }
 
-Chassis& Chassis::driveToPoint(float x, float y, float targetVoltage_, float timeOut_) {
+Chassis& Chassis::driveToPoint(float x, float y, float targetVoltage_, float timeOut_, bool reverse) {
   if (isRunning) {
     targetX = x - odom.getX();
     targetY = y - odom.getY();
-    if (targetY != 0) {
-      //theta = math.angleWrap(atan(targetX/targetY)*(180/M_PI));
-      //targetTheta = theta + odom.getTheta();
-      targetTheta = math.angleWrap(atan(targetX/targetY)*(180/M_PI));
-      isTurning = true;
-    } else {
-      isTurning = false;
-    }
+    // if (targetY != 0) {
+    //   //theta = math.angleWrap(atan(targetX/targetY)*(180/M_PI));
+    //   //targetTheta = theta + odom.getTheta();
+    //   targetTheta = math.angleWrap(atan(targetX/targetY)*(180/M_PI));
+    //   isTurning = true;
+    // } else {
+    //   isTurning = false;
+    // }
     ticks = math.inchToTicks(sqrt(pow(targetX, 2) + pow(targetY, 2)));
+    if (reverse == true) {
+      ticks = -ticks;
+    }
     targetTicks = ticks + math.encoderAverage();
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
     isDriving = true;
     isSettled = false;
+    isTurning = false;
   }
   return *this;
 }
