@@ -14,6 +14,7 @@
 /* ********** Define Sensor Ports ********** */
 
 #define IMU_Port 17
+#define Intake_Optical_Port 0
 #define Left_Encoder_Top_Port 'g'
 #define Left_Encoder_Bottom_Port 'h'
 #define Right_Encoder_Top_Port 'e'
@@ -33,6 +34,7 @@ Motor LFD (LFD_Port,MOTOR_GEARSET_18,false,MOTOR_ENCODER_DEGREES),
 /* ********** Creates Sensors ********** */
 
 Imu IMU (IMU_Port);
+Optical Intake_Optical (Intake_Optical_Port);
 ADIEncoder LEnc (Left_Encoder_Top_Port,Left_Encoder_Bottom_Port,true),
            REnc (Right_Encoder_Top_Port,Right_Encoder_Bottom_Port,false);
 

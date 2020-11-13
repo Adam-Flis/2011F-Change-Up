@@ -11,6 +11,7 @@ public:
   void move(float velocity);
   Intake& stop();
   void brake();
+  void waitUntillColor(char color, float timeOut);
 };
 
 #endif
