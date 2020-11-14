@@ -14,7 +14,7 @@
 /* ********** Define Sensor Ports ********** */
 
 #define IMU_Port 17
-#define Intake_Optical_Port 0
+#define Intake_Optical_Port 15
 #define Left_Encoder_Top_Port 'g'
 #define Left_Encoder_Bottom_Port 'h'
 #define Right_Encoder_Top_Port 'e'

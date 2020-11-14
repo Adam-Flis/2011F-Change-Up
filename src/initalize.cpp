@@ -17,6 +17,7 @@ void initialize() {
   cout<<"IMU Calibrated"<<endl;
   Task chassisTask(chassis.startTask, NULL, "Chassis Task");
   Task trackTask(odom.startTask, NULL, "Track Task");
+  Intake_Optical.set_led_pwm(100);
   lcd::set_text(0, "Tasks Initalizing");
   cout<<"Tasks initializing"<<endl;
   delay(500);

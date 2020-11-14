@@ -3,7 +3,7 @@
 #include "functions/math.hpp"
 
 float wheelDiameter = 2.75; //In inches
-float wheelCircumference = wheelDiameter * M_PI;
+double wheelCircumference = wheelDiameter * M_PI;
 float ticksPerRevolution = 360; //Number of ticks in one full revolution of encoder/motor
 
 float Math::ticksToInch(float ticks) {
@@ -46,7 +46,7 @@ float Math::angleWrap(float angle) {
 }
 
 float Math::encoderAverage() {
-  return (LEnc.get_value() + REnc.get_value())/2;
+  return ((LEnc.get_value() + REnc.get_value())/2) * 1000.07178/1000;
 }
 
 float Math::secToMillis(float seconds) {
