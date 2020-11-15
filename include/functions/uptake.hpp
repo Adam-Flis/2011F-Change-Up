@@ -11,6 +11,8 @@ public:
   void move(float velocity);
   Uptake& stop();
   void brake();
+  void waitUntillIndexed(float timeOut);
+  void waitUntillShot(int amount, float timeOut);
 };
 
 #endif

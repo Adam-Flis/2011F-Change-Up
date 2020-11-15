@@ -13,6 +13,7 @@ extern Motor TU, BU; // Uptake
 
 extern Imu IMU; // Inertial measurement unit
 extern Optical Intake_Optical;
+extern ADILineSensor Bottom_Uptake_Line, Top_Uptake_Line;
 extern ADIEncoder LEnc, REnc; // Encoders
 extern ADIPotentiometer ArmPot; // Arm potentiometer
 

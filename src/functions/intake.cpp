@@ -38,7 +38,7 @@ void Intake::waitUntillColor(char color, float timeOut) {
     timeOut = millis();
   }
   while (1) {
-    if (low_hue < Intake_Optical.get_hue() && Intake_Optical.get_hue() < high_hue) {
+    if (low_hue <= Intake_Optical.get_hue() && Intake_Optical.get_hue() <= high_hue) {
       break;
     }
     else if (millis() >= timeOut) {

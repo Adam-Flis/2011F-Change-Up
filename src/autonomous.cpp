@@ -6,13 +6,64 @@
 #include "functions/intake.hpp"
 #include "functions/uptake.hpp"
 
-void autonomous() {
-  Chassis chassis;
-  Intake intake;
-  Odom odom;
-  Math math;
-  Uptake uptake;
+static Chassis chassis;
+static Intake intake;
+static Odom odom;
+static Math math;
+static Uptake uptake;
 
+void autonomous() {
+  uptake.move(100);
+  delay(950);
+  uptake.stop();
+  intake.move(100);
+  chassis.drive(26, 80, 1.5);
+  intake.waitUntillColor('R', 1.5);
+  uptake.move(100);
+  delay(150);
+  uptake.stop();
+  intake.move(30);
+  chassis.waitUntilSettled();
+  chassis.turnToAngle(-130, 80, 1.2).waitUntilSettled();
+  chassis.drive(35, 85, 1.9).waitUntilSettled(); // Drive towards 1st goal
+  intake.move(-30);
+  uptake.move(100);
+  delay(1000); // Score red ball in 1st goal
+  uptake.stop();
+  intake.move(100);
+  chassis.drive(-14, 80, 1.0).waitUntilSettled(); // Drive away from 1st goal
+  chassis.turnToAngle(0, 80, 1.5).waitUntilSettled();
+  uptake.move(100);
+  delay(200);
+  uptake.stop();
+  chassis.drive(52, 85, 2.0); // Drive towards middle of the field
+  intake.waitUntillColor('R', 2);
+  chassis.waitUntilSettled();
+  chassis.turnToAngle(-90, 80, 1.0).waitUntilSettled();
+  chassis.drive(12, 65, 1.0).waitUntilSettled(); // Drive towards 2nd goal
+  intake.move(0);
+  uptake.move(100);
+  delay(1000); // Score red ball in 2nd goal
+  intake.stop();
+  uptake.stop();
+  chassis.drive(-15, 60, 1.0).waitUntilSettled(); // Drive away from 2nd goal
+  intake.move(100);
+  intake.waitUntillColor('R', 0.5);
+  uptake.move(100);
+  delay(300);
+  uptake.stop();
+  intake.stop();
+  chassis.turnToAngle(0, 80, 1.5).waitUntilSettled();
+  chassis.drive(53, 85, 2.1); // Drive to far side of field
+  intake.move(100);
+  intake.waitUntillColor('R', 2.0);
+  intake.stop();
+  chassis.waitUntilSettled();
+  chassis.turnToAngle(-45, 60, 1.0).waitUntilSettled(); // Turn towards 3rd goal
+
+}
+
+void homeRow() {
   uptake.move(100);
   delay(950);
   uptake.stop();

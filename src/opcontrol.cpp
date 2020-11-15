@@ -19,6 +19,13 @@ void opcontrol() {
   chassis.endTask();
   chassis.brake();
   Intake_Optical.set_led_pwm(0);
+  // delay(1000);
+  // uptake.move(30);
+  // uptake.waitUntillIndexed(10.0);
+  // uptake.stop();
+  // delay(1000);
+  // uptake.move(100);
+  // uptake.waitUntillShot(2, 10.0);
 
   while(1) {
     lcd::print(0, "X: %f \n", odom.getX());
