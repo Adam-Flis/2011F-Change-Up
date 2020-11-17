@@ -15,12 +15,13 @@ void opcontrol() {
   Intake intake;
   Uptake uptake;
 
-  //odom.endTask();
+  odom.endTask();
   chassis.endTask();
   chassis.brake();
   Intake_Optical.set_led_pwm(0);
-  // delay(1000);
-  // uptake.move(30);
+  // intake.move(100);
+  // uptake.move(100);
+  // delay(500);
   // uptake.waitUntillIndexed(10.0);
   // uptake.stop();
   // delay(1000);

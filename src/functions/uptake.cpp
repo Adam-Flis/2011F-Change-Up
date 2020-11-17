@@ -25,10 +25,10 @@ void Uptake::brake() {
 }
 
 void Uptake::waitUntillIndexed(float timeOut) {
-  int ballPassed = 2915;
+  int ballPassed = 2920;
   timeOut = math.secToMillis(timeOut) + millis();
   while (1) {
-    if (Top_Uptake_Line.get_value() <= ballPassed) {
+    if (Bottom_Uptake_Line.get_value() < ballPassed) {
       break;
     } else if (millis() >= timeOut) {
       break;
@@ -38,11 +38,11 @@ void Uptake::waitUntillIndexed(float timeOut) {
 }
 
 void Uptake::waitUntillShot(int amount, float timeOut) {
-  int ballPassed = 2895;
+  int ballPassed = 2900;
   timeOut = math.secToMillis(timeOut) + millis();
   for (int lp = 0; lp <= amount; lp++) {
     while (1) {
-      if (Top_Uptake_Line.get_value() <= ballPassed) {
+      if (Top_Uptake_Line.get_value() < ballPassed) {
         break;
       } else if (millis() >= timeOut) {
         lp = amount;
@@ -50,6 +50,6 @@ void Uptake::waitUntillShot(int amount, float timeOut) {
       }
       delay(10);
     }
-    delay(100);
+    delay(50);
   }
 }
