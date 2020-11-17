@@ -15,30 +15,22 @@ void opcontrol() {
   Intake intake;
   Uptake uptake;
 
+  Intake_Optical.set_led_pwm(0);
   odom.endTask();
   chassis.endTask();
   chassis.brake();
-  Intake_Optical.set_led_pwm(0);
-  // intake.move(100);
-  // uptake.move(100);
-  // delay(500);
-  // uptake.waitUntillIndexed(10.0);
-  // uptake.stop();
-  // delay(1000);
-  // uptake.move(100);
-  // uptake.waitUntillShot(2, 10.0);
-
+  
   while(1) {
-    lcd::print(0, "X: %f \n", odom.getX());
-    lcd::print(1, "Y: %f \n", odom.getY());
-    lcd::print(2, "Theta Wrap: %f degress\n", odom.getTheta());
-    //lcd::print(3, "Theta Raw: %f degress\n", IMU.get_rotation());
-    lcd::print(4, "Left: %f in\n", math.ticksToInch(LEnc.get_value()));
-    lcd::print(5, "Right: %f in\n", math.ticksToInch(REnc.get_value()));
-    //lcd::print(6, "L: %d ticks\n", LEnc.get_value());
-    lcd::print(6, "Avg Wrap: %f ticks\n", math.encoderAverage());
-    //lcd::print(7, "Avg Raw: %f ticks\n", math.encoderAverage());
-    //lcd::print(7, "R: %d ticks\n", REnc.get_value());
+    // lcd::print(0, "X: %f \n", odom.getX());
+    // lcd::print(1, "Y: %f \n", odom.getY());
+    // lcd::print(2, "Theta Wrap: %f degress\n", odom.getTheta());
+    // lcd::print(3, "Theta Raw: %f degress\n", IMU.get_rotation());
+    // lcd::print(4, "Left: %f in\n", math.ticksToInch(LEnc.get_value()));
+    // lcd::print(5, "Right: %f in\n", math.ticksToInch(REnc.get_value()));
+    // lcd::print(6, "L: %d ticks\n", LEnc.get_value());
+    // lcd::print(6, "Avg Wrap: %f ticks\n", math.encoderAverage());
+    // lcd::print(7, "Avg Raw: %f ticks\n", math.encoderAverage());
+    // lcd::print(7, "R: %d ticks\n", REnc.get_value());
 
     /* ********** Drivetrain ********** */
 
