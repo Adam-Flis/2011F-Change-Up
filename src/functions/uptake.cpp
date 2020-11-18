@@ -50,6 +50,6 @@ void Uptake::waitUntillShot(int amount, float timeOut) {
       }
       delay(10);
     }
-    delay(50);
+    delay(125);
   }
 }

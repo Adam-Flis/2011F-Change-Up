@@ -16,12 +16,12 @@ void homeRow(char color) {
   chassis.driveToPoint(0, 29.7, 85, 1.35).waitUntilSettled();
   chassis.turnToAngle(92.5, 85, 1.25).waitUntilSettled(); // Turn towards goal
   intake.move(100);
-  chassis.driveToPoint(34, 23, 90, 1.3); // Drive towards goal
-  delay(400);
+  chassis.driveToPoint(34.5, 24.5, 90, 1.4); // Drive towards goal
+  delay(500);
   uptake.move(100);
-  uptake.waitUntillShot(2, 1.2); // Shoots 2 balls into the goal
-  uptake.move(50);
-  intake.move(50);
+  uptake.waitUntillShot(2, 1.0); // Shoots 2 balls into the goal
+  uptake.move(70);
+  intake.move(70);
   intake.waitUntillColor(color, 1.0); // Wait untill middle color ball is inside intakes (Prevent overshooting of balls)
   uptake.waitUntillIndexed(0.2); // Index ball
   uptake.stop();
@@ -54,8 +54,8 @@ void homeRow(char color) {
   chassis.driveToPoint(-35, -53, 90, 1.1); // Drive towards goal
   uptake.move(100);
   uptake.waitUntillShot(2, 1.2); // Shoots 2 balls into the goal
-  uptake.move(50);
-  intake.move(50);
+  uptake.move(100);
+  intake.move(100);
   intake.waitUntillColor(color, 1.0); // Wait untill middle color ball is inside intakes (Prevent overshooting of balls)
   uptake.waitUntillIndexed(0.2); // Idex ball
   uptake.stop();
