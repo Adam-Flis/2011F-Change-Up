@@ -5,9 +5,13 @@
 
 // Code that runs when you start the program
 void initialize() {
+
   lcd::initialize();
-  Chassis chassis;
+  Chassis chassis; //Define classes
   Odom odom;
+
+  /* ********** Calibrate IMU ********** */
+
   IMU.reset();
   delay(20);
   while (IMU.is_calibrating()){
@@ -15,12 +19,16 @@ void initialize() {
     delay(10);
   }
   cout<<"IMU Calibrated"<<endl;
+
+  /* ********** Initalize Chassis and Odometry Tasks ********** */
+
   Task chassisTask(chassis.startTask, NULL, "Chassis Task");
   Task trackTask(odom.startTask, NULL, "Track Task");
   lcd::set_text(0, "Tasks Initalizing");
   cout<<"Tasks initializing"<<endl;
   delay(500);
-  lcd::set_text(0, "Ready To Go!");
+
+  lcd::set_text(0, "Ready To Go!"); // Message to let user know robot is all initalized
   cout<<"Ready"<<endl;
   delay(500);
   lcd::clear_line(0);

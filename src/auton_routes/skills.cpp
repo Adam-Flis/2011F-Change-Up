@@ -3,6 +3,7 @@
 #include "autonomous.hpp"
 
 void skills () {
+  
   uptake.move(100);
   delay(950); // Deploy hood
   uptake.stop();

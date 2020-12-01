@@ -3,6 +3,7 @@
 #include "autonomous.hpp"
 
 void homeRow(char color) {
+  
   if (color == 'B') {
     color = 'R';
   } else if (color == 'R') {
