@@ -9,15 +9,6 @@ Intake::~Intake(){}
 static Math math; // Class definition
 
 /**
- * Sets the speed of the intakes
- * @param velocity -100 to 100 (In percentage of max intake speed)
- */
-void Intake::move(float velocity) {
-  LI.move_velocity(math.percentToVelocity(velocity, 'B'));
-  RI.move_velocity(math.percentToVelocity(velocity, 'B'));
-}
-
-/**
  * Stops the intakes
  */
 Intake& Intake::stop() {
@@ -35,9 +26,18 @@ void Intake::brake() {
 }
 
 /**
+ * Sets the speed of the intakes
+ * @param velocity -100 to 100 (In percentage of max intake speed)
+ */
+void Intake::move(float velocity) {
+  LI.move_velocity(math.percentToVelocity(velocity, 'B'));
+  RI.move_velocity(math.percentToVelocity(velocity, 'B'));
+}
+
+/**
  * Waits untill a certain ball color is detected in the intakes
  * Pervents overcycling of balls in autonomous
- * @param color 'B', 'R' (Ball color; Blue or Red)
+ * @param color 'B', or 'R' (Ball color; Blue or Red)
  * @param timeOut (In seconds)
  */
 void Intake::waitUntillColor(char color, float timeOut) {

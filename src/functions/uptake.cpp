@@ -9,15 +9,6 @@ Uptake::~Uptake(){}
 static Math math; // Class definition
 
 /**
- * Sets the speed of the uptakes
- * @param velocity -100 to 100 (In percentage of max uptakes speed)
- */
-void Uptake::move(float velocity) {
-  BU.move_velocity(math.percentToVelocity(velocity, 'B'));
-  TU.move_velocity(math.percentToVelocity(velocity, 'B'));
-}
-
-/**
  * Stops the uptakes
  */
 Uptake& Uptake::stop() {
@@ -32,6 +23,15 @@ Uptake& Uptake::stop() {
 void Uptake::brake() {
   BU.set_brake_mode(MOTOR_BRAKE_BRAKE);
   TU.set_brake_mode(MOTOR_BRAKE_BRAKE);
+}
+
+/**
+ * Sets the speed of the uptakes
+ * @param velocity -100 to 100 (In percentage of max uptakes speed)
+ */
+void Uptake::move(float velocity) {
+  BU.move_velocity(math.percentToVelocity(velocity, 'B'));
+  TU.move_velocity(math.percentToVelocity(velocity, 'B'));
 }
 
 /**
@@ -71,6 +71,8 @@ void Uptake::waitUntillIndexed(float timeOut) {
       }
       delay(10); // Loop speed, prevent overload
     }
-    delay(125); // Delay before going onto next for loop if there are multiple balls queued
+    if (amount > 1) {
+      delay(125); // Delay before going onto next for loop if there are multiple balls queued
+    }
   }
 }

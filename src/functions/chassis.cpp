@@ -33,7 +33,6 @@ float targetX,
       targetY,
       finalVoltage,
       ticks,
-      //theta,
       drift;
 
 /**
@@ -45,26 +44,6 @@ Chassis& Chassis::stop() {
   RFD.move_velocity(0);
   RBD.move_velocity(0);
   return *this;
-}
-
-/**
- * Sets velocity of chassis side/s
- * @param velocity -100 to 100 (In percentage of drive max speed)
- * @param side 'L', 'R', 'B' (Side of drive that will move; Left, Right, Both)
- */
-void Chassis::move(float velocity, char side) {
-  if (side == 'L') {
-    LFD.move_velocity(math.percentToVelocity(velocity, 'G'));
-    LBD.move_velocity(math.percentToVelocity(velocity, 'G'));
-  } else if (side == 'R') {
-    RFD.move_velocity(math.percentToVelocity(velocity, 'G'));
-    RBD.move_velocity(math.percentToVelocity(velocity, 'G'));
-  } else if (side == 'B') {
-    LFD.move_velocity(math.percentToVelocity(velocity, 'G'));
-    RFD.move_velocity(math.percentToVelocity(velocity, 'G'));
-    LBD.move_velocity(math.percentToVelocity(velocity, 'G'));
-    RBD.move_velocity(math.percentToVelocity(velocity, 'G'));
-  }
 }
 
 /**
@@ -98,11 +77,30 @@ void Chassis::coast() {
 }
 
 /**
+ * Sets velocity of chassis side/s
+ * @param velocity -100 to 100 (In percentage of drive max speed)
+ * @param side 'L', 'R', or 'B' (Side of drive that will move; Left, Right, or Both)
+ */
+void Chassis::move(float velocity, char side) {
+  if (side == 'L') {
+    LFD.move_velocity(math.percentToVelocity(velocity, 'G'));
+    LBD.move_velocity(math.percentToVelocity(velocity, 'G'));
+  } else if (side == 'R') {
+    RFD.move_velocity(math.percentToVelocity(velocity, 'G'));
+    RBD.move_velocity(math.percentToVelocity(velocity, 'G'));
+  } else if (side == 'B') {
+    LFD.move_velocity(math.percentToVelocity(velocity, 'G'));
+    RFD.move_velocity(math.percentToVelocity(velocity, 'G'));
+    LBD.move_velocity(math.percentToVelocity(velocity, 'G'));
+    RBD.move_velocity(math.percentToVelocity(velocity, 'G'));
+  }
+}
+
+/**
  * Resets the chassis variables
  */
 void Chassis::reset() {
   isSettled = true;
-  //theta = 0;
   targetX = targetY = finalVoltage = ticks = drift = 0;
   leftVoltage = rightVoltage = timeOut = 0;
   targetTheta = targetTicks = targetVoltage = 0;
@@ -279,7 +277,6 @@ Chassis& Chassis::turnToPoint(float x, float y, float targetVoltage_, float time
  */
 Chassis& Chassis::turnToAngle(float theta_, float targetVoltage_, float timeOut_) {
   if (isRunning) {
-
     // Sets the global variables that are used to move the robot in the chassis task
     targetTheta = math.angleWrap(theta_);
     targetVoltage = math.percentToVoltage(targetVoltage_);

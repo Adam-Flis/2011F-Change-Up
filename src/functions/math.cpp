@@ -9,7 +9,7 @@ double wheelCircumference = wheelDiameter * M_PI;
 float ticksPerRevolution = 360; //Number of ticks in one full revolution of encoder/motor
 
 /**
- * Returns and converts ticks to inches
+ * Converts ticks to inches, then returns
  * @param ticks
  */
 float Math::ticksToInch(float ticks) {
@@ -19,7 +19,7 @@ float Math::ticksToInch(float ticks) {
 }
 
 /**
- * Returns and converts inches to ticks
+ * Converts inches to ticks, then returns
  * @param inches
  */
 float Math::inchToTicks(float inches) {
@@ -29,7 +29,7 @@ float Math::inchToTicks(float inches) {
 }
 
 /**
- * Returns and converts percent value to velocity value
+ * Converts percent value to velocity value, then returns
  * @param percent -100 to 100 (In percentage of max speed)
  * @param cartColor 'R', 'G', 'B' (Color cart of motor insert; Red, Green, Blue)
  */
@@ -48,7 +48,7 @@ float Math::percentToVelocity(float percent, char cartColor) {
 }
 
 /**
- * Returns and converts percent to voltage
+ * Converts percent to voltage, then returns
  */
 float Math::percentToVoltage(float percent) {
   return percent * 120;
@@ -70,13 +70,14 @@ float Math::angleWrap(float angle) {
  * Returns the average left and right encoder values
  */
 float Math::encoderAverage() {
-  return ((LEnc.get_value() + REnc.get_value())/2) * 1000.07178/1000;
+  float multiplier = 1000.07178/1000; // Multiplies the encoder value for more accurate readings
+  return ((LEnc.get_value() + REnc.get_value())/2) * multiplier;
 }
 
 /**
- * Returns and converts seconds to milliseconds
+ * Converts seconds to milliseconds, then returns
  * @param seconds (In seconds)
  */
 float Math::secToMillis(float seconds) {
-  return seconds*1000;
+  return seconds * 1000;
 }
