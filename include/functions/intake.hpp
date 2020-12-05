@@ -8,10 +8,13 @@ public:
   Intake();
   ~Intake();
 
-  void move(float velocity);
   Intake& stop();
   void brake();
+
+  void move(float velocity);
+
   void waitUntillColor(char color, float timeOut);
+
 };
 
 #endif

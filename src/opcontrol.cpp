@@ -9,18 +9,22 @@
 
 void opcontrol() {
 
-  Chassis chassis;
+  Chassis chassis; // Defines classes
   Odom odom;
   Math math;
   Intake intake;
   Uptake uptake;
 
-  Intake_Optical.set_led_pwm(0);
-  odom.endTask();
+  Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
+  odom.endTask(); // End tasks to prevent brain overload
   chassis.endTask();
   chassis.brake();
-  
+
   while(1) {
+
+    /* ********** Testing of sensors ********** */
+    // Commented out for match to prevent brain overload
+
     // lcd::print(0, "X: %f \n", odom.getX());
     // lcd::print(1, "Y: %f \n", odom.getY());
     // lcd::print(2, "Theta Wrap: %f degress\n", odom.getTheta());

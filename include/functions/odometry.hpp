@@ -7,15 +7,18 @@ class Odom {
 public:
 
   void reset();
+
   float getX();
   float getY();
   float getTheta();
+
   static void startTask(void* param);
   void endTask();
 
 private:
   float x, y, theta;
   static bool isRunning;
+  
 };
 
 #endif

@@ -2,7 +2,14 @@
 #include "define.hpp"
 #include "autonomous.hpp"
 
+/**
+ * Goal: Completes 4 rows and 7 red owned goals
+ * Goal: Points scored: 31 red - 14 blue + 63 = 80
+ * Accomplished: Completes 2 rows and 5 red owned goals
+ * Accomplished: Points scored: 17 red - 15 blue + 63 = 65
+ */
 void skills () {
+
   uptake.move(100);
   delay(950); // Deploy hood
   uptake.stop();
@@ -97,5 +104,4 @@ void skills () {
   uptake.move(100);
   uptake.waitUntillIndexed(0.5); // Index ball
   uptake.stop();
-
 }

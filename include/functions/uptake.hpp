@@ -8,11 +8,14 @@ public:
   Uptake();
   ~Uptake();
 
-  void move(float velocity);
   Uptake& stop();
   void brake();
+
+  void move(float velocity);
+
   void waitUntillIndexed(float timeOut);
   void waitUntillShot(int amount, float timeOut);
+  
 };
 
 #endif

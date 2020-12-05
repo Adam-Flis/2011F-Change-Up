@@ -4,7 +4,7 @@
 
 void autonomous() {
 
-  Intake_Optical.set_led_pwm(100);
+  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
 
   //skills();
   //homeRow('B');
