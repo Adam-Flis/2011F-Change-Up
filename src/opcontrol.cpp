@@ -46,16 +46,16 @@ void opcontrol() {
     /* ********** Ball Uptakes ********** */
 
     if (Main.get_digital(DIGITAL_L1)) { // Button L1 pressed, uptake balls
-      TU.move_velocity(600);
-      BU.move_velocity(600);
+      LU.move_velocity(600);
+      RU.move_velocity(600);
     } else if (Main.get_digital(DIGITAL_L2)) { // Button L2 pressed, downtake balls
-      TU.move_velocity(-600);
-      BU.move_velocity(-600);
+      LU.move_velocity(-600);
+      RU.move_velocity(-600);
     } else { // Nothing pressed, stop uptake
-      TU.set_brake_mode(MOTOR_BRAKE_BRAKE);
-      BU.set_brake_mode(MOTOR_BRAKE_BRAKE);
-      TU.move_velocity(0);
-      BU.move_velocity(0);
+      LU.set_brake_mode(MOTOR_BRAKE_BRAKE);
+      RU.set_brake_mode(MOTOR_BRAKE_BRAKE);
+      LU.move_velocity(0);
+      RU.move_velocity(0);
     }
 
     /* ********** Ball Intakes ********** */

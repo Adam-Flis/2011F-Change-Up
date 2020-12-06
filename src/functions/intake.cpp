@@ -6,7 +6,9 @@
 Intake::Intake(){}
 Intake::~Intake(){}
 
-static Math math; // Class definition
+Intake intake; // Class definition
+static Math math;
+
 
 /**
  * Stops the intakes
@@ -56,6 +58,7 @@ void Intake::waitUntillColor(char color, float timeOut) {
     timeOut = millis();
   }
   while (1) {
+    intake.move(100);
     if (low_hue <= Intake_Optical.get_hue() && Intake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
       break;
     }
@@ -64,4 +67,5 @@ void Intake::waitUntillColor(char color, float timeOut) {
     }
     delay(20); // Loop speed, prevent overload
   }
+  intake.stop();
 }

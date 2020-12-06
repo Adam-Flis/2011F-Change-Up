@@ -6,14 +6,15 @@
 Uptake::Uptake(){}
 Uptake::~Uptake(){}
 
-static Math math; // Class definition
+Uptake uptake; // Class definition
+static Math math;
 
 /**
  * Stops the uptakes
  */
 Uptake& Uptake::stop() {
-  BU.move_velocity(0);
-  TU.move_velocity(0);
+  LU.move_velocity(0);
+  RU.move_velocity(0);
   return *this;
 }
 
@@ -21,8 +22,8 @@ Uptake& Uptake::stop() {
  * Sets the brake mode of the uptakes to brake
  */
 void Uptake::brake() {
-  BU.set_brake_mode(MOTOR_BRAKE_BRAKE);
-  TU.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  LU.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  RU.set_brake_mode(MOTOR_BRAKE_BRAKE);
 }
 
 /**
@@ -30,27 +31,26 @@ void Uptake::brake() {
  * @param velocity -100 to 100 (In percentage of max uptakes speed)
  */
 void Uptake::move(float velocity) {
-  BU.move_velocity(math.percentToVelocity(velocity, 'B'));
-  TU.move_velocity(math.percentToVelocity(velocity, 'B'));
+  LU.move_velocity(math.percentToVelocity(velocity, 'B'));
+  RU.move_velocity(math.percentToVelocity(velocity, 'B'));
 }
 
 /**
  * Waits untill a ball is indexed
  * Accurately index a ball
+ * @param amount (Number of balls to index 1 or 2)
  * @param timeOut (In seconds)
  */
-void Uptake::waitUntillIndexed(float timeOut) {
-  int ballPassed = 2920;
-  timeOut = math.secToMillis(timeOut) + millis();
-  while (1) {
-    if (Bottom_Uptake_Line.get_value() < ballPassed) {
-      break;
-    } else if (millis() >= timeOut) {
-      break;
-    }
-    delay(10); // Loop speed, prevent overload
-  }
+void Uptake::waitUntillIndexed(int amount, float timeOut) {
+  // int bottomLineThresh = 2900;
+  // int middleLineThresh = 2800;
+  // timeOut = math.secToMillis(timeOut) + millis();
+  //
+  // for (int lp = 0; lp <= amount; lp++) {
+  //
+  // uptake.stop();
 }
+
 
 /**
  * Waits untill ball/s are shot into the goal
@@ -59,11 +59,12 @@ void Uptake::waitUntillIndexed(float timeOut) {
  * @param timeOut (In seconds)
  */
  void Uptake::waitUntillShot(int amount, float timeOut) {
-  int ballPassed = 2900;
+  int lineThresh = 2900;
   timeOut = math.secToMillis(timeOut) + millis();
   for (int lp = 0; lp <= amount; lp++) {
+    uptake.move(100); // Start Uptakes
     while (1) {
-      if (Top_Uptake_Line.get_value() < ballPassed) {
+      if (Top_Uptake_Line.get_value() <= lineThresh) {
         break;
       } else if (millis() >= timeOut) {
         lp = amount;
@@ -71,8 +72,18 @@ void Uptake::waitUntillIndexed(float timeOut) {
       }
       delay(10); // Loop speed, prevent overload
     }
-    if (amount > 1) {
-      delay(125); // Delay before going onto next for loop if there are multiple balls queued
+    if (amount > 1) { // If multiple balls are queued wait untill previous ball is shot to get next sensor reading
+      uptake.move(70); // Slow down uptakes
+      float timeOut2 = math.secToMillis(0.3) + millis();
+      while (1) {
+        if (Top_Uptake_Line.get_value() >= lineThresh) {
+          break;
+        } else if (millis() >= timeOut2) {
+          break;
+        }
+        delay(10); // Loop speed, prevent overload
+      }
     }
   }
+  uptake.stop(); // Stop uptakes
 }
