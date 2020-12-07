@@ -36,21 +36,44 @@ void Uptake::move(float velocity) {
 }
 
 /**
- * Waits untill a ball is indexed
- * Accurately index a ball
- * @param amount (Number of balls to index 1 or 2)
+ * Waits untill a ball is indexed to the bottom roller
+ * Accurately index a ball to bottom roller
  * @param timeOut (In seconds)
  */
-void Uptake::waitUntillIndexed(int amount, float timeOut) {
-  // int bottomLineThresh = 2900;
-  // int middleLineThresh = 2800;
-  // timeOut = math.secToMillis(timeOut) + millis();
-  //
-  // for (int lp = 0; lp <= amount; lp++) {
-  //
-  // uptake.stop();
+void Uptake::waitUntillIndexedBottom(float timeOut) {
+  int ballPassed = 2920;
+  timeOut = math.secToMillis(timeOut) + millis();
+  uptake.move(50); // Start Uptakes
+  while (1) {
+    if (Bottom_Uptake_Line.get_value() < ballPassed) {
+      break;
+    } else if (millis() >= timeOut) {
+      break;
+    }
+    delay(10); // Loop speed, prevent overload
+  }
+  uptake.stop(); // Stop uptakes
 }
 
+/**
+ * Waits untill a ball is indexed to the middle roller
+ * Accurately index a ball to middle roller
+ * @param timeOut (In seconds)
+ */
+void Uptake::waitUntillIndexedMiddle(float timeOut) {
+  int ballPassed = 2920;
+  timeOut = math.secToMillis(timeOut) + millis();
+  uptake.move(50); // Start Uptakes
+  while (1) {
+    if (Middle_Uptake_Line.get_value() < ballPassed) {
+      break;
+    } else if (millis() >= timeOut) {
+      break;
+    }
+    delay(10); // Loop speed, prevent overload
+  }
+  uptake.stop(); // Stop uptakes
+}
 
 /**
  * Waits untill ball/s are shot into the goal
@@ -73,7 +96,7 @@ void Uptake::waitUntillIndexed(int amount, float timeOut) {
       delay(10); // Loop speed, prevent overload
     }
     if (amount > 1) { // If multiple balls are queued wait untill previous ball is shot to get next sensor reading
-      uptake.move(70); // Slow down uptakes
+      uptake.move(50); // Slow down uptakes
       float timeOut2 = math.secToMillis(0.3) + millis();
       while (1) {
         if (Top_Uptake_Line.get_value() >= lineThresh) {

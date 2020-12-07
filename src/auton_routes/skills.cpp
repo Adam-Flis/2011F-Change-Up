@@ -30,7 +30,7 @@ void skills () {
   chassis.drive(-14, 80, 1.5).waitUntilSettled(); // Drive away from 1st goal
   uptake.move(50);
   intake.move(100);
-  //uptake.waitUntillIndexed(0.5); // Index ball
+  uptake.waitUntillIndexedBottom(0.5); // Index ball
   uptake.stop();
 
   /* ********** 2nd Goal ********** */
@@ -47,7 +47,7 @@ void skills () {
   chassis.drive(-18, 90, 1.3).waitUntilSettled(); // Drive away from 2nd goal
   uptake.move(50);
   intake.move(100);
-  //uptake.waitUntillIndexed(0.5); // Index ball
+  uptake.waitUntillIndexedBottom(0.5); // Index ball
   uptake.stop();
   intake.stop();
 
@@ -67,7 +67,7 @@ void skills () {
   chassis.drive(-36, 80, 0.8).waitUntilSettled(); // Drive away from 3rd goal
   intake.move(100);
   uptake.move(100);
-  //uptake.waitUntillIndexed(0.5); // Index ball
+  uptake.waitUntillIndexedBottom(0.5); // Index ball
   uptake.stop();
 
   /* ********** 4th Goal ********** */
@@ -86,7 +86,7 @@ void skills () {
   chassis.drive(-12, 80, 0.7).waitUntilSettled(); // Drive away from 4th goal
   intake.move(100);
   uptake.move(100);
-  //uptake.waitUntillIndexed(0.5); // Index ball
+  uptake.waitUntillIndexedBottom(0.5); // Index ball
   uptake.stop();
 
   /* ********** 5th Goal ********** */
@@ -102,6 +102,6 @@ void skills () {
   chassis.drive(-12, 80, 0.8).waitUntilSettled(); // Drive away from 5th goal
   intake.move(100);
   uptake.move(100);
-  //uptake.waitUntillIndexed(0.5); // Index ball
+  uptake.waitUntillIndexedBottom(0.5); // Index ball
   uptake.stop();
 }

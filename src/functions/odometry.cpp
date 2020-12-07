@@ -60,6 +60,10 @@ void Odom::startTask(void* param) {
   while (isRunning) {
     currentTheta = math.angleWrap(IMU.get_rotation() * (7200/7181.9)) * (M_PI/180); // Filters and then converts the IMU value to radians
 
+    if (abs(currentTheta - lastTheta) < 0.01) { // Filter theta value
+      currentTheta = 0;
+    }
+
     currentVertical = VEnc.get_value();
     deltaVertical = currentVertical - lastVertical; // Difference between current and last vertical position
 
