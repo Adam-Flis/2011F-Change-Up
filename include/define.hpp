@@ -14,7 +14,7 @@ extern Motor LU, RU; // Uptakes
 extern Imu IMU; // Inertial measurement unit
 extern Optical Intake_Optical; // Optical sensor
 extern ADILineSensor Bottom_Uptake_Line, Middle_Uptake_Line, Top_Uptake_Line; // Line sensors
-extern ADIEncoder LEnc, REnc; // Encoders
+extern ADIEncoder HEnc, VEnc; // Encoders
 
 /* ********** Declare Controller ********** */
 

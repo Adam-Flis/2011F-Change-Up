@@ -13,7 +13,6 @@ public:
   static float percentToVoltage(float percent);
 
   static float angleWrap(float angle);
-  static float encoderAverage();
   
   static float secToMillis(float seconds);
 

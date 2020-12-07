@@ -52,7 +52,7 @@ float PID::drive(float targetTicks_, float targetVoltage_) {
   intergralLimit = (targetVoltage_/kI)/50;
 
   // Error reestablished at the start of the loop
-  error = targetTicks_ - math.encoderAverage();
+  error = targetTicks_; //- math.encoderAverage();
   // Proportion stores the error until it can be multiplied by the constant
   proportion = error;
   // Intergral takes area under the error and is useful for major adjustment

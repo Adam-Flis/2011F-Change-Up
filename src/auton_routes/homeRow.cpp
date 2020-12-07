@@ -33,7 +33,7 @@ void homeRow(char color) {
   uptake.move(70);
   intake.move(70);
   intake.waitUntillColor(color, 1.0); // Wait untill middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
-  uptake.waitUntillIndexed(0.2); // Index ball
+  //uptake.waitUntillIndexed(0.2); // Index ball
   uptake.stop();
   chassis.waitUntilSettled();
 
@@ -69,7 +69,7 @@ void homeRow(char color) {
   uptake.move(100);
   intake.move(100);
   intake.waitUntillColor(color, 1.0); // Wait untill middle color ball (opponents color) is inside intakes (Prevent overshooting of balls)
-  uptake.waitUntillIndexed(0.2); // Index ball
+  //uptake.waitUntillIndexed(0.2); // Index ball
   uptake.stop();
   chassis.waitUntilSettled();
 

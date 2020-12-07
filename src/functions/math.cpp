@@ -67,14 +67,6 @@ float Math::angleWrap(float angle) {
 }
 
 /**
- * Returns the average left and right encoder values
- */
-float Math::encoderAverage() {
-  float multiplier = 1000.07178/1000; // Multiplies the encoder value for more accurate readings
-  return ((LEnc.get_value() + REnc.get_value())/2) * multiplier;
-}
-
-/**
  * Converts seconds to milliseconds, then returns
  * @param seconds (In seconds)
  */

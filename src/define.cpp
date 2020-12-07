@@ -15,17 +15,17 @@
 
 /* ********** Define Sensor Ports ********** */
 
-#define IMU_Port 17
-#define Intake_Optical_Port 15
+#define IMU_Port 14
+#define Intake_Optical_Port 3
 
-#define Bottom_Uptake_Line_Port 'd'
+#define Bottom_Uptake_Line_Port 'c'
 #define Middle_Uptake_Line_Port 'b'
-#define Top_Uptake_Line_Port 'c'
+#define Top_Uptake_Line_Port 'a'
 
-#define Middle_Encoder_Top_Port 'g'
-#define Middle_Encoder_Bottom_Port 'h'
-#define Right_Encoder_Top_Port 'e'
-#define Right_Encoder_Bottom_Port 'f'
+#define Horizontal_Encoder_Top_Port 'e'
+#define Horizontal_Encoder_Bottom_Port 'f'
+#define Vertical_Encoder_Top_Port 'g'
+#define Vertical_Encoder_Bottom_Port 'h'
 
 /* ********** Creates Motors ********** */
 
@@ -47,8 +47,8 @@ Optical Intake_Optical (Intake_Optical_Port);
 ADILineSensor Bottom_Uptake_Line (Bottom_Uptake_Line_Port),
               Middle_Uptake_Line (Middle_Uptake_Line_Port),
               Top_Uptake_Line (Top_Uptake_Line_Port);
-ADIEncoder MEnc (Middle_Encoder_Top_Port,Middle_Encoder_Bottom_Port,true),
-           REnc (Right_Encoder_Top_Port,Right_Encoder_Bottom_Port,false);
+ADIEncoder HEnc (Horizontal_Encoder_Top_Port,Horizontal_Encoder_Bottom_Port,true),
+           VEnc (Vertical_Encoder_Top_Port,Vertical_Encoder_Bottom_Port,false);
 
 /* ********** Creates Controller ********** */
 

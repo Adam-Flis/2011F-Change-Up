@@ -16,7 +16,7 @@ void opcontrol() {
   Uptake uptake;
 
   Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
-  odom.endTask(); // End tasks to prevent brain overload
+  //odom.endTask(); // End tasks to prevent brain overload
   chassis.endTask();
   chassis.brake();
 
@@ -25,9 +25,9 @@ void opcontrol() {
     /* ********** Testing of sensors ********** */
     // Commented out for match to prevent brain overload
 
-    // lcd::print(0, "X: %f \n", odom.getX());
-    // lcd::print(1, "Y: %f \n", odom.getY());
-    // lcd::print(2, "Theta Wrap: %f degress\n", odom.getTheta());
+    lcd::print(0, "X: %f \n", odom.getX());
+    lcd::print(1, "Y: %f \n", odom.getY());
+    lcd::print(2, "Theta Wrap: %f degress\n", odom.getTheta());
     // lcd::print(3, "Theta Raw: %f degress\n", IMU.get_rotation());
     // lcd::print(4, "Left: %f in\n", math.ticksToInch(LEnc.get_value()));
     // lcd::print(5, "Right: %f in\n", math.ticksToInch(REnc.get_value()));

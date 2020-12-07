@@ -26,7 +26,6 @@ void initialize() {
   lcd::set_text(0, "Tasks Initalizing");
   cout<<"Tasks initializing"<<endl;
   delay(500);
-  lcd::set_text(0, "Ready To Go!");
 
   lcd::set_text(0, "Ready To Go!"); // Message to let user know robot is all initalized
   cout<<"Ready"<<endl;

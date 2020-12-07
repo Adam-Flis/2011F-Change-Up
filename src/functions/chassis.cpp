@@ -140,9 +140,9 @@ void Chassis::startTask(void* param) {
 
       if (odom.getTheta() == targetTheta && isTurning && targetTheta != 0) { // When robot reaches turn target stop turning
           isTurning = false;
-        } else if (math.encoderAverage() == targetTicks && isDriving && targetTicks != 0) { // When robot reaches drive target stop driving
-          isDriving = false;
-        }
+        } // else if (math.encoderAverage() == targetTicks && isDriving && targetTicks != 0) { // When robot reaches drive target stop driving
+        //   isDriving = false;
+        // }
       if (millis() >= timeOut) { // When timeout is reached stop the robot and reset variables
         isDriving = isTurning = false;
         chassis.reset();
@@ -177,7 +177,7 @@ void Chassis::endTask() {
 Chassis& Chassis::drive(float distance, float targetVoltage_, float timeOut_) {
   if (isRunning) {
     ticks = math.inchToTicks(distance);
-    targetTicks = ticks + math.encoderAverage();
+    targetTicks = ticks; //+ math.encoderAverage();
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
     isDriving = true;
@@ -232,7 +232,7 @@ Chassis& Chassis::driveToPoint(float x, float y, float targetVoltage_, float tim
     }
 
     // Sets the global variables that are used to move the robot in the chassis task
-    targetTicks = ticks + math.encoderAverage();
+    targetTicks = ticks; //+ math.encoderAverage();
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
     isDriving = true;
