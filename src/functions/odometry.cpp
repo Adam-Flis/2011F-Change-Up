@@ -9,10 +9,8 @@ static Math math;
 /* ********** Define variables ********** */
 
 bool Odom::isRunning = false;
-float lastTheta = 0, lastVertical = 0, lastHorizontial = 0;
-float currentTheta = 0, currentVertical = 0, currentHorizontial = 0;
-float deltaVertical = 0, deltaHorizontial = 0, deltaX = 0, deltaY = 0;
-float averageTheta = 0;
+float Sv = 7.5;
+float Sh = 6.25;
 
 /**
  * Resets the odometry variables
@@ -21,10 +19,6 @@ void Odom::reset() {
   VEnc.reset();
   HEnc.reset();
   odom.x = odom.y = odom.theta = 0;
-  lastTheta = 0, lastVertical = 0, lastHorizontial = 0;
-  currentTheta = 0, currentVertical = 0, currentHorizontial = 0;
-  deltaVertical = 0, deltaHorizontial = 0, deltaX = 0, deltaY = 0;
-  averageTheta = 0;
 }
 
 /**
@@ -49,7 +43,7 @@ float Odom::getTheta() {
 }
 
 /**
- * Starts the odometry task
+ * Starts the odometry tracking task
  */
 void Odom::startTask(void* param) {
   delay(100);
@@ -58,36 +52,71 @@ void Odom::startTask(void* param) {
   cout<<"Encoders and odometry reset"<<endl;
   delay(500);
   cout<<"Odometry Task Started"<<endl;
+
+  double currentTheta = 0, currentVertical = 0, currentHorizontial = 0;
+  double lastTheta = 0, lastVertical = 0, lastHorizontial = 0;
+  double deltaTheta = 0, deltaVertical = 0, deltaHorizontial = 0;
+  double theta = 0, averageTheta = 0;
+  double verticalRadius = 0, horizontialRadius = 0;
+  double verticalCord = 0, horizontialCord = 0;
+
   while (isRunning) {
-    currentTheta = math.angleWrap(IMU.get_rotation() * (7200/7181.9)) * (M_PI/180); // Filters and then converts the IMU value to radians
 
-    if (abs(currentTheta - lastTheta) < 0.01) { // Filter theta value
-      currentTheta = 0;
-    }
+	  // Value of the sensors
+    currentTheta = math.angleWrap(IMU.get_rotation() * (7200/7181.9));
+	  currentVertical = VEnc.get_value();
+	  currentHorizontial = HEnc.get_value();
 
-    currentVertical = VEnc.get_value();
-    deltaVertical = currentVertical - lastVertical; // Difference between current and last vertical position
+    // Change in sensor values since last update
+    deltaTheta = math.filter(currentTheta, lastTheta);
+    deltaVertical = math.filter(currentVertical, lastHorizontial);
+    deltaHorizontial = math.filter(currentHorizontial, lastHorizontial);
 
-    currentHorizontial = HEnc.get_value();
-    deltaHorizontial = currentHorizontial - lastHorizontial; // Difference between current and last horizontial position
-
+    // Finding the average of the current and last theta
     averageTheta = (currentTheta + lastTheta)/2;
 
-    deltaX = deltaVertical * sin(averageTheta); // Calculates the distance the robot moved in the x direction
-    deltaY = deltaVertical * cos(averageTheta); // Calculates the distance the robot moved in the y direction
-
-    deltaX += deltaHorizontial * -cos(averageTheta);
-    deltaY += deltaHorizontial * sin(averageTheta);
-
+	  // Update last sensor values
     lastTheta = currentTheta;
     lastVertical = currentVertical;
     lastHorizontial = currentHorizontial;
 
-    odom.theta = currentTheta * (180/M_PI); // Converts currentTheta from radians back to degress
-    odom.x += math.ticksToInch(deltaX); // Converts then adds deltaX to current x position
-    odom.y += math.ticksToInch(deltaY); // Converts then adds deltaY to current Y position
+    currentTheta = math.degToRad(currentTheta); // Convert theta from degress to radians
 
-    delay(10); // Loop speed, prevent overload
+	  // If the robot turned
+	  if (deltaTheta != 0) {
+
+      theta = deltaTheta / 2.0;
+
+      // Calculating the traslation of the vertical wheel
+		  verticalRadius = deltaVertical / deltaTheta + Sv;
+		  verticalCord = (verticalRadius * sin(theta)) * 2;
+
+      // Calculating the translation with the horizontial wheel
+		  horizontialRadius = deltaHorizontial / deltaTheta + Sh;
+		  horizontialCord = (horizontialRadius * sin(theta)) * 2;
+
+	  } else { // If the robot did not turn
+
+      // Setting the vertical and horizontial movement to the ticks rotated
+		  verticalCord = deltaVertical;
+		  horizontialCord = deltaHorizontial;
+
+      // Setting the offset to 0 because it didn't turn
+		  deltaTheta = 0;
+
+	  }
+
+    // Adding the change in the axis to the global coordonates
+    odom.x += math.ticksToInch(verticalCord * sin(averageTheta));
+    odom.y += math.ticksToInch(verticalCord * cos(averageTheta));
+
+    odom.x += math.ticksToInch(horizontialCord * -cos(averageTheta));
+    odom.y += math.ticksToInch(horizontialCord * sin(averageTheta));
+
+    // Updating the global angle
+	  odom.theta += deltaTheta;
+
+	  delay(10);
   }
 }
 

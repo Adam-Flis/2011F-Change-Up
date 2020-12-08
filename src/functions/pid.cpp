@@ -93,10 +93,8 @@ float PID::drive(float targetTicks_, float targetVoltage_) {
  */
 float PID::drift() {
   // Establishes the initial error simply as the value of the IMU since its supposed to be 0
-  error_drift = odom.getTheta() - lastIMURotation;
-  if (abs(error_drift) < 0.01) { // Filter theta value
-    error_drift = 0;
-  }
+  error_drift = math.filter(odom.getTheta(), lastIMURotation);
+
   // Derivative finds difference between current error and last recrded to recieve ROC, good for fine adjustment
   derivative_d = error_drift - lastError_d;
   lastIMURotation = odom.getTheta();
