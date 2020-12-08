@@ -41,11 +41,11 @@ void Uptake::move(float velocity) {
  * @param timeOut (In seconds)
  */
 void Uptake::waitUntillIndexedBottom(float timeOut) {
-  int ballPassed = 2920;
+  int lineThresh = 2915;
   timeOut = math.secToMillis(timeOut) + millis();
-  uptake.move(50); // Start Uptakes
+  uptake.move(70); // Start Uptakes
   while (1) {
-    if (Bottom_Uptake_Line.get_value() < ballPassed) {
+    if (Bottom_Uptake_Line.get_value() <= lineThresh) {
       break;
     } else if (millis() >= timeOut) {
       break;
@@ -61,11 +61,11 @@ void Uptake::waitUntillIndexedBottom(float timeOut) {
  * @param timeOut (In seconds)
  */
 void Uptake::waitUntillIndexedMiddle(float timeOut) {
-  int ballPassed = 2920;
+  int lineThresh = 2925;
   timeOut = math.secToMillis(timeOut) + millis();
-  uptake.move(50); // Start Uptakes
+  uptake.move(70); // Start uptakes
   while (1) {
-    if (Middle_Uptake_Line.get_value() < ballPassed) {
+    if (Middle_Uptake_Line.get_value() <= lineThresh) {
       break;
     } else if (millis() >= timeOut) {
       break;
@@ -82,10 +82,10 @@ void Uptake::waitUntillIndexedMiddle(float timeOut) {
  * @param timeOut (In seconds)
  */
  void Uptake::waitUntillShot(int amount, float timeOut) {
-  int lineThresh = 2900;
+  int lineThresh = 2905;
   timeOut = math.secToMillis(timeOut) + millis();
   for (int lp = 0; lp <= amount; lp++) {
-    uptake.move(100); // Start Uptakes
+    uptake.move(100); // Start uptakes
     while (1) {
       if (Top_Uptake_Line.get_value() <= lineThresh) {
         break;
@@ -95,9 +95,9 @@ void Uptake::waitUntillIndexedMiddle(float timeOut) {
       }
       delay(10); // Loop speed, prevent overload
     }
-    if (amount > 1) { // If multiple balls are queued wait untill previous ball is shot to get next sensor reading
-      uptake.move(50); // Slow down uptakes
-      float timeOut2 = math.secToMillis(0.3) + millis();
+    if (amount > 1 && amount != lp) { // If multiple balls are queued wait untill previous ball is shot to get next sensor reading
+      uptake.move(0); // Slow down uptakes
+      float timeOut2 = math.secToMillis(0.5) + millis();
       while (1) {
         if (Top_Uptake_Line.get_value() >= lineThresh) {
           break;

@@ -13,7 +13,7 @@ public:
 
   void move(float velocity);
 
-  void waitUntillColor(char color, float timeOut);
+  void waitUntillColor(char color, float timeOut, bool atGoal = true);
 
 };
 

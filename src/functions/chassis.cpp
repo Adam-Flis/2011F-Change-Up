@@ -111,9 +111,10 @@ void Chassis::reset() {
  * Starts the chassis drive task
  */
 void Chassis::startTask(void* param) {
-  delay(300);
+  delay(100);
   isRunning = true;
   chassis.reset();
+  delay(500);
   cout<<"Chassis Task Started"<<endl;
   while(isRunning) {
     if (!isSettled) {
@@ -127,7 +128,7 @@ void Chassis::startTask(void* param) {
         }
       } else if (isDriving && !isTurning) { // Run the drive function when the robot is called to drive and not to turn
         finalVoltage = pid.drive(targetTicks, targetVoltage);
-        drift = pid.drift();
+        //drift = pid.drift();
         if (finalVoltage > 0) { // Adds drift correction for when the robot travels forward
           leftVoltage = finalVoltage - drift;
           rightVoltage = finalVoltage + drift;
@@ -210,7 +211,7 @@ Chassis& Chassis::turn(float theta_, float targetVoltage_, float timeOut_) {
  * @param y (In inches)
  * @param targetVoltage_ 0 to 100 (In percentage of drive max speed)
  * @param timeOut_ (In seconds)
- * @param reverse True or False (Perform action backwards)
+ * @param reverse True or False (Perform action backwards, false by default)
  */
 Chassis& Chassis::driveToPoint(float x, float y, float targetVoltage_, float timeOut_, bool reverse) {
   if (isRunning) {

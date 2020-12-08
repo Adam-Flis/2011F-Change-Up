@@ -41,24 +41,31 @@ void Intake::move(float velocity) {
  * Pervents overcycling of balls in autonomous
  * @param color 'B', or 'R' (Ball color; Blue or Red)
  * @param timeOut (In seconds)
+ * @param reverse True or False (Whether or not at goal to run intakes slower; true by default)
  */
-void Intake::waitUntillColor(char color, float timeOut) {
+void Intake::waitUntillColor(char color, float timeOut, bool atGoal) {
   timeOut = math.secToMillis(timeOut) + millis();
   double low_hue;
   double high_hue;
+  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
 
   // Sets low and high hue variables
   if (color == 'B') {
     low_hue = 220;
-    high_hue = 230;
+    high_hue = 280;
   } else if (color == 'R') {
-    low_hue = 010;
-    high_hue = 025;
+    low_hue = 005;
+    high_hue = 020;
   } else { // Ends function if a char that is not 'B' or 'R' is inputted
     timeOut = millis();
   }
+  if (atGoal) {
+    intake.move(100); // Start intakes
+  } else if (!atGoal) {
+    intake.move(50); // Start intakes
+  }
+
   while (1) {
-    intake.move(100);
     if (low_hue <= Intake_Optical.get_hue() && Intake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
       break;
     }
@@ -67,5 +74,6 @@ void Intake::waitUntillColor(char color, float timeOut) {
     }
     delay(20); // Loop speed, prevent overload
   }
-  intake.stop();
+  Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
+  intake.stop(); // Stop intakes
 }

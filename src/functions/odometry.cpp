@@ -52,10 +52,11 @@ float Odom::getTheta() {
  * Starts the odometry task
  */
 void Odom::startTask(void* param) {
-  delay(300);
+  delay(100);
   isRunning = true;
   odom.reset();
   cout<<"Encoders and odometry reset"<<endl;
+  delay(500);
   cout<<"Odometry Task Started"<<endl;
   while (isRunning) {
     currentTheta = math.angleWrap(IMU.get_rotation() * (7200/7181.9)) * (M_PI/180); // Filters and then converts the IMU value to radians

@@ -13,8 +13,8 @@ static Odom odom;
 /* ********** Define variables ********** */
 
 float kP = 12.3, kI = 0.1, kD = 3.0;
-float kP_t = 100, kI_t = 0.1, kD_t = 50;
-float kP_d = 1800, kD_d = 900;
+float kP_t = 60, kI_t = 0.1, kD_t = 30;
+float kP_d = 3, kD_d = 6;
 
 float intergralActive = math.inchToTicks(3);
 float intergralActive_t = 3;
@@ -52,7 +52,7 @@ float PID::drive(float targetTicks_, float targetVoltage_) {
   intergralLimit = (targetVoltage_/kI)/50;
 
   // Error reestablished at the start of the loop
-  error = targetTicks_ + VEnc.get_value();
+  error = targetTicks_ - VEnc.get_value();
   // Proportion stores the error until it can be multiplied by the constant
   proportion = error;
   // Intergral takes area under the error and is useful for major adjustment
@@ -94,6 +94,9 @@ float PID::drive(float targetTicks_, float targetVoltage_) {
 float PID::drift() {
   // Establishes the initial error simply as the value of the IMU since its supposed to be 0
   error_drift = odom.getTheta() - lastIMURotation;
+  if (abs(error_drift) < 0.01) { // Filter theta value
+    error_drift = 0;
+  }
   // Derivative finds difference between current error and last recrded to recieve ROC, good for fine adjustment
   derivative_d = error_drift - lastError_d;
   lastIMURotation = odom.getTheta();
