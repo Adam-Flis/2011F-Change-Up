@@ -110,11 +110,9 @@ void Chassis::reset() {
 /**
  * Starts the chassis drive task
  */
-void Chassis::startTask(void* param) {
-  delay(100);
+void Chassis::startTask() {
   isRunning = true;
   chassis.reset();
-  delay(500);
   cout<<"Chassis Task Started"<<endl;
   while(isRunning) {
     if (!isSettled) {
@@ -122,13 +120,13 @@ void Chassis::startTask(void* param) {
         finalVoltage = pid.turn(targetTheta, targetVoltage);
         leftVoltage = finalVoltage;
         rightVoltage = -finalVoltage;
-        if (millis() >= timeOut/2 && isDriving) { // Allocates enough time for the robot to be able
-                                                  // to turn then drive when driveToPoint function is used
-          isTurning = false;
-        }
+        // if (millis() >= timeOut/2 && isDriving) { // Allocates enough time for the robot to be able
+        //                                           // to turn then drive when driveToPoint function is used
+        //   isTurning = false;
+        // }
       } else if (isDriving && !isTurning) { // Run the drive function when the robot is called to drive and not to turn
         finalVoltage = pid.drive(targetTicks, targetVoltage);
-        drift = pid.drift();
+        //drift = pid.drift();
         if (finalVoltage > 0) { // Adds drift correction for when the robot travels forward
           leftVoltage = finalVoltage - drift;
           rightVoltage = finalVoltage + drift;
@@ -163,7 +161,10 @@ void Chassis::startTask(void* param) {
  * Ends the chassis drive task
  */
 void Chassis::endTask() {
-  isRunning = false;
+  //isRunning = false;
+  chassisTask->remove();
+  delete chassisTask;
+  chassisTask = nullptr;
   chassis.reset();
   cout<<"Chassis task ended"<<endl;
 }
@@ -215,8 +216,10 @@ Chassis& Chassis::turn(float theta_, float targetVoltage_, float timeOut_) {
  */
 Chassis& Chassis::driveToPoint(float x, float y, float targetVoltage_, float timeOut_, bool reverse) {
   if (isRunning) {
-    errorX = x - odom.getX();
-    errorY = y - odom.getY();
+
+      errorX = x - odom.getX();
+      errorY = y - odom.getY();
+
 
     // Calculates if the robot needs to turn before moving in the x/y direction
     // if (errorY != 0) {

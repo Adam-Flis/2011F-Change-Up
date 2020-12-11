@@ -21,12 +21,15 @@ void initialize() {
 
   /* ********** Initalize Chassis and Odometry Tasks ********** */
 
-  Task chassisTask(chassis.startTask, NULL, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_MIN, "Chassis Task");
-  Task trackTask(odom.startTask, NULL, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "Track Task");
+  trackingTask = new Task(odom.startTask, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "Track Task");
+  chassisTask = new Task(chassis.startTask, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_MIN, "Chassis Task");
   lcd::set_text(0, "Tasks Initalizing");
-  cout<<"Tasks initializing"<<endl;
-  delay(600);
+  cout<<"Tasks Initializing"<<endl;
+  delay(1000);
+  cout<<trackingTask<<endl;
+  cout<<chassisTask<<endl;
 
+  cout<<"Tasks Done Initializing"<<endl;
   lcd::set_text(0, "Ready To Go!"); // Message to let user know robot is all initalized
   cout<<"Ready"<<endl;
   delay(500);

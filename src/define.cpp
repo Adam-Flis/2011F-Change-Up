@@ -8,10 +8,10 @@
 #define RBD_Port 20
 
 #define Intake_Left_Port 2
-#define Intake_Right_Port 9
+#define Intake_Right_Port 10
 
 #define Uptake_Left_Port 1
-#define Uptake_Right_Port 10
+#define Uptake_Right_Port 9
 
 /* ********** Define Sensor Ports ********** */
 
@@ -47,9 +47,15 @@ Optical Intake_Optical (Intake_Optical_Port);
 ADILineSensor Bottom_Uptake_Line (Bottom_Uptake_Line_Port),
               Middle_Uptake_Line (Middle_Uptake_Line_Port),
               Top_Uptake_Line (Top_Uptake_Line_Port);
-ADIEncoder HEnc (Horizontal_Encoder_Top_Port,Horizontal_Encoder_Bottom_Port,true),
+ADIEncoder HEnc (Horizontal_Encoder_Top_Port,Horizontal_Encoder_Bottom_Port,false),
            VEnc (Vertical_Encoder_Top_Port,Vertical_Encoder_Bottom_Port,false);
 
 /* ********** Creates Controller ********** */
 
 Controller Main (CONTROLLER_MASTER);
+
+
+/* ********** Creates Tasks ********** */
+
+Task *trackingTask = nullptr;
+Task *chassisTask = nullptr;

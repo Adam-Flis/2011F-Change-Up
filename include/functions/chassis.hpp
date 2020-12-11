@@ -16,7 +16,7 @@ public:
   void move(float velocity, char side);
   void reset();
 
-  static void startTask(void *param);
+  static void startTask();
   static void endTask();
 
   Chassis& drive(float distance, float targetVoltage_, float timeOut_);
@@ -31,7 +31,7 @@ private:
   static float leftVoltage, rightVoltage, timeOut;
   static float targetTheta, targetTicks, targetVoltage;
   static bool isRunning, isSettled, isTurning, isDriving;
-  
+
 };
 
 #endif

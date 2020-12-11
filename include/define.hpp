@@ -20,4 +20,7 @@ extern ADIEncoder HEnc, VEnc; // Encoders
 
 extern Controller Main; // Main controller
 
+extern Task *trackingTask;
+extern Task *chassisTask;
+
 #endif

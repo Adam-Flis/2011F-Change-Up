@@ -44,10 +44,10 @@ void Intake::move(float velocity) {
  * @param reverse True or False (Whether or not at goal to run intakes slower; true by default)
  */
 void Intake::waitUntillColor(char color, float timeOut, bool atGoal) {
+  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
   timeOut = math.secToMillis(timeOut) + millis();
   double low_hue;
   double high_hue;
-  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
 
   // Sets low and high hue variables
   if (color == 'B') {
@@ -60,7 +60,7 @@ void Intake::waitUntillColor(char color, float timeOut, bool atGoal) {
     timeOut = millis();
   }
   if (atGoal) {
-    intake.move(100); // Start intakes
+    intake.move(70); // Start intakes
   } else if (!atGoal) {
     intake.move(50); // Start intakes
   }
@@ -74,6 +74,6 @@ void Intake::waitUntillColor(char color, float timeOut, bool atGoal) {
     }
     delay(20); // Loop speed, prevent overload
   }
-  Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
   intake.stop(); // Stop intakes
+  Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
 }

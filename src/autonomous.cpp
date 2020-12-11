@@ -4,8 +4,8 @@
 
 void autonomous() {
 
-  //skills();
-  homeRow('B');
-  //homeRow('R');
+  skills();
+  //homeRow('R'); // Line up on right side of middle goal
+  //homeRow('B');
 
 }

@@ -43,7 +43,7 @@ void Uptake::move(float velocity) {
 void Uptake::waitUntillIndexedBottom(float timeOut) {
   int lineThresh = 2915;
   timeOut = math.secToMillis(timeOut) + millis();
-  uptake.move(70); // Start Uptakes
+  uptake.move(60); // Start Uptakes
   while (1) {
     if (Bottom_Uptake_Line.get_value() <= lineThresh) {
       break;
@@ -63,7 +63,7 @@ void Uptake::waitUntillIndexedBottom(float timeOut) {
 void Uptake::waitUntillIndexedMiddle(float timeOut) {
   int lineThresh = 2925;
   timeOut = math.secToMillis(timeOut) + millis();
-  uptake.move(70); // Start uptakes
+  uptake.move(60); // Start uptakes
   while (1) {
     if (Middle_Uptake_Line.get_value() <= lineThresh) {
       break;

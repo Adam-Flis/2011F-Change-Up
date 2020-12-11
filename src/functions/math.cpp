@@ -34,7 +34,7 @@ float Math::inchToTicks(float inches) {
  * @param last (Last sensor value)
  */
 float Math::filter(float current, float last) {
-  float filteredVal = current - last;
+  float filteredVal = (current - last);
   if (fabs(filteredVal) < 0.01) {
     filteredVal = 0;
   }
@@ -84,7 +84,7 @@ float Math::angleWrap(float angle) {
  * @param angle (In degress)
  */
 float Math::degToRad(float angle) {
-  return angle * (M_PI/180);
+  return angle * M_PI / 180.0;
 }
 
 /**
@@ -92,7 +92,7 @@ float Math::degToRad(float angle) {
  * @param angle (In radians)
  */
 float Math::radToDeg(float angle) {
-  return angle * (180/M_PI);
+  return angle / M_PI * 180.0;
 }
 
 /**
