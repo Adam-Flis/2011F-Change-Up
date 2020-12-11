@@ -17,26 +17,26 @@ void homeRow(char color) {
     color = 'B';
   }
 
-  /* ********** Middle Goal (1st Ball) ********** */
+  /* ********** 1st Middle Goal (1st Goal) ********** */
   intake.move(-100);
   delay(500); // Deploy hood and shoot preload ball into middle goal
   intake.stop();
 
-  /* ********** 1st Corner Goal (2nd Ball) ********** */
+  /* ********** 1st Corner Goal (2nd Goal) ********** */
   chassis.driveToPoint(0, 33.5, 85, 1.4).waitUntilSettled();
   chassis.turnToAngle(90, 85, 1.1).waitUntilSettled(); // Turn towards goal
   intake.move(100);
   chassis.driveToPoint(35, 35, 85, 1.9); // Drive towards goal
   uptake.move(100);
   intake.waitUntillColor(color, 1.45); // Wait untill middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
-  delay(125);
+  delay(125); // Ball settling time
   uptake.stop();
   chassis.waitUntilSettled();
 
   /* ********** Drive away from goal ********** */
   chassis.drive(-36, 90, 1.7); // Drive away from goal
   intake.move(-100);
-  delay(300);
+  delay(300); // Outake blue balls
   uptake.move(-100);
   chassis.waitUntilSettled(); // Outake middle color ball while driving backwards
   uptake.stop();
@@ -46,19 +46,19 @@ void homeRow(char color) {
   chassis.turnToAngle(-140, 85, 1.2).waitUntilSettled(); // Turn to drive across the field
   chassis.driveToPoint(-43, -16, 80, 2.0).waitUntilSettled(); // Drive across the field
 
-  /* ********** 2nd Corner Goal (3rd Ball) ********** */
+  /* ********** 2nd Corner Goal (3rd Goal) ********** */
   chassis.turn(-48, 85, 1.0).waitUntilSettled(); // Turn towards goal
   chassis.driveToPoint(-50, -60, 90, 2.3); // Drive towards goal
   uptake.move(100);
   intake.waitUntillColor(color, 1.8); // Wait untill middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
-  delay(125);
+  delay(125); // Ball settling time
   uptake.stop();
   chassis.waitUntilSettled();
 
   /* ********** Drive away from goal ********** */
   chassis.drive(-24, 100, 1.0); // Drive away from goal
   intake.move(-100);
-  delay(300);
+  delay(300); // Outake blue balls
   uptake.move(-100);
   chassis.waitUntilSettled();
   intake.stop();
