@@ -62,7 +62,7 @@ void Intake::waitUntillColor(char color, float timeOut, bool atGoal) {
   if (atGoal) {
     intake.move(70); // Start intakes
   } else if (!atGoal) {
-    intake.move(50); // Start intakes
+    intake.move(90); // Start intakes
   }
 
   while (1) {

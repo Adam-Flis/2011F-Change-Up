@@ -9,6 +9,9 @@ Uptake::~Uptake(){}
 Uptake uptake; // Class definition
 static Math math;
 
+int bottomLineThresh = 2915;
+int middleLineThresh = 2925;
+
 /**
  * Stops the uptakes
  */
@@ -41,11 +44,12 @@ void Uptake::move(float velocity) {
  * @param timeOut (In seconds)
  */
 void Uptake::waitUntillIndexedBottom(float timeOut) {
-  int lineThresh = 2915;
   timeOut = math.secToMillis(timeOut) + millis();
-  uptake.move(60); // Start Uptakes
+  uptake.move(40); // Start Uptakes
   while (1) {
-    if (Bottom_Uptake_Line.get_value() <= lineThresh) {
+    if (Bottom_Uptake_Line.get_value() <= bottomLineThresh) {
+      break;
+    } else if (Middle_Uptake_Line.get_value() <= middleLineThresh) {
       break;
     } else if (millis() >= timeOut) {
       break;
@@ -61,11 +65,10 @@ void Uptake::waitUntillIndexedBottom(float timeOut) {
  * @param timeOut (In seconds)
  */
 void Uptake::waitUntillIndexedMiddle(float timeOut) {
-  int lineThresh = 2925;
   timeOut = math.secToMillis(timeOut) + millis();
-  uptake.move(60); // Start uptakes
+  uptake.move(40); // Start uptakes
   while (1) {
-    if (Middle_Uptake_Line.get_value() <= lineThresh) {
+    if (Middle_Uptake_Line.get_value() <= middleLineThresh) {
       break;
     } else if (millis() >= timeOut) {
       break;
