@@ -19,6 +19,8 @@ void opcontrol() {
   odom.endTask(); // End tasks to prevent brain overload
   chassis.endTask();
   chassis.brake();
+  lcd::clear();
+  lcd::shutdown();
 
   while(1) {
 
@@ -27,11 +29,11 @@ void opcontrol() {
 
     // lcd::print(0, "X: %f \n", odom.getX());
     // lcd::print(1, "Y: %f \n", odom.getY());
-    // lcd::print(2, "Theta Wrap: %f degress\n", odom.getTheta());
-    // lcd::print(3, "Theta Raw: %f degress\n", IMU.get_rotation());
-    // lcd::print(4, "Left: %f in\n", math.ticksToInch(LEnc.get_value()));
-    // lcd::print(5, "Right: %f in\n", math.ticksToInch(REnc.get_value()));
-    // lcd::print(6, "L: %d ticks\n", LEnc.get_value());
+    // lcd::print(2, "Theta: %f degress\n", odom.getTheta());
+    //lcd::print(3, "Theta: %f radians\n", odom.getRadians());
+    // lcd::print(4, "Vertical: %f in\n", math.ticksToInch(VEnc.get_value()));
+    // lcd::print(5, "Horizontial: %f in\n", math.ticksToInch(HEnc.get_value()));
+    // /lcd::print(6, "L: %d ticks\n", LEnc.get_value());
     // lcd::print(6, "Avg Wrap: %f ticks\n", math.encoderAverage());
     // lcd::print(7, "Avg Raw: %f ticks\n", math.encoderAverage());
     // lcd::print(7, "R: %d ticks\n", REnc.get_value());
@@ -46,16 +48,16 @@ void opcontrol() {
     /* ********** Ball Uptakes ********** */
 
     if (Main.get_digital(DIGITAL_L1)) { // Button L1 pressed, uptake balls
-      TU.move_velocity(600);
-      BU.move_velocity(600);
+      LU.move_velocity(600);
+      RU.move_velocity(600);
     } else if (Main.get_digital(DIGITAL_L2)) { // Button L2 pressed, downtake balls
-      TU.move_velocity(-600);
-      BU.move_velocity(-600);
+      LU.move_velocity(-600);
+      RU.move_velocity(-600);
     } else { // Nothing pressed, stop uptake
-      TU.set_brake_mode(MOTOR_BRAKE_BRAKE);
-      BU.set_brake_mode(MOTOR_BRAKE_BRAKE);
-      TU.move_velocity(0);
-      BU.move_velocity(0);
+      LU.set_brake_mode(MOTOR_BRAKE_BRAKE);
+      RU.set_brake_mode(MOTOR_BRAKE_BRAKE);
+      LU.move_velocity(0);
+      RU.move_velocity(0);
     }
 
     /* ********** Ball Intakes ********** */

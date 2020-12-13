@@ -13,9 +13,10 @@ public:
 
   void move(float velocity);
 
-  void waitUntillIndexed(float timeOut);
+  void waitUntillIndexedBottom(float timeOut);
+  void waitUntillIndexedMiddle(float timeOut);
   void waitUntillShot(int amount, float timeOut);
-  
+
 };
 
 #endif

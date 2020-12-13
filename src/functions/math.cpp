@@ -29,6 +29,19 @@ float Math::inchToTicks(float inches) {
 }
 
 /**
+ * Filters sensor values
+ * @param current (Current sensor value)
+ * @param last (Last sensor value)
+ */
+float Math::filter(float current, float last) {
+  float filteredVal = (current - last);
+  if (fabs(filteredVal) < 0.01) {
+    filteredVal = 0;
+  }
+  return filteredVal;
+}
+
+/**
  * Converts percent value to velocity value, then returns
  * @param percent -100 to 100 (In percentage of max speed)
  * @param cartColor 'R', 'G', 'B' (Color cart of motor insert; Red, Green, Blue)
@@ -67,11 +80,19 @@ float Math::angleWrap(float angle) {
 }
 
 /**
- * Returns the average left and right encoder values
+ * Converts degress to radians, then returns
+ * @param angle (In degress)
  */
-float Math::encoderAverage() {
-  float multiplier = 1000.07178/1000; // Multiplies the encoder value for more accurate readings
-  return ((LEnc.get_value() + REnc.get_value())/2) * multiplier;
+float Math::degToRad(float angle) {
+  return angle * M_PI / 180.0;
+}
+
+/**
+ * Converts radians to degress, then returns
+ * @param angle (In radians)
+ */
+float Math::radToDeg(float angle) {
+  return angle / M_PI * 180.0;
 }
 
 /**

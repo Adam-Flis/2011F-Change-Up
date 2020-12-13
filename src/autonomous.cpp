@@ -4,10 +4,8 @@
 
 void autonomous() {
 
-  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
-
-  //skills();
+  skills();
+  //homeRow('R'); // Line up on right side of middle goal
   //homeRow('B');
-  homeRow('R');
 
 }
