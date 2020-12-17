@@ -45,11 +45,11 @@ void homeRow(char color) {
   intake.stop();
 
   /* ********** Drive across the field ********** */
-  chassis.turnToAngle(-140, 85, 1.2).waitUntilSettled(); // Turn to drive across the field
+  chassis.turnToAngle(-143, 85, 1.2).waitUntilSettled(); // Turn to drive across the field
   chassis.driveToPoint(-40, -13, 85, 1.9).waitUntilSettled(); // Drive across the field
 
   /* ********** 2nd Corner Goal (3rd Goal) ********** */
-  chassis.turn(-48, 85, 1.0).waitUntilSettled(); // Turn towards goal
+  chassis.turnToAngle(180, 90, 1.2).waitUntilSettled(); // Turn towards goal
   chassis.driveToPoint(-50, -60, 90, 2.3); // Drive towards goal
   uptake.move(100);
   delay(400);
