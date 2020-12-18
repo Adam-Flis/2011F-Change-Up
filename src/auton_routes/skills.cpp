@@ -29,7 +29,7 @@ void skills () {
   delay(400); // Ball settling time
   chassis.stop().brake();
   intake.stop();
-  chassis.drive(-17.75, 90, 1.3); // Drive away from 1st goal
+  chassis.drive(-17.6, 90, 1.3); // Drive away from 1st goal
   delay(200);
   intake.move(100); // Reposition red ball
   uptake.move(-50);
@@ -40,9 +40,9 @@ void skills () {
   chassis.turnToAngle(0, 90, 1.3); // Turn towards mid field
   uptake.stop();
   delay(100);
-  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
+  uptake.waitUntillIndexedBottom(0.3); // Move red ball up into robot
   chassis.waitUntilSettled();
-  chassis.driveToPoint(-14, 58.5, 90, 1.4); // Drive towards mid field
+  chassis.driveToPoint(-14, 59, 90, 1.4); // Drive towards mid field
   intake.waitUntillColor('R', 1.4, false); // Grab red ball in front of 2nd goal
   chassis.waitUntilSettled();
   chassis.turnToAngle(-90, 90, 0.7); // Turn towards 2nd goal
@@ -73,7 +73,7 @@ void skills () {
   chassis.waitUntilSettled();
   chassis.turnToAngle(-60, 90, 0.7); // Turn towards 3rd goal
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.5); // Move red ball up into robot
+  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
   chassis.waitUntilSettled();
   intake.stop();
   chassis.driveToPoint(-26, 117, 90, 0.8).waitUntilSettled(); // Drive to 3rd goal
@@ -85,17 +85,18 @@ void skills () {
   uptake.stop();
   delay(400); // Ball settling time
   chassis.stop().brake();
-  chassis.drive(-33.5, 80, 1.3).waitUntilSettled(); // Drive away from 3rd goal
+  chassis.turnToAngle(-45, 100, 1.1).waitUntilSettled(); // Align on goal
+  chassis.drive(-33.5, 90, 1.2).waitUntilSettled(); // Drive away from 3rd goal
 
   /* ********** 4th Goal ********** */
-  chassis.turnToAngle(-90, 90, 0.8).waitUntilSettled(); // Turn towards wall
-  chassis.driveToPoint(-36, 92, 70, 1.6); // Drive to wall
-  intake.waitUntillColor('R', 1.5, false); // Grab red wall ball
+  chassis.turnToAngle(-90, 90, 0.9).waitUntilSettled(); // Turn towards wall
+  chassis.driveToPoint(-36, 92, 65, 1.4); // Drive to wall
+  intake.waitUntillColor('R', 1.4, false); // Grab red wall ball
   intake.move(50);
   chassis.waitUntilSettled();
   chassis.drive(-60, 90, 1.8); // Drive across the field (backwards)
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.5); // Move red ball up into robot
+  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
   intake.stop();
   chassis.waitUntilSettled();
   chassis.turnToAngle(0, 90, 0.5).waitUntilSettled(); // Turn to 4th goal
@@ -112,13 +113,13 @@ void skills () {
   intake.stop();
 
   /* ********** 5th Goal ********** */
-  chassis.turnToAngle(90, 90, 0.8).waitUntilSettled();; // Turn towards wall
+  chassis.turnToAngle(90, 90, 0.8).waitUntilSettled(); // Turn towards wall
   intake.stop();
   uptake.stop();
   chassis.driveToPoint(71, 110, 90, 1.8); // Drive across the field
   intake.waitUntillColor('R', 1.5, false); // Grab red ball
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.5); // Move red ball up into robot
+  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
   intake.stop();
   chassis.waitUntilSettled();
   chassis.turnToAngle(45, 90, 0.5).waitUntilSettled(); // Turn to 5th goal
@@ -131,31 +132,31 @@ void skills () {
   uptake.stop();
   delay(400); // Ball settling time
   chassis.stop().brake();
-  chassis.turnToAngle(45, 90, 1.3).waitUntilSettled(); // Align on goal
-  chassis.drive(-31, 85, 1.0).waitUntilSettled(); // Drive away from 5th goal
+  chassis.turnToAngle(45, 100, 1.0).waitUntilSettled(); // Align on goal
+  chassis.drive(-29, 85, 1.0).waitUntilSettled(); // Drive away from 5th goal
 
   /* ********** 6th Goal ********** */
   intake.stop();
-  chassis.turnToAngle(95, 90, 0.8).waitUntilSettled(); // Turn towards wall
+  chassis.turnToAngle(90, 90, 0.8).waitUntilSettled(); // Turn towards wall
   chassis.driveToPoint(90, 90, 70, 1.5); // Drive to wall
   intake.waitUntillColor('R', 1.3); // Grab red wall ball
   intake.move(50);
   chassis.waitUntilSettled();
-  chassis.drive(-13, 80, 0.9).waitUntilSettled(); // Drive away from wall
+  chassis.drive(-13.5, 85, 1.0).waitUntilSettled(); // Drive away from wall
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.5); // Move red ball up into robot
+  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
   intake.stop();
   chassis.waitUntilSettled();
   chassis.turnToAngle(180, 90, 0.8).waitUntilSettled(); // Turn towards mid field
-  chassis.driveToPoint(80, 60, 90, 1.7); // Drive towards mid field
+  chassis.driveToPoint(80, 55, 90, 1.7); // Drive towards mid field
   intake.waitUntillColor('R', 1.4, false); // Grab red ball in front of 6th goal
   chassis.waitUntilSettled();
   chassis.turnToAngle(90, 90, 0.7); // Turn towards 6th goal
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.5); // Move red ball up into robot
+  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
   intake.stop();
   chassis.waitUntilSettled();
-  chassis.driveToPoint(90, 60, 90, 1.0); // Drive to 6th goal
+  chassis.driveToPoint(90, 55, 90, 1.0); // Drive to 6th goal
   chassis.move(30, 'B'); // Constant pressure on 6th goal
   delay(300);
   uptake.move(100);
@@ -166,8 +167,8 @@ void skills () {
   uptake.stop();
   delay(400); // Ball settling time
   chassis.stop().brake();
-  chassis.turnToAngle(90, 90, 1.3).waitUntilSettled(); // Align on goal
-  chassis.drive(-18, 85, 1.2); // Drive away from 6th goal
+  chassis.turnToAngle(90, 100, 1.0).waitUntilSettled(); // Align on goal
+  chassis.drive(-18, 90, 0.9); // Drive away from 6th goal
   intake.move(-50);
   chassis.waitUntilSettled();
   intake.stop();
@@ -177,7 +178,7 @@ void skills () {
   chassis.driveToPoint(55, 60, 90, 1.0); // Drive towards middle goal
   intake.waitUntillColor('R', 0.6, false); // Grab red ball
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.6); // Move red ball up into robot
+  uptake.waitUntillIndexedBottom(0.5); // Move red ball up into robot
   intake.stop();
   chassis.waitUntilSettled();
   chassis.turnToAngle(-80, 70, 0.5).waitUntilSettled();
@@ -192,6 +193,6 @@ void skills () {
   chassis.stop().brake();
   chassis.move(-100, 'R');
   chassis.move(-60, 'L');
-  delay(1500);
-  chassis.stop();
+  delay(1000);
+  chassis.stop().brake();
 }
