@@ -126,7 +126,7 @@ void Chassis::startTask() {
         // }
       } else if (isDriving && !isTurning) { // Run the drive function when the robot is called to drive and not to turn
         finalVoltage = pid.drive(targetTicks, targetVoltage);
-        //drift = pid.drift();
+        drift = pid.drift();
         if (finalVoltage > 0) { // Adds drift correction for when the robot travels forward
           leftVoltage = finalVoltage - drift;
           rightVoltage = finalVoltage + drift;
@@ -281,6 +281,7 @@ Chassis& Chassis::turnToPoint(float x, float y, float targetVoltage_, float time
 Chassis& Chassis::turnToAngle(float theta_, float targetVoltage_, float timeOut_) {
   if (isRunning) {
     // Sets the global variables that are used to move the robot in the chassis task
+
     targetTheta = math.angleWrap(theta_);
     targetVoltage = math.percentToVoltage(targetVoltage_);
     timeOut = math.secToMillis(timeOut_) + millis();
@@ -292,7 +293,7 @@ Chassis& Chassis::turnToAngle(float theta_, float targetVoltage_, float timeOut_
 }
 
 /**
- * Waits untill the chassis has settled
+ * Waits until the chassis has settled
  */
 void Chassis::waitUntilSettled() {
   while(!isSettled) {
