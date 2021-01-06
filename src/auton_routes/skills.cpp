@@ -3,10 +3,8 @@
 #include "autonomous.hpp"
 
 /**
- * Goal: Completes 4 rows and 7 red owned goals
- * Goal: Points scored: 31 red - 14 blue + 63 = 80
- * Accomplished: Completes 2 rows and 5 red owned goals
- * Accomplished: Points scored: 17 red - 15 blue + 63 = 65
+ * Completes 4 rows and 7 red owned goals
+ * Points scored: 31 red - 14 blue + 63 = 80
  */
 void skills () {
 
@@ -140,24 +138,20 @@ void skills () {
 
   /* ********** 7th Goal ********** */
   chassis.turnToAngle(-90, 90, 0.8).waitUntilSettled();
-  // chassis.driveToPoint(55, 60, 90, 1.0); // Drive towards middle goal
-  // intake.waitUntilColor('R', 0.6); // Grab red ball
-  // intake.move(100);
-  // uptake.waitUntilIndexedBottom(0.5); // Move red ball up into robot
-  // intake.stop();
-  // chassis.waitUntilSettled();
-  // chassis.turnToAngle(-80, 70, 0.5).waitUntilSettled();
-  // chassis.driveToPoint(35, 61, 90, 1.2); // Drive towards middle goal
-  // intake.move(-100);
-  // chassis.waitUntilSettled();
-  // chassis.move(100, 'R');
-  // delay(1000);
-  // uptake.move(100); // Score in middle 7th goal
-  // delay(700);
-  // uptake.stop();
-  // chassis.stop().brake();
-  // chassis.move(-100, 'R');
-  // chassis.move(-60, 'L');
-  // delay(1000);
-  // chassis.stop().brake();
+  chassis.driveToPoint(55, 60, 90, 1.0); // Drive towards middle goal
+  intake.move(100);
+  uptake.waitUntilIndexedBottom(1.0); // Move red ball up into robot
+  intake.stop();
+  chassis.waitUntilSettled();
+  chassis.turnToAngle(-80, 70, 0.5).waitUntilSettled(); // Slight turn towards middle goal
+  intake.move(-100);
+  chassis.driveToPoint(35, 61, 90, 1.2).waitUntilSettled(); // Drive towards middle goal
+  chassis.move(100, 'R'); // Power on right side to descore one blue ball
+  delay(1000);
+  uptake.waitUntilShot(1, 1.0); // Score in middle 7th goal
+  chassis.stop().brake();
+  chassis.move(-100, 'R'); // Do a curved drive away from the middle goal
+  chassis.move(-60, 'L');
+  delay(1000);
+  chassis.stop().brake();
 }

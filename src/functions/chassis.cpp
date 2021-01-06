@@ -163,7 +163,7 @@ void Chassis::startTask() {
 void Chassis::endTask() {
   //isRunning = false;
   chassisTask->remove();
-  delete chassisTask;
+  delete chassisTask; // Deletes the task from memory
   chassisTask = nullptr;
   chassis.reset();
   cout<<"Chassis task ended"<<endl;

@@ -23,7 +23,7 @@ void opcontrol() {
   chassis.endTask();
   chassis.brake();
   lcd::clear();
-  lcd::shutdown();
+  lcd::shutdown(); // Turns off LCD display
 
   while(1) {
 

@@ -26,10 +26,10 @@ void initialize() {
   lcd::set_text(0, "Tasks Initalizing");
   cout<<"Tasks Initializing"<<endl;
   delay(1000);
-  cout<<trackingTask<<endl;
+  cout<<trackingTask<<endl; // Print to console task information
   cout<<chassisTask<<endl;
-
   cout<<"Tasks Done Initializing"<<endl;
+
   lcd::set_text(0, "Ready To Go!"); // Message to let user know robot is all initalized
   cout<<"Ready"<<endl;
   delay(500);

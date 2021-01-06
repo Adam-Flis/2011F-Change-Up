@@ -117,12 +117,13 @@ void Uptake::waitUntilIndexedTop(float timeOut) {
     if (Distance_Sensor.get() <= distanceThresh && !passed) {
       lp++;
       passed = true;
-      if (amount > 1) {
+      if (amount > 1) { // If the amount is greater than one bring queued ball down
+                        // to wait for previous ball to be fully in goal
         uptake.move(-100); // Reverse uptakes
         delay(200);
       }
     } else if (amount > 1 && passed && Distance_Sensor.get() >= distanceThresh) { // If multiple balls are queued wait until previous ball
-                                                                                 // is shot to get next sensor reading
+                                                                                 // is fully inside the goal to get next sensor reading
         passed = false;
     } else if (millis() >= timeOut) {
         lp = amount;
