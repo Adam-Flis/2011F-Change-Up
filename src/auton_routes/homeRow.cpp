@@ -23,17 +23,17 @@ void homeRow(char color) {
   intake.stop();
 
   /* ********** 1st Corner Goal (2nd Goal) ********** */
-  chassis.driveToPoint(0, 35, 90, 1.3).waitUntilSettled();
+  chassis.driveToPoint(0, 35.5, 90, 1.25).waitUntilSettled();
   chassis.turnToAngle(90, 90, 0.8).waitUntilSettled(); // Turn towards goal
   intake.move(100);
-  chassis.driveToPoint(35.5, 35.5, 90, 1.8); // Drive towards goal
-  uptake.move(85);
-  chassis.move(40, 'B'); // Constant pressure on 1st goal
+  chassis.driveToPoint(35.5, 35, 90, 1.8); // Drive towards goal
+  uptake.move(75);
+  //chassis.move(40, 'B'); // Constant pressure on 1st goal
   intake.waitUntilColor(color, 1.8); // Wait until middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
   uptake.stop();
   chassis.waitUntilSettled();
   chassis.stop().brake();
-  chassis.turnToAngle(90, 100, 0.5).waitUntilSettled(); // Align on goal
+  chassis.turnToAngle(90, 100, 1.5).waitUntilSettled(); // Align on goal
 
   /* ********** Drive away from goal ********** */
   chassis.drive(-34, 90, 1.2); // Drive away from goal
@@ -46,14 +46,14 @@ void homeRow(char color) {
 
   /* ********** Drive across the field ********** */
   chassis.turnToAngle(-143, 90, 1.2).waitUntilSettled(); // Turn to face downfield
-  chassis.drive(-30, 80, 1.3).waitUntilSettled(); // Drive into the wall
-  chassis.driveToPoint(-32, -19, 90, 2.0).waitUntilSettled(); // Drive across the field
+  delay(50);
+  chassis.driveToPoint(-32.5, -18.5, 90, 2.0).waitUntilSettled(); // Drive across the field
 
   /* ********** 2nd Corner Goal (3rd Goal) ********** */
-  chassis.turnToAngle(175, 90, 1.0).waitUntilSettled(); // Turn towards goal
-  chassis.driveToPoint(-38, -60, 90, 2.2); // Drive towards goal
-  uptake.move(90);
-  chassis.move(40, 'B'); // Constant pressure on 3rd goal
+  chassis.turnToAngle(175, 90, 0.9).waitUntilSettled(); // Turn towards goal
+  chassis.driveToPoint(-40, -61, 90, 2.2); // Drive towards goal
+  uptake.move(75);
+  //chassis.move(40, 'B'); // Constant pressure on 3rd goal
   intake.waitUntilColor(color, 2.2); // Wait until middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
   uptake.stop();
   chassis.waitUntilSettled();

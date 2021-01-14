@@ -50,7 +50,7 @@ void Intake::waitUntilColor(char color, float timeOut) {
 
   // Sets low and high hue variables
   if (color == 'B') {
-    low_hue = 220;
+    low_hue = 200;
     high_hue = 280;
   } else if (color == 'R') {
     low_hue = 005;

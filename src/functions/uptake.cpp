@@ -10,7 +10,7 @@ Uptake uptake; // Class definition
 static Math math;
 
 int bottomThresh = 2918;
-int middleThresh = 2933;
+int middleThresh = 2929;
 int topThresh = 2907;
 
 int distanceThresh = 230;

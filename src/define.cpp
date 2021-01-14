@@ -17,7 +17,7 @@
 
 #define IMU_Port 14
 
-#define Distance_Port 4
+#define Distance_Port 5
 
 #define Middle_Optical_Port 3
 

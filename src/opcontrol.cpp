@@ -15,9 +15,6 @@ void opcontrol() {
   Intake intake;
   Uptake uptake;
 
-  // intake.move(100);
-  // uptake.waitUntilShot(2, 5.0);
-
   Middle_Optical.set_led_pwm(0); // Turn off optical sensor LED
   odom.endTask(); // End tasks to prevent brain overload
   chassis.endTask();

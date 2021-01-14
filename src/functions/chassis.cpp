@@ -127,14 +127,16 @@ void Chassis::startTask() {
       } else if (isDriving && !isTurning) { // Run the drive function when the robot is called to drive and not to turn
         finalVoltage = pid.drive(targetTicks, targetVoltage);
         drift = pid.drift();
-        if (finalVoltage > 0) { // Adds drift correction for when the robot travels forward
-          leftVoltage = finalVoltage - drift;
-          rightVoltage = finalVoltage + drift;
-        }
-        else {
-          leftVoltage = finalVoltage;
-          rightVoltage = finalVoltage;
-        }
+        leftVoltage = finalVoltage - drift; // Adds drift correction
+        rightVoltage = finalVoltage + drift;
+        // if (finalVoltage > 0) { // Adds drift correction for when the robot travels forward
+        //   leftVoltage = finalVoltage - drift;
+        //   rightVoltage = finalVoltage + drift;
+        // }
+        // else {
+        //   leftVoltage = finalVoltage;
+        //   rightVoltage = finalVoltage;
+        // }
       }
       if (odom.getTheta() == targetTheta && isTurning && targetTheta != 0) { // When robot reaches turn target stop turning
           isTurning = false;
