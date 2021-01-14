@@ -37,36 +37,32 @@ void Intake::move(float velocity) {
 }
 
 /**
- * Waits untill a certain ball color is detected in the intakes
+ * Waits until a certain ball color is detected in the intakes
  * Pervents overcycling of balls in autonomous
  * @param color 'B', or 'R' (Ball color; Blue or Red)
  * @param timeOut (In seconds)
- * @param reverse True or False (Whether or not at goal to run intakes slower; true by default)
  */
-void Intake::waitUntillColor(char color, float timeOut, bool atGoal) {
-  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
+void Intake::waitUntilColor(char color, float timeOut) {
+  Middle_Optical.set_led_pwm(100); // Turn on optical sensor LED
   timeOut = math.secToMillis(timeOut) + millis();
   double low_hue;
   double high_hue;
 
   // Sets low and high hue variables
   if (color == 'B') {
-    low_hue = 220;
+    low_hue = 200;
     high_hue = 280;
   } else if (color == 'R') {
     low_hue = 005;
-    high_hue = 020;
-  } else { // Ends function if a char that is not 'B' or 'R' is inputted
+    high_hue = 025;
+  } else { // Ends function if the char is not 'B' or 'R'
     timeOut = millis();
   }
-  if (atGoal) {
-    intake.move(70); // Start intakes
-  } else if (!atGoal) {
-    intake.move(90); // Start intakes
-  }
+
+  intake.move(100); // Start intakes
 
   while (1) {
-    if (low_hue <= Intake_Optical.get_hue() && Intake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
+    if (low_hue <= Middle_Optical.get_hue() && Middle_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
       break;
     }
     else if (millis() >= timeOut) { // Breaks loop when timeout is reached
@@ -74,6 +70,6 @@ void Intake::waitUntillColor(char color, float timeOut, bool atGoal) {
     }
     delay(20); // Loop speed, prevent overload
   }
-  intake.stop(); // Stop intakes
-  Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
+  intake.stop().brake(); // Stop intakes
+  Middle_Optical.set_led_pwm(0); // Turn off optical sensor LED
 }

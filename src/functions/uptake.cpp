@@ -9,8 +9,11 @@ Uptake::~Uptake(){}
 Uptake uptake; // Class definition
 static Math math;
 
-int bottomLineThresh = 2915;
-int middleLineThresh = 2925;
+int bottomThresh = 2918;
+int middleThresh = 2929;
+int topThresh = 2907;
+
+int distanceThresh = 230;
 
 /**
  * Stops the uptakes
@@ -39,77 +42,93 @@ void Uptake::move(float velocity) {
 }
 
 /**
- * Waits untill a ball is indexed to the bottom roller
+ * Waits until a ball is indexed to the bottom roller
  * Accurately index a ball to bottom roller
  * @param timeOut (In seconds)
  */
-void Uptake::waitUntillIndexedBottom(float timeOut) {
+void Uptake::waitUntilIndexedBottom(float timeOut) {
   timeOut = math.secToMillis(timeOut) + millis();
-  uptake.move(40); // Start Uptakes
+  //uptake.move(100); // Start Uptakes
   while (1) {
-    if (Bottom_Uptake_Line.get_value() <= bottomLineThresh) {
+    if (Bottom_Line.get_value() <= bottomThresh) {
       break;
-    } else if (Middle_Uptake_Line.get_value() <= middleLineThresh) {
+    } else if (Middle_Line.get_value() <= middleThresh) {
       break;
     } else if (millis() >= timeOut) {
       break;
     }
     delay(10); // Loop speed, prevent overload
   }
-  uptake.stop(); // Stop uptakes
+  uptake.stop().brake(); // Stop uptakes
 }
 
 /**
- * Waits untill a ball is indexed to the middle roller
+ * Waits until a ball is indexed to the middle roller
  * Accurately index a ball to middle roller
  * @param timeOut (In seconds)
  */
-void Uptake::waitUntillIndexedMiddle(float timeOut) {
+void Uptake::waitUntilIndexedMiddle(float timeOut) {
   timeOut = math.secToMillis(timeOut) + millis();
-  uptake.move(40); // Start uptakes
+  uptake.move(65); // Start uptakes
   while (1) {
-    if (Middle_Uptake_Line.get_value() <= middleLineThresh) {
+    if (Middle_Line.get_value() <= middleThresh) {
       break;
     } else if (millis() >= timeOut) {
       break;
     }
     delay(10); // Loop speed, prevent overload
   }
-  uptake.stop(); // Stop uptakes
+  uptake.stop().brake(); // Stop uptakes
 }
 
 /**
- * Waits untill ball/s are shot into the goal
+ * Waits until a ball is indexed to the top roller
+ * Accurately index a ball to top roller
+ * @param timeOut (In seconds)
+ */
+void Uptake::waitUntilIndexedTop(float timeOut) {
+  timeOut = math.secToMillis(timeOut) + millis();
+  uptake.move(50); // Start uptakes
+  while (1) {
+    if (Top_Line.get_value() <= topThresh) {
+      break;
+    } else if (millis() >= timeOut) {
+      break;
+    }
+    delay(10); // Loop speed, prevent overload
+  }
+  uptake.stop().brake(); // Stop uptakes
+}
+
+/**
+ * Waits until ball/s are shot into the goal
  * Accurately shoot a desired number of ball/s
  * @param amount (Number of balls to shoot)
  * @param timeOut (In seconds)
  */
- void Uptake::waitUntillShot(int amount, float timeOut) {
-  int lineThresh = 2905;
+ void Uptake::waitUntilShot(int amount, float timeOut) {
   timeOut = math.secToMillis(timeOut) + millis();
-  for (int lp = 0; lp <= amount; lp++) {
-    uptake.move(100); // Start uptakes
-    while (1) {
-      if (Top_Uptake_Line.get_value() <= lineThresh) {
-        break;
-      } else if (millis() >= timeOut) {
+  int lp = 0;
+  bool passed = false;
+  while (lp != amount) {
+    if (!passed) {
+      uptake.move(100); // Start uptakes
+    }
+    if (Distance_Sensor.get() <= distanceThresh && !passed) {
+      lp++;
+      passed = true;
+      if (amount > 1) { // If the amount is greater than one bring queued ball down
+                        // to wait for previous ball to be fully in goal
+        uptake.move(-100); // Reverse uptakes
+        delay(200);
+      }
+    } else if (amount > 1 && passed && Distance_Sensor.get() >= distanceThresh) { // If multiple balls are queued wait until previous ball
+                                                                                 // is fully inside the goal to get next sensor reading
+        passed = false;
+    } else if (millis() >= timeOut) {
         lp = amount;
-        break;
-      }
-      delay(10); // Loop speed, prevent overload
     }
-    if (amount > 1 && amount != lp) { // If multiple balls are queued wait untill previous ball is shot to get next sensor reading
-      uptake.move(0); // Slow down uptakes
-      float timeOut2 = math.secToMillis(0.5) + millis();
-      while (1) {
-        if (Top_Uptake_Line.get_value() >= lineThresh) {
-          break;
-        } else if (millis() >= timeOut2) {
-          break;
-        }
-        delay(10); // Loop speed, prevent overload
-      }
-    }
+    delay(20); // Loop speed, prevent overload
   }
-  uptake.stop(); // Stop uptakes
+  uptake.stop().brake(); // Stop uptakes
 }

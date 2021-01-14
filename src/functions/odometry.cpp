@@ -51,6 +51,7 @@ void Odom::startTask() {
   cout<<"Encoders and odometry reset"<<endl;
   cout<<"Odometry Task Started"<<endl;
 
+  // Define variables
   float currentTheta = 0, currentVertical = 0, currentHorizontial = 0;
   float lastTheta = 0, lastVertical = 0, lastHorizontial = 0;
   float deltaTheta = 0, deltaVertical = 0, deltaHorizontial = 0, deltaX = 0, deltaY = 0;
@@ -117,6 +118,7 @@ void Odom::startTask() {
     // Updating the global positions
     odom.theta += math.radToDeg(deltaTheta);
 
+    // Display sensor values to LCD display
     lcd::print(0, "X: %f \n", odom.getX());
     lcd::print(1, "Y: %f \n", odom.getY());
     lcd::print(2, "Theta: %f degress\n", odom.getTheta());
@@ -131,7 +133,7 @@ void Odom::startTask() {
 void Odom::endTask() {
   //isRunning = false;
   trackingTask->remove();
-  delete trackingTask;
+  delete trackingTask; // Deletes the task from memory
   trackingTask = nullptr;
   odom.reset();
   cout<<"Odometry task ended"<<endl;

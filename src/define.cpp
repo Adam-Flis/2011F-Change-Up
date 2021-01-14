@@ -11,16 +11,19 @@
 #define Intake_Right_Port 10
 
 #define Uptake_Left_Port 1
-#define Uptake_Right_Port 9
+#define Uptake_Right_Port 8
 
 /* ********** Define Sensor Ports ********** */
 
 #define IMU_Port 14
-#define Intake_Optical_Port 3
 
-#define Bottom_Uptake_Line_Port 'c'
-#define Middle_Uptake_Line_Port 'b'
-#define Top_Uptake_Line_Port 'a'
+#define Distance_Port 5
+
+#define Middle_Optical_Port 3
+
+#define Bottom_Line_Port 'd'
+#define Middle_Line_Port 'c'
+#define Top_Line_Port 'b'
 
 #define Horizontal_Encoder_Top_Port 'e'
 #define Horizontal_Encoder_Bottom_Port 'f'
@@ -43,10 +46,11 @@ Motor LFD (LFD_Port,MOTOR_GEARSET_18,false,MOTOR_ENCODER_DEGREES),
 /* ********** Creates Sensors ********** */
 
 Imu IMU (IMU_Port);
-Optical Intake_Optical (Intake_Optical_Port);
-ADILineSensor Bottom_Uptake_Line (Bottom_Uptake_Line_Port),
-              Middle_Uptake_Line (Middle_Uptake_Line_Port),
-              Top_Uptake_Line (Top_Uptake_Line_Port);
+Distance Distance_Sensor (Distance_Port);
+Optical Middle_Optical (Middle_Optical_Port);
+ADILineSensor Bottom_Line (Bottom_Line_Port),
+              Middle_Line (Middle_Line_Port),
+              Top_Line (Top_Line_Port);
 ADIEncoder HEnc (Horizontal_Encoder_Top_Port,Horizontal_Encoder_Bottom_Port,false),
            VEnc (Vertical_Encoder_Top_Port,Vertical_Encoder_Bottom_Port,false);
 

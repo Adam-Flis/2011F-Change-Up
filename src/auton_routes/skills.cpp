@@ -3,196 +3,165 @@
 #include "autonomous.hpp"
 
 /**
- * Goal: Completes 4 rows and 7 red owned goals
- * Goal: Points scored: 31 red - 14 blue + 63 = 80
- * Accomplished: Completes 2 rows and 5 red owned goals
- * Accomplished: Points scored: 17 red - 15 blue + 63 = 65
+ * Completes 4 rows and 7 red owned goals
+ * Descores 2 blue balls
+ * Points scored: 31 red - 13 blue + 63 = 81
  */
 void skills () {
 
   intake.move(-100);
-  delay(500); // Deploy hood and shoot preload ball into middle goal
-  chassis.driveToPoint(0, 24, 90, 1.0);
-  intake.waitUntillColor('R', 1.0); // Grab red ball infront of robot
-  intake.move(30);
+  delay(500); // Deploy hood
+  chassis.driveToPoint(0, 26, 100, 1.0);
+  intake.move(100); // Grab red ball infront of robot
   chassis.waitUntilSettled();
+  intake.stop();
 
   /* ********** 1st Goal ********** */
-  chassis.turnToAngle(-135, 90, 1.1).waitUntilSettled(); // Turn towards 1st goal
-  chassis.driveToPoint(-27, 5, 90, 1.2).waitUntilSettled(); // Drive towards 1st goal
-  chassis.move(30, 'B'); // Constant pressure on 1st goal
-  intake.move(-40);
-  delay(100);
-  uptake.move(100);
-  delay(400); // Score in 1st goal
-  uptake.stop();
-  delay(400); // Ball settling time
-  chassis.stop().brake();
-  intake.stop();
-  chassis.drive(-17.6, 90, 1.3); // Drive away from 1st goal
+  chassis.turnToAngle(-135, 85, 0.9).waitUntilSettled(); // Turn towards 1st goal
+  chassis.driveToPoint(-23.5, 0.5, 95, 1.3).waitUntilSettled(); // Drive towards 1st goal
+  //chassis.move('B', 30); // Constant power on 1st goal
+  uptake.waitUntilShot(1, 0.8); // Score in 1st goal
+  //chassis.stop().brake();
+  chassis.turnToAngle(-135, 100, 1.0).waitUntilSettled(); // Align on 1st goal
+  intake.move(-50);
+  chassis.drive(-15, 95, 1.1); // Drive away from 1st goal
   delay(200);
-  intake.move(100); // Reposition red ball
-  uptake.move(-50);
+  intake.move(100);
+  uptake.waitUntilIndexedMiddle(1.2); // Reposition red ball
+  intake.stop();
   chassis.waitUntilSettled();
-
 
   /* ********** 2nd Goal ********** */
-  chassis.turnToAngle(0, 90, 1.3); // Turn towards mid field
+  chassis.turnToAngle(0, 85, 1.2); // Turn towards mid field
+  uptake.move(-50);
+  intake.move(70);
+  chassis.waitUntilSettled();
   uptake.stop();
-  delay(100);
-  uptake.waitUntillIndexedBottom(0.3); // Move red ball up into robot
+  intake.move(100); // Grab red ball in front of 2nd goal
+  chassis.driveToPoint(-17, 58, 95, 1.4).waitUntilSettled(); // Drive towards mid field
+  chassis.turnToAngle(-90, 85, 1.0); // Turn towards 2nd goal
+  uptake.waitUntilIndexedTop(1.2); // Index both red balls
   chassis.waitUntilSettled();
-  chassis.driveToPoint(-14, 59, 90, 1.4); // Drive towards mid field
-  intake.waitUntillColor('R', 1.4, false); // Grab red ball in front of 2nd goal
-  chassis.waitUntilSettled();
-  chassis.turnToAngle(-90, 90, 0.7); // Turn towards 2nd goal
-  intake.move(100);
-  uptake.waitUntillIndexedBottom(0.3); // Move red ball up into robot
   intake.stop();
-  chassis.waitUntilSettled();
-  chassis.driveToPoint(-25, 58.5, 90, 0.8).waitUntilSettled(); // Drive towards 2nd goal
-  chassis.move(30, 'B'); // Constant pressure on 2nd goal
-  delay(200);
-  uptake.move(100);
-  intake.move(20);
-  delay(400); // Score in 2nd goal
-  intake.stop();
-  delay(300);
-  uptake.stop();
-  delay(400); // Ball settling time
-  chassis.stop().brake();
-  chassis.drive(-22, 85, 1.2); // Drive away from 2nd goal
-  intake.move(-50);
+  chassis.driveToPoint(-25, 58, 95, 0.9).waitUntilSettled(); // Drive towards 2nd goal
+  //chassis.move('B', 30); // Constant power on 2nd goal
+  uptake.waitUntilShot(2, 1.3); // Score in 2nd goal
+  //chassis.stop().brake();
+  chassis.turnToAngle(-90, 100, 1.0).waitUntilSettled(); // Align on 2nd goal
+  chassis.drive(-18, 90, 1.2); // Drive away from 2nd goal
+  intake.move(-100);
   chassis.waitUntilSettled();
   intake.stop();
 
   /* ********** 3rd Goal ********** */
-  chassis.turnToAngle(0, 90, 0.9).waitUntilSettled(); // Turn towards far field
-  chassis.driveToPoint(0, 98, 90, 1.7); // Drive to far side of field
-  intake.waitUntillColor('R', 1.5, false); // Grab red ball for 3rd goal ball
-  chassis.waitUntilSettled();
-  chassis.turnToAngle(-60, 90, 0.7); // Turn towards 3rd goal
+  chassis.turnToAngle(0, 75, 1.2).waitUntilSettled(); // Turn towards far field
+  chassis.driveToPoint(0, 108, 100, 1.8); // Drive to far side of field
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
+  uptake.waitUntilIndexedMiddle(1.8); // Grab red ball for 3rd goal ball
+  chassis.waitUntilSettled();
+  chassis.turnToAngle(-70, 85, 1.1); // Turn towards 3rd goal
+  uptake.waitUntilIndexedMiddle(1.0); // Make sure red ball is inside robot
+  intake.stop();
+  chassis.waitUntilSettled();
+  chassis.driveToPoint(-30, 118, 95, 0.9).waitUntilSettled(); // Drive to 3rd goal
+  //chassis.move('B', 25); // Constant power on 3rd goal
+  uptake.waitUntilShot(1, 0.9); // Score in 3rd goal
+  //chassis.stop().brake();
+  chassis.turnToAngle(-45, 100, 1.3).waitUntilSettled(); // Align on 3rd goal
+  chassis.drive(-35, 90, 1.4); // Drive away from 3rd goal
+  intake.move(-100);
   chassis.waitUntilSettled();
   intake.stop();
-  chassis.driveToPoint(-26, 117, 90, 0.8).waitUntilSettled(); // Drive to 3rd goal
-  chassis.move(30, 'B'); // Constant pressure on 3rd goal
-  intake.move(-40);
-  delay(100);
-  uptake.move(100);
-  delay(400); // Score in 3rd goal
-  uptake.stop();
-  delay(400); // Ball settling time
-  chassis.stop().brake();
-  chassis.turnToAngle(-45, 100, 1.1).waitUntilSettled(); // Align on goal
-  chassis.drive(-33.5, 90, 1.2).waitUntilSettled(); // Drive away from 3rd goal
 
   /* ********** 4th Goal ********** */
-  chassis.turnToAngle(-90, 90, 0.9).waitUntilSettled(); // Turn towards wall
-  chassis.driveToPoint(-36, 92, 65, 1.4); // Drive to wall
-  intake.waitUntillColor('R', 1.4, false); // Grab red wall ball
-  intake.move(50);
-  chassis.waitUntilSettled();
-  chassis.drive(-60, 90, 1.8); // Drive across the field (backwards)
+  chassis.turnToAngle(-90, 90, 0.8).waitUntilSettled(); // Turn towards wall
+  chassis.driveToPoint(-33.5, 92, 70, 1.4); // Drive to wall
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
+  uptake.waitUntilIndexedMiddle(1.4); // Grab red wall ball
   intake.stop();
   chassis.waitUntilSettled();
-  chassis.turnToAngle(0, 90, 0.5).waitUntilSettled(); // Turn to 4th goal
-  chassis.driveToPoint(27, 115, 90, 0.8).waitUntilSettled(); // Drive to 4th goal
-  chassis.move(30, 'B'); // Constant pressure on 4th goal
-  uptake.move(100);
-  delay(400); // Score in 4th goal
-  uptake.stop();
-  delay(400); // Ball settling time
-  chassis.stop().brake();
+  delay(100);
+  chassis.drive(-61, 85, 1.8).waitUntilSettled(); // Drive across the field (backwards)
+  chassis.turnToAngle(0, 90, 1.0).waitUntilSettled(); // Turn to 4th goal
+  chassis.driveToPoint(36, 118, 90, 0.8).waitUntilSettled(); // Drive to 4th goal
+  //chassis.move('B', 30); // Constant power on 4th goal
+  uptake.waitUntilShot(1, 0.8); // Score in 4th goal
+  //chassis.stop().brake();
+  chassis.turnToAngle(0, 100, 1.2).waitUntilSettled(); // Align on 4th goal
   chassis.drive(-11, 90, 0.8); // Drive away from 4th goal
-  intake.move(-50);
+  intake.move(-100);
   chassis.waitUntilSettled();
   intake.stop();
 
   /* ********** 5th Goal ********** */
-  chassis.turnToAngle(90, 90, 0.8).waitUntilSettled(); // Turn towards wall
-  intake.stop();
-  uptake.stop();
-  chassis.driveToPoint(71, 110, 90, 1.8); // Drive across the field
-  intake.waitUntillColor('R', 1.5, false); // Grab red ball
+  chassis.turnToAngle(90, 85, 1.0).waitUntilSettled(); // Turn towards wall
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
+  chassis.driveToPoint(73, 100, 95, 1.3).waitUntilSettled(); // Drive across the field
+  uptake.waitUntilIndexedMiddle(1.3); // Index red ball
   intake.stop();
+  chassis.turnToAngle(47, 85, 0.6).waitUntilSettled(); // Turn to 5th goal
+  chassis.driveToPoint(92, 118, 95, 1.1).waitUntilSettled(); // Drive to 5th goal
+  //chassis.move('B', 30); // Constant power on 5th goal
+  uptake.waitUntilShot(1, 0.8); // Score in 5th goal
+  //chassis.stop().brake();
+  chassis.turnToAngle(45, 100, 1.3).waitUntilSettled(); // Align on goal
+  chassis.drive(-31, 95, 1.55); // Drive away from 5th goal
+  intake.move(-100);
   chassis.waitUntilSettled();
-  chassis.turnToAngle(45, 90, 0.5).waitUntilSettled(); // Turn to 5th goal
-  chassis.driveToPoint(85, 117, 90, 0.8).waitUntilSettled(); // Drive to 5th goal
-  chassis.move(30, 'B'); // Constant pressure on 5th goal
-  intake.move(-50);
-  delay(100);
-  uptake.move(100);
-  delay(500); // Score in 5th goal
-  uptake.stop();
-  delay(400); // Ball settling time
-  chassis.stop().brake();
-  chassis.turnToAngle(45, 100, 1.0).waitUntilSettled(); // Align on goal
-  chassis.drive(-29, 85, 1.0).waitUntilSettled(); // Drive away from 5th goal
+  intake.stop();
 
   /* ********** 6th Goal ********** */
-  intake.stop();
   chassis.turnToAngle(90, 90, 0.8).waitUntilSettled(); // Turn towards wall
-  chassis.driveToPoint(90, 90, 70, 1.5); // Drive to wall
-  intake.waitUntillColor('R', 1.3); // Grab red wall ball
-  intake.move(50);
-  chassis.waitUntilSettled();
-  chassis.drive(-13.5, 85, 1.0).waitUntilSettled(); // Drive away from wall
+  chassis.driveToPoint(92, 92, 70, 1.6); // Drive to wall
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
+  uptake.waitUntilIndexedMiddle(1.6); // Grab red wall ball
   intake.stop();
   chassis.waitUntilSettled();
-  chassis.turnToAngle(180, 90, 0.8).waitUntilSettled(); // Turn towards mid field
-  chassis.driveToPoint(80, 55, 90, 1.7); // Drive towards mid field
-  intake.waitUntillColor('R', 1.4, false); // Grab red ball in front of 6th goal
+  chassis.drive(-14, 85, 1.2).waitUntilSettled(); // Drive away from wall
+  chassis.turnToAngle(180, 85, 0.9); // Turn towards mid field
+  uptake.move(-50);
+  intake.move(70);
   chassis.waitUntilSettled();
-  chassis.turnToAngle(90, 90, 0.7); // Turn towards 6th goal
-  intake.move(100);
-  uptake.waitUntillIndexedBottom(0.4); // Move red ball up into robot
-  intake.stop();
-  chassis.waitUntilSettled();
-  chassis.driveToPoint(90, 55, 90, 1.0); // Drive to 6th goal
-  chassis.move(30, 'B'); // Constant pressure on 6th goal
-  delay(300);
-  uptake.move(100);
-  intake.move(20);
-  delay(400); // Score in 6th goal
-  intake.stop();
-  delay(300);
   uptake.stop();
-  delay(400); // Ball settling time
-  chassis.stop().brake();
-  chassis.turnToAngle(90, 100, 1.0).waitUntilSettled(); // Align on goal
-  chassis.drive(-18, 90, 0.9); // Drive away from 6th goal
-  intake.move(-50);
+  chassis.driveToPoint(73, 62.5, 95, 2.0); // Drive towards mid field
+  intake.move(100); // Grab red ball in front of 6th goal
+  chassis.waitUntilSettled();
+  chassis.turnToAngle(90, 90, 1.0); // Turn towards 6th goal
+  uptake.waitUntilIndexedTop(1.0); // Index both red balls
+  chassis.waitUntilSettled();
+  intake.stop();
+  chassis.driveToPoint(92, 62.5, 95, 1.0).waitUntilSettled(); // Drive to 6th goal
+  chassis.turnToAngle(90, 100, 1.3).waitUntilSettled(); // Align on goal
+  //chassis.move('B', 30); // Constant power on 6th goal
+  uptake.waitUntilShot(2, 1.3); // Score in 6th goal
+  //chassis.stop().brake();
+  chassis.drive(-14, 85, 1.0); // Drive away from 6th goal
+  intake.move(-100);
   chassis.waitUntilSettled();
   intake.stop();
 
   /* ********** 7th Goal ********** */
-  chassis.turnToAngle(-90, 90, 0.8).waitUntilSettled();
-  chassis.driveToPoint(55, 60, 90, 1.0); // Drive towards middle goal
-  intake.waitUntillColor('R', 0.6, false); // Grab red ball
+  chassis.turnToAngle(-90, 70, 1.4).waitUntilSettled();
+  chassis.driveToPoint(43, 62.5, 95, 1.1); // Drive towards middle goal
   intake.move(100);
-  uptake.waitUntillIndexedBottom(0.5); // Move red ball up into robot
+  uptake.waitUntilIndexedMiddle(1.1); // Move red ball up into robot
+  chassis.waitUntilSettled();
+  chassis.turnToAngle(-75, 90, 1.1); // Slight turn towards middle goal
+  uptake.waitUntilIndexedMiddle(0.9); // Make sure red ball is inside robot
   intake.stop();
   chassis.waitUntilSettled();
-  chassis.turnToAngle(-80, 70, 0.5).waitUntilSettled();
-  chassis.driveToPoint(35, 61, 90, 1.2); // Drive towards middle goal
   intake.move(-100);
-  chassis.waitUntilSettled();
-  chassis.move(100, 'R');
-  delay(1000);
-  uptake.move(100); // Score in middle 7th goal
-  delay(700);
-  uptake.stop();
-  chassis.stop().brake();
-  chassis.move(-100, 'R');
+  chassis.driveToPoint(40, 63, 95, 1.0).waitUntilSettled(); // Drive towards middle goal and poke out 1st blue ball
+  chassis.drive(-6, 100, 0.5).waitUntilSettled(); // Drive away from middle to reset
+  delay(100);
+  chassis.drive(8, 100, 0.5).waitUntilSettled(); // Poke out 2nd blue ball
+  delay(100);
+  chassis.move(100, 'B'); //Constant pressure on middle goal
+  delay(200);
+  uptake.waitUntilShot(1, 1.0); // Score in middle 7th goal
+  chassis.move(-100, 'R'); // Do a curved drive away from the middle goal
   chassis.move(-60, 'L');
   delay(1000);
   chassis.stop().brake();
+  intake.stop();
 }

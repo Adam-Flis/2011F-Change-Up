@@ -13,8 +13,8 @@ static Odom odom;
 /* ********** Define variables ********** */
 
 float kP = 9.5, kI = 0.1, kD = 5;
-float kP_t = 300, kI_t = 0.1, kD_t = 2000;
-float kP_d = 500, kD_d = 300;
+float kP_t = 325, kI_t = 0.1, kD_t = 2000;
+float kP_d = 9000, kD_d = 500;
 
 float intergralActive = math.inchToTicks(3);
 float intergralActive_t = 5;
@@ -98,16 +98,18 @@ float PID::drift() {
 
   //Derivative finds difference between current error and last recrded to recieve ROC, good for fine adjustment
   derivative = error_drift - lastError_d;
-  if (derivative > -0.01 && derivative < 0.01) {
-    proportion_drift = error_drift * kP_d; //+ derivative * kD_d;
-  } else {
-    proportion_drift = 0;
+  if (derivative > 10 || derivative < -10) {
+    derivative = 0;
   }
+  // if (derivative > -0.01 && derivative < 0.01) {
+  //   proportion_drift = derivative * kP_d; //+ derivative * kD_d;
+  // } else {
+  //   proportion_drift = 0;
+  // }
+  proportion_drift = derivative * kP_d;
   lastError_d = error_drift;
 
-  cout << proportion_drift << endl;
   return proportion_drift;
-
 }
 
 /**

@@ -10,7 +10,7 @@
  */
 void homeRow(char color) {
 
-  // Changes color of inputted alliance to opponents alliance for waitUntillColor function
+  // Changes color of inputted alliance to opponents alliance for waituntilColor function
   if (color == 'B') {
     color = 'R';
   } else if (color == 'R') {
@@ -23,46 +23,46 @@ void homeRow(char color) {
   intake.stop();
 
   /* ********** 1st Corner Goal (2nd Goal) ********** */
-  chassis.driveToPoint(0, 33.5, 85, 1.4).waitUntilSettled();
-  chassis.turnToAngle(90, 85, 1.1).waitUntilSettled(); // Turn towards goal
+  chassis.driveToPoint(0, 35.5, 90, 1.25).waitUntilSettled();
+  chassis.turnToAngle(90, 90, 0.8).waitUntilSettled(); // Turn towards goal
   intake.move(100);
-  chassis.driveToPoint(35, 35, 85, 1.9); // Drive towards goal
-  uptake.move(100);
-  delay(400);
-  chassis.move(30, 'B'); // Constant pressure on 1st goal
-  intake.waitUntillColor(color, 0.9); // Wait untill middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
-  delay(125); // Ball settling time
+  chassis.driveToPoint(35.5, 35, 90, 1.8); // Drive towards goal
+  uptake.move(75);
+  //chassis.move(40, 'B'); // Constant pressure on 1st goal
+  intake.waitUntilColor(color, 1.8); // Wait until middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
   uptake.stop();
   chassis.waitUntilSettled();
+  chassis.stop().brake();
+  chassis.turnToAngle(90, 100, 1.5).waitUntilSettled(); // Align on goal
 
   /* ********** Drive away from goal ********** */
-  chassis.drive(-36, 90, 1.7); // Drive away from goal
+  chassis.drive(-34, 90, 1.2); // Drive away from goal
   intake.move(-100);
-  delay(300); // Outake blue balls
+  delay(100); // Outake opponents ball
   uptake.move(-100);
-  chassis.waitUntilSettled(); // Outake middle color ball while driving backwards
+  chassis.waitUntilSettled();
   uptake.stop();
   intake.stop();
 
   /* ********** Drive across the field ********** */
-  chassis.turnToAngle(-143, 85, 1.2).waitUntilSettled(); // Turn to drive across the field
-  chassis.driveToPoint(-40, -13, 85, 1.9).waitUntilSettled(); // Drive across the field
+  chassis.turnToAngle(-143, 90, 1.2).waitUntilSettled(); // Turn to face downfield
+  delay(50);
+  chassis.driveToPoint(-32.5, -18.5, 90, 2.0).waitUntilSettled(); // Drive across the field
 
   /* ********** 2nd Corner Goal (3rd Goal) ********** */
-  chassis.turnToAngle(180, 90, 1.2).waitUntilSettled(); // Turn towards goal
-  chassis.driveToPoint(-50, -60, 90, 2.3); // Drive towards goal
-  uptake.move(100);
-  delay(400);
-  chassis.move(30, 'B'); // Constant pressure on 3rd goal
-  intake.waitUntillColor(color, 1.05); // Wait untill middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
-  delay(125); // Ball settling time
+  chassis.turnToAngle(175, 90, 0.9).waitUntilSettled(); // Turn towards goal
+  chassis.driveToPoint(-40, -61, 90, 2.2); // Drive towards goal
+  uptake.move(75);
+  //chassis.move(40, 'B'); // Constant pressure on 3rd goal
+  intake.waitUntilColor(color, 2.2); // Wait until middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
   uptake.stop();
   chassis.waitUntilSettled();
+  chassis.stop().brake();
 
   /* ********** Drive away from goal ********** */
   chassis.drive(-24, 100, 1.0); // Drive away from goal
   intake.move(-100);
-  delay(300); // Outake blue balls
+  delay(100); // Outake opponents ball
   uptake.move(-100);
   chassis.waitUntilSettled();
   intake.stop();

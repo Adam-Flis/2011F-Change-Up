@@ -15,12 +15,12 @@ void opcontrol() {
   Intake intake;
   Uptake uptake;
 
-  Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
+  Middle_Optical.set_led_pwm(0); // Turn off optical sensor LED
   odom.endTask(); // End tasks to prevent brain overload
   chassis.endTask();
   chassis.brake();
   lcd::clear();
-  lcd::shutdown();
+  lcd::shutdown(); // Turns off LCD display
 
   while(1) {
 
