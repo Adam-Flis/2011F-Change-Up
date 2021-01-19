@@ -11,9 +11,10 @@ void initialize() {
 
   /* ********** Calibrate IMU ********** */
 
-  IMU.reset();
+  LIMU.reset();
+  RIMU.reset();
   delay(20);
-  while (IMU.is_calibrating()){
+  while (LIMU.is_calibrating() && RIMU.is_calibrating()){
     lcd::set_text(0, "IMU Calibrating");
     delay(10);
   }
@@ -25,15 +26,10 @@ void initialize() {
   chassisTask = new Task(chassis.startTask, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_MIN, "Chassis Task");
   lcd::set_text(0, "Tasks Initalizing");
   cout<<"Tasks Initializing"<<endl;
-  delay(1000);
+  delay(1500);
   cout<<trackingTask<<endl; // Print to console task information
   cout<<chassisTask<<endl;
   cout<<"Tasks Done Initializing"<<endl;
-
-  lcd::set_text(0, "Ready To Go!"); // Message to let user know robot is all initalized
-  cout<<"Ready"<<endl;
-  delay(500);
-  lcd::clear_line(0);
 }
 
 // Code that runs when the robot is in the disabled state by the competition switch or the field controller

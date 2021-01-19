@@ -16,24 +16,50 @@ static Odom odom;
 
 /* ********** Define variables ********** */
 
-bool Chassis::isRunning = false,
-     Chassis::isSettled = true,
-     Chassis::isTurning = false,
-     Chassis::isDriving = false;
+float kP_D = 0,
+      kI_D = 0,
+      kD_D = 0,
 
-float Chassis::targetTheta,
-      Chassis::targetTicks,
-      Chassis::targetVoltage;
+      kP_T = 0,
+      kI_T = 0,
+      kD_T = 0,
 
-float Chassis::leftVoltage,
-      Chassis::rightVoltage,
-      Chassis::timeOut;
+      kP_DA = 0,
+      kI_DA = 0,
+      kD_DA = 0,
+
+      kP_TA = 0,
+      kI_TA = 0,
+      kD_TA = 0;
+
 
 float errorX,
       errorY,
-      finalVoltage,
-      ticks,
-      drift;
+      errorTheta,
+      errorTicks,
+      lastErrorTicks,
+      errorRotation,
+      targetVelocity,
+      targetX,
+      targetY,
+      targetTheta,
+      driveVelocity,
+      turnVelocity,
+      velocityL,
+      velocityR,
+      drift,
+      timeOut,
+
+      proportionD,
+      integralD,
+      integralZoneD = 10,
+      integralLimitD = 10 * kI_D,
+      derivativeD,
+      turnD = 0.1, dTurn, lastErrorR;
+
+bool reversed;
+
+char side;
 
 /**
  * Stops the chassis
@@ -101,9 +127,6 @@ void Chassis::move(float velocity, char side) {
  */
 void Chassis::reset() {
   isSettled = true;
-  errorX = errorY = finalVoltage = ticks = drift = 0;
-  leftVoltage = rightVoltage = timeOut = 0;
-  targetTheta = targetTicks = targetVoltage = 0;
   chassis.stop().brake();
 }
 
@@ -112,79 +135,145 @@ void Chassis::reset() {
  */
 void Chassis::startTask() {
   isRunning = true;
+  isSettled = false;
+  isTurning = false;
+  isDriving = false;
+  isArcing = false;
+
   chassis.reset();
   cout<<"Chassis Task Started"<<endl;
   while(isRunning) {
     if (!isSettled) {
-      if (isTurning) { // Run the turn function when the robot is called to turn
-        finalVoltage = pid.turn(targetTheta, targetVoltage);
-        leftVoltage = finalVoltage;
-        rightVoltage = -finalVoltage;
-        // if (millis() >= timeOut/2 && isDriving) { // Allocates enough time for the robot to be able
-        //                                           // to turn then drive when driveToPoint function is used
-        //   isTurning = false;
+      if (isTurning) {
+        // velocity = pid.turn(errorTheta, targetVelocity);
+        // if (side == 'B') {
+        //   velocityL = velocity;
+        //   velocityR = -velocity;
+        // } else if (side == 'L') {
+        //   velocityL = velocity;
+        //   velocityR = 0;
+        // } else if (side == 'R') {
+        //   velocityL = 0;
+        //   velocityR = -velocity;
         // }
-      } else if (isDriving && !isTurning) { // Run the drive function when the robot is called to drive and not to turn
-        finalVoltage = pid.drive(targetTicks, targetVoltage);
-        drift = pid.drift();
-        leftVoltage = finalVoltage - drift; // Adds drift correction
-        rightVoltage = finalVoltage + drift;
-        // if (finalVoltage > 0) { // Adds drift correction for when the robot travels forward
-        //   leftVoltage = finalVoltage - drift;
-        //   rightVoltage = finalVoltage + drift;
-        // }
-        // else {
-        //   leftVoltage = finalVoltage;
-        //   rightVoltage = finalVoltage;
-        // }
-      }
-      if (odom.getTheta() == targetTheta && isTurning && targetTheta != 0) { // When robot reaches turn target stop turning
-          isTurning = false;
-        } else if (VEnc.get_value() == targetTicks && isDriving && targetTicks != 0) { // When robot reaches drive target stop driving
-          isDriving = false;
+      } else if (isDriving) {
+
+        errorX = math.filter(targetX, odom.getX());
+        errorY = math.filter(targetY, odom.getY());
+
+        errorTicks = sqrt(errorX * errorX + errorY * errorY);
+
+        errorRotation = (math.angleIn180(math.radToDeg(atan2(errorX, errorY))) -
+                        math.angleIn180(math.radToDeg(odom.getTheta())));
+
+        proportionD = errorTicks;
+
+        if(fabs(errorTicks) < integralZoneD && errorTicks != 0){
+            integralD = integralD + errorTicks;
+        } else {
+            integralD = 0;
         }
-      if (millis() >= timeOut) { // When timeout is reached stop the robot and reset variables
-        isDriving = isTurning = false;
+        if(integralD > integralLimitD){
+            integralD = integralLimitD;
+        }
+
+    derivativeD = errorTicks - lastErrorTicks;
+    lastErrorTicks = errorTicks;
+
+    driveVelocity = (kP_D * proportionD + kI_D * integralD + kD_D * derivativeD);
+    if(driveVelocity > targetVelocity){
+      driveVelocity = targetVelocity;
+    }
+    if(driveVelocity < -targetVelocity){
+      driveVelocity = -targetVelocity;
+    }
+    if (reversed) {
+      driveVelocity = -driveVelocity;
+    }
+
+    dTurn = fabs(errorR) - lastErrorR;
+    turnVelocity = dTurn * turnD;
+    lastErrorR = fabs(errorR);
+
+    finalVL = (driveVelocity + turnVelocity);
+    finalVR = (driveVelocity - turnVelocity);
+    if(errorType == "y"){
+      if(fabs(errorY) < pctCutoff){
+        enabled = false;
+      }
+    }
+    else if(errorType == "x"){
+      if(fabs(errorX) < pctCutoff){
+        enabled = false;
+      }
+    }
+    else if(errorType == "d"){
+      if(fabs(errorD) < pctCutoff){
+        enabled = false;
+      }
+
+    }
+    lDrive_V(finalVL * 2);
+    rDrive_V(finalVR * 2);
+  }
+}
+      } else if (isArcing) {
+        velocityArr = pid.arc(errorX, errorY, targetVelocity);
+        velocityL = velocityArr[0];
+        velocityR = velocityArr[1];
+      }
+
+      if (timeOut <= millis()) {
         chassis.reset();
-      } else if (!isTurning && !isDriving) { // Stops the robot when it reaches its target
+      } else if (targetX <= odom.getX()) {
+        chassis.reset();
+      } else if (targetY <= odom.getY()) {
+        chassis.reset();
+      } else if (targetTheta <= math.radToDeg(odom.getTheta())) {
         chassis.reset();
       }
 
-      LFD.move_voltage(leftVoltage); // Sets voltage of chassis motors
-      RFD.move_voltage(rightVoltage);
-      LBD.move_voltage(leftVoltage);
-      RBD.move_voltage(rightVoltage);
+      LFD.move_velocity(velocityL);
+      RFD.move_velocity(velocityR);
+      LBD.move_velocity(velocityL);
+      RBD.move_velocity(velocityR);
     }
     delay(10); // Loop speed, prevent overload
   }
 }
 
-/**
- * Ends the chassis drive task
- */
-void Chassis::endTask() {
-  //isRunning = false;
-  chassisTask->remove();
-  delete chassisTask; // Deletes the task from memory
-  chassisTask = nullptr;
-  chassis.reset();
-  cout<<"Chassis task ended"<<endl;
+Chassis& Chassis::driveToPoint(float targetX_, float targetY_, float targetVelocity_, float timeOut_, bool reversed_) {
+  if (isRunning) {
+    targetX = targetX_;
+    targetY = targetY_;
+    reversed = reversed_;
+    targetVelocity = math.percentToVelocity(targetVelocity_, 'G');
+    timeOut = math.secToMillis(timeOut_) + millis();
+    isDriving = true;
+    isTurning = false;
+    isArcing = false;
+    isSettled = false;
+  }
+  return *this;
 }
+
+
+
 
 /**
  * Moves the chassis a certain distance using a PID loop
  * @param distance (In inches -backwards +forwards)
- * @param targetVoltage_ 0 to 100 (In percentage of drive max speed)
+ * @param targetVelocity_ 0 to 100 (In percentage of drive max speed)
  * @param timeOut_ (In seconds)
  */
-Chassis& Chassis::drive(float distance, float targetVoltage_, float timeOut_) {
+Chassis& Chassis::drive(float distance, float targetVelocity_, float timeOut_) {
   if (isRunning) {
-    ticks = math.inchToTicks(distance);
-    targetTicks = ticks + VEnc.get_value();
-    targetVoltage = math.percentToVoltage(targetVoltage_);
+    errorTicks = math.inchToTicks(distance);
+    targetVelocity = math.percentToVelocity(targetVelocity_, 'G');
     timeOut = math.secToMillis(timeOut_) + millis();
     isDriving = true;
     isTurning = false;
+    isArcing = false;
     isSettled = false;
   }
   return *this;
@@ -196,102 +285,29 @@ Chassis& Chassis::drive(float distance, float targetVoltage_, float timeOut_) {
  * @param targetVoltage_ 0 to 100 (In percentage of drive max speed)
  * @param timeOut_ (In seconds)
  */
-Chassis& Chassis::turn(float theta_, float targetVoltage_, float timeOut_) {
+Chassis& Chassis::turn(float theta, float targetVelocity_, float timeOut_) {
   if (isRunning) {
-    targetTheta = math.angleWrap(theta_) + odom.getTheta();
-    targetVoltage = math.percentToVoltage(targetVoltage_);
+    errorTheta = theta;
+    targetVelocity = math.percentToVelocity(targetVelocity_, 'G');
     timeOut = math.secToMillis(timeOut_) + millis();
-    isTurning = true;
     isDriving = false;
+    isTurning = true;
+    isArcing = false;
     isSettled = false;
   }
   return *this;
 }
 
 /**
- * Moves the robot to a certain point on the field
- * @param x (In inches)
- * @param y (In inches)
- * @param targetVoltage_ 0 to 100 (In percentage of drive max speed)
- * @param timeOut_ (In seconds)
- * @param reverse True or False (Perform action backwards, false by default)
+ * Ends the chassis drive task
  */
-Chassis& Chassis::driveToPoint(float x, float y, float targetVoltage_, float timeOut_, bool reverse) {
-  if (isRunning) {
-
-      errorX = x - odom.getX();
-      errorY = y - odom.getY();
-
-
-    // Calculates if the robot needs to turn before moving in the x/y direction
-    // if (errorY != 0) {
-    //   targetTheta = math.angleWrap(math.radToDeg(atan(errorX/errorY)));
-    //   isTurning = true;
-    // } else {
-    //   isTurning = false;
-    // }
-
-    ticks = math.inchToTicks(sqrt(pow(errorX, 2) + pow(errorY, 2))); // Calculates the hypotenuse of triangle, distance robot will travel
-    if (reverse == true) { // Sets ticks to negative if the robot will drive backwards to point
-      ticks = -ticks;
-    }
-
-    // Sets the global variables that are used to move the robot in the chassis task
-    targetTicks = ticks + VEnc.get_value();
-    targetVoltage = math.percentToVoltage(targetVoltage_);
-    timeOut = math.secToMillis(timeOut_) + millis();
-    isDriving = true;
-    isSettled = false;
-    isTurning = false;
+void Chassis::endTask() {
+  if (chassisTask != nullptr) {
+    chassisTask->remove(); // Removes memory stack task is occupying
+    delete chassisTask; // Deletes the task from memory
+    chassisTask = nullptr;
+    cout<<"Chassis task ended"<<endl;
   }
-  return *this;
-}
-
-/**
- * Turns the robot to a certain point on the field
- * @param x (In inches)
- * @param y (In inches)
- * @param targetVoltage_ 0 to 100 (In percentage of drive max speed)
- * @param timeOut_ (In seconds)
- */
-Chassis& Chassis::turnToPoint(float x, float y, float targetVoltage_, float timeOut_) {
-  if (isRunning) {
-    errorX = x - odom.getX();
-    errorY = y - odom.getY();
-
-    // Calculates the angle the robot has to turn to face the desired poinnt
-    if (errorY != 0) {
-      targetTheta = math.angleWrap(math.radToDeg(atan(errorX/errorY)));
-    }
-
-    // Sets the global variables that are used to move the robot in the chassis task
-    targetVoltage = math.percentToVoltage(targetVoltage_);
-    timeOut = math.secToMillis(timeOut_) + millis();
-    isTurning = true;
-    isDriving = false;
-    isSettled = false;
-  }
-  return *this;
-}
-
-/**
- * Turns the robot to a certain angle
- * @param theta_ (In degress)
- * @param targetVoltage_ 0 to 100 (In percentage of drive max speed)
- * @param timeOut_ (In seconds)
- */
-Chassis& Chassis::turnToAngle(float theta_, float targetVoltage_, float timeOut_) {
-  if (isRunning) {
-    // Sets the global variables that are used to move the robot in the chassis task
-
-    targetTheta = math.angleWrap(theta_);
-    targetVoltage = math.percentToVoltage(targetVoltage_);
-    timeOut = math.secToMillis(timeOut_) + millis();
-    isTurning = true;
-    isDriving = false;
-    isSettled = false;
-  }
-  return *this;
 }
 
 /**

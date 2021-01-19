@@ -19,18 +19,17 @@ public:
   static void startTask();
   static void endTask();
 
-  Chassis& drive(float distance, float targetVoltage_, float timeOut_);
-  Chassis& turn(float theta_, float targetVoltage_, float timeOut_);
-  Chassis& driveToPoint(float x, float y, float targetVoltage_, float timeOut_, bool reverse = false);
-  Chassis& turnToPoint(float x, float y, float targetVoltage_, float timeOut_);
-  Chassis& turnToAngle(float theta_, float targetVoltage_, float timeOut_);
+  Chassis& drive(float distance, float targetVelocity_, float timeOut_);
+  Chassis& turn(float theta, float targetVelocity_, float timeOut_);
+  Chassis& driveToPoint(float targetX_, float targetY_, float targetVelocity_, float timeOut_, bool reversed_ = false);
+  Chassis& arcToPoint(float targetX_, float targetY_, float targetVelocity_, float timeOut_, bool reversed_ = false);
+  Chassis& turnToPoint(float targetX_, float targetY_, float targetVelocity_, float timeOut_, bool longestPath_ = false);
+  Chassis& turnToAngle(float targetTheta_, float targetVelocity_, float timeOut_, char side_ = 'B', bool longestPath_ = false);
 
   void waitUntilSettled();
 
 private:
-  static float leftVoltage, rightVoltage, timeOut;
-  static float targetTheta, targetTicks, targetVoltage;
-  static bool isRunning, isSettled, isTurning, isDriving;
+  static bool isRunning, isSettled, isTurning, isDriving, isArcing;
 
 };
 

@@ -29,11 +29,11 @@ void Intake::brake() {
 
 /**
  * Sets the speed of the intakes
- * @param velocity -100 to 100 (In percentage of max intake speed)
+ * @param voltage -100 to 100 (In percentage of max intake speed)
  */
-void Intake::move(float velocity) {
-  LI.move_velocity(math.percentToVelocity(velocity, 'B'));
-  RI.move_velocity(math.percentToVelocity(velocity, 'B'));
+void Intake::move(float voltage) {
+  LI.move_voltage(math.percentToVoltage(voltage));
+  RI.move_voltage(math.percentToVoltage(voltage));
 }
 
 /**

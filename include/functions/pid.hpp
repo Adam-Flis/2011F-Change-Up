@@ -6,9 +6,10 @@
 class PID {
 public:
 
-  float drive(float targetTicks_, float maxSpeed_);
+  float drive(float errorTicks_, float maxVelocity_);
   float drift();
-  float turn(float targetTheta_, float maxSpeed_);
+  float turn(float errorTheta_, float maxVelocity_);
+  float* arc(float errorX_, float errorY_, float maxVelocity_);
 
 private:
 

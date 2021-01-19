@@ -14,6 +14,7 @@ public:
   static float percentToVoltage(float percent);
 
   static float angleWrap(float angle);
+  static float angleIn180(float angle);
   static float degToRad(float angle);
   static float radToDeg(float angle);
 

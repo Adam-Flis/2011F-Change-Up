@@ -68,15 +68,24 @@ float Math::percentToVoltage(float percent) {
 }
 
 /**
- * Returns an angle between -180 and 180 degress
+ * Returns an angle between 0 and 360 degress
  * @param angle (In degress)
  */
 float Math::angleWrap(float angle) {
-  angle = fmod(angle + 180, 360);
-  if (angle < 0) {
-      angle += 360;
+  angle = fmod(x, 360);
+    if (angle < 0) {
+        angle += 360;
     }
-  return angle - 180;
+  return angle;
+}
+
+float Math::angleIn180(float angle) {
+  float halfCircle = 180;
+  angle = angleWrap(angle);
+  if(angle >= halfCircle){
+    angle -= (2 * halfCircle);
+  }
+  return angle;
 }
 
 /**

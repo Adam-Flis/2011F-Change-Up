@@ -11,9 +11,9 @@ extern Motor LU, RU; // Uptakes
 
 /* ********** Declare Sensors ********** */
 
-extern Imu IMU; // Inertial measurement unit
+extern Imu LIMU, RIMU; // Inertial measurement unit sensors
 extern Distance Distance_Sensor; // Distance sensor
-extern Optical Middle_Optical; // Optical sensor
+extern Optical Intake_Optical, Uptake_Optical; // Optical sensors
 extern ADILineSensor Bottom_Line, Middle_Line, Top_Line; // Line sensors
 extern ADIEncoder HEnc, VEnc; // Encoders
 
@@ -25,5 +25,7 @@ extern Controller Main; // Main controller
 
 extern Task *trackingTask;
 extern Task *chassisTask;
+extern Task *rollerTask;
+
 
 #endif

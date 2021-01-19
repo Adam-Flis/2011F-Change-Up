@@ -34,11 +34,11 @@ void Uptake::brake() {
 
 /**
  * Sets the speed of the uptakes
- * @param velocity -100 to 100 (In percentage of max uptakes speed)
+ * @param voltagge -100 to 100 (In percentage of max uptakes speed)
  */
-void Uptake::move(float velocity) {
-  LU.move_velocity(math.percentToVelocity(velocity, 'B'));
-  RU.move_velocity(math.percentToVelocity(velocity, 'B'));
+void Uptake::move(float voltage) {
+  LU.move_voltage(math.percentToVoltage(voltage));
+  RU.move_voltage(math.percentToVoltage(voltage));
 }
 
 /**
