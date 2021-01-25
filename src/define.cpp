@@ -15,11 +15,13 @@
 
 /* ********** Define Sensor Ports ********** */
 
-#define IMU_Port 14
+#define LIMU_Port 14
+#define RIMU_Port 17
 
 #define Distance_Port 5
 
-#define Middle_Optical_Port 3
+#define Intake_Optical_Port 15
+#define Uptake_Optical_Port 3
 
 #define Bottom_Line_Port 'd'
 #define Middle_Line_Port 'c'
@@ -45,9 +47,11 @@ Motor LFD (LFD_Port,MOTOR_GEARSET_18,false,MOTOR_ENCODER_DEGREES),
 
 /* ********** Creates Sensors ********** */
 
-Imu IMU (IMU_Port);
+Imu LIMU (LIMU_Port),
+    RIMU (RIMU_Port);
 Distance Distance_Sensor (Distance_Port);
-Optical Middle_Optical (Middle_Optical_Port);
+Optical Intake_Optical (Intake_Optical_Port),
+        Uptake_Optical (Uptake_Optical_Port);
 ADILineSensor Bottom_Line (Bottom_Line_Port),
               Middle_Line (Middle_Line_Port),
               Top_Line (Top_Line_Port);
@@ -57,7 +61,6 @@ ADIEncoder HEnc (Horizontal_Encoder_Top_Port,Horizontal_Encoder_Bottom_Port,fals
 /* ********** Creates Controller ********** */
 
 Controller Main (CONTROLLER_MASTER);
-
 
 /* ********** Creates Tasks ********** */
 

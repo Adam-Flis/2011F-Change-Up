@@ -11,7 +11,7 @@ public:
   Intake& stop();
   void brake();
 
-  void move(float velocity);
+  void move(float voltage);
 
   void waitUntilColor(char color, float timeOut);
 

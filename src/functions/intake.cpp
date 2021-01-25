@@ -29,11 +29,11 @@ void Intake::brake() {
 
 /**
  * Sets the speed of the intakes
- * @param velocity -100 to 100 (In percentage of max intake speed)
+ * @param voltage -100 to 100 (In percentage of max intake speed)
  */
-void Intake::move(float velocity) {
-  LI.move_velocity(math.percentToVelocity(velocity, 'B'));
-  RI.move_velocity(math.percentToVelocity(velocity, 'B'));
+void Intake::move(float voltage) {
+  LI.move_velocity(math.percentToVoltage(voltage));
+  RI.move_velocity(math.percentToVoltage(voltage));
 }
 
 /**
@@ -43,7 +43,7 @@ void Intake::move(float velocity) {
  * @param timeOut (In seconds)
  */
 void Intake::waitUntilColor(char color, float timeOut) {
-  Middle_Optical.set_led_pwm(100); // Turn on optical sensor LED
+  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
   timeOut = math.secToMillis(timeOut) + millis();
   double low_hue;
   double high_hue;
@@ -62,7 +62,7 @@ void Intake::waitUntilColor(char color, float timeOut) {
   intake.move(100); // Start intakes
 
   while (1) {
-    if (low_hue <= Middle_Optical.get_hue() && Middle_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
+    if (low_hue <= Intake_Optical.get_hue() && Intake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
       break;
     }
     else if (millis() >= timeOut) { // Breaks loop when timeout is reached
@@ -71,5 +71,5 @@ void Intake::waitUntilColor(char color, float timeOut) {
     delay(20); // Loop speed, prevent overload
   }
   intake.stop().brake(); // Stop intakes
-  Middle_Optical.set_led_pwm(0); // Turn off optical sensor LED
+  Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
 }

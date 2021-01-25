@@ -11,9 +11,10 @@ void initialize() {
 
   /* ********** Calibrate IMU ********** */
 
-  IMU.reset();
+  LIMU.reset();
+  RIMU.reset();
   delay(20);
-  while (IMU.is_calibrating()){
+  while (LIMU.is_calibrating() || RIMU.is_calibrating()){
     lcd::set_text(0, "IMU Calibrating");
     delay(10);
   }
