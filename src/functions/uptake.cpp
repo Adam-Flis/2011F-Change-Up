@@ -34,11 +34,11 @@ void Uptake::brake() {
 
 /**
  * Sets the speed of the uptakes
- * @param velocity -100 to 100 (In percentage of max uptakes speed)
+ * @param voltage -100 to 100 (In percentage of max uptakes speed)
  */
-void Uptake::move(float velocity) {
-  LU.move_velocity(math.percentToVelocity(velocity, 'B'));
-  RU.move_velocity(math.percentToVelocity(velocity, 'B'));
+void Uptake::move(float voltage) {
+  LU.move_voltage(math.percentToVoltage(voltage));
+  RU.move_velocity(math.percentToVoltage(voltage));
 }
 
 /**
@@ -48,7 +48,7 @@ void Uptake::move(float velocity) {
  */
 void Uptake::waitUntilIndexedBottom(float timeOut) {
   timeOut = math.secToMillis(timeOut) + millis();
-  //uptake.move(100); // Start Uptakes
+  uptake.move(100); // Start Uptakes
   while (1) {
     if (Bottom_Line.get_value() <= bottomThresh) {
       break;
@@ -131,4 +131,43 @@ void Uptake::waitUntilIndexedTop(float timeOut) {
     delay(20); // Loop speed, prevent overload
   }
   uptake.stop().brake(); // Stop uptakes
+}
+
+/**
+ * Waits until a certain ball color is detected in the uptakes
+ * Pervents overcycling of balls in autonomous
+ * @param color 'B', or 'R' (Ball color; Blue or Red)
+ * @param timeOut (In seconds)
+ */
+void Uptake::waitUntilColor(char color, float timeOut) {
+  Uptake_Optical.set_led_pwm(100); // Turn on optical sensor LED
+  timeOut = math.secToMillis(timeOut) + millis();
+  double low_hue;
+  double high_hue;
+
+  // Sets low and high hue variables
+  if (color == 'B') {
+    low_hue = 200;
+    high_hue = 280;
+  } else if (color == 'R') {
+    low_hue = 005;
+    high_hue = 025;
+  } else { // Ends function if the char is not 'B' or 'R'
+    timeOut = millis();
+  }
+
+  uptake.move(100); // Start uptakes
+
+  while (1) {
+    if (low_hue <= Uptake_Optical.get_hue() && Uptake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
+      break;
+    }
+    else if (millis() >= timeOut) { // Breaks loop when timeout is reached
+      break;
+    }
+    delay(20); // Loop speed, prevent overload
+  }
+  delay(50);
+  uptake.stop().brake(); // Stop uptakes
+  Uptake_Optical.set_led_pwm(0); // Turn off optical sensor LED
 }

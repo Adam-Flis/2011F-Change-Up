@@ -12,9 +12,9 @@ static Odom odom;
 
 /* ********** Define variables ********** */
 
-float kP = 9.5, kI = 0.1, kD = 5;
-float kP_t = 325, kI_t = 0.1, kD_t = 2000;
-float kP_d = 9000, kD_d = 500;
+float kP = 8.8, kI = 0.1, kD = 5.8;
+float kP_t = 325, kI_t = 0.1, kD_t = 2100;
+float kP_d = 9000, kD_d = 575;
 
 float intergralActive = math.inchToTicks(3);
 float intergralActive_t = 5;
@@ -94,7 +94,12 @@ float PID::drive(float targetTicks_, float targetVoltage_) {
  */
 float PID::drift() {
   //Establishes the initial error simply as the value of the IMU since its supposed to be 0
-  error_drift = IMU.get_rotation();
+  float iL = LIMU.get_rotation();
+  float iR = RIMU.get_rotation();
+  error_drift = iR;
+  if (iL > iR) {
+    error_drift = iL;
+  }
 
   //Derivative finds difference between current error and last recrded to recieve ROC, good for fine adjustment
   derivative = error_drift - lastError_d;

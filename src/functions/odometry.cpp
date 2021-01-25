@@ -62,7 +62,7 @@ void Odom::startTask() {
   while (isRunning) {
 
 	  // Value of the sensors
-    currentTheta = IMU.get_rotation() * (7200/7181.9);
+    currentTheta = LIMU.get_rotation() * (7200/7181.9);
     thetaFiltered += math.filter(currentTheta, lastTheta);
     lastTheta = currentTheta;
 
@@ -122,6 +122,7 @@ void Odom::startTask() {
     lcd::print(0, "X: %f \n", odom.getX());
     lcd::print(1, "Y: %f \n", odom.getY());
     lcd::print(2, "Theta: %f degress\n", odom.getTheta());
+    lcd::print(3, "Left IMU: %f degress\n", LIMU.get_rotation());
 
 	  delay(10);
   }
