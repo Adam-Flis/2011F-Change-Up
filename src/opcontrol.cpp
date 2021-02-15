@@ -3,41 +3,21 @@
 #include "functions/chassis.hpp"
 #include "functions/odometry.hpp"
 #include "functions/math.hpp"
-#include "functions/intake.hpp"
-#include "functions/uptake.hpp"
 
 
 void opcontrol() {
 
   Chassis chassis; // Defines classes
   Odom odom;
-  Math math;
-  Intake intake;
-  Uptake uptake;
 
   Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
   Uptake_Optical.set_led_pwm(0);
   odom.endTask(); // End tasks to prevent brain overload
-  chassis.endTask();
   chassis.brake();
   lcd::clear();
   lcd::shutdown(); // Turns off LCD display
 
   while(1) {
-
-    /* ********** Testing of sensors ********** */
-    // Commented out for match to prevent brain overload
-
-    // lcd::print(0, "X: %f \n", odom.getX());
-    // lcd::print(1, "Y: %f \n", odom.getY());
-    // lcd::print(2, "Theta: %f degress\n", odom.getTheta());
-    //lcd::print(3, "Theta: %f radians\n", odom.getRadians());
-    // lcd::print(4, "Vertical: %f in\n", math.ticksToInch(VEnc.get_value()));
-    // lcd::print(5, "Horizontial: %f in\n", math.ticksToInch(HEnc.get_value()));
-    // /lcd::print(6, "L: %d ticks\n", LEnc.get_value());
-    // lcd::print(6, "Avg Wrap: %f ticks\n", math.encoderAverage());
-    // lcd::print(7, "Avg Raw: %f ticks\n", math.encoderAverage());
-    // lcd::print(7, "R: %d ticks\n", REnc.get_value());
 
     /* ********** Drivetrain ********** */
 

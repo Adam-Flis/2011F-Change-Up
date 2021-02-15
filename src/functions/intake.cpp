@@ -45,27 +45,20 @@ void Intake::move(float voltage) {
 void Intake::waitUntilColor(char color, float timeOut) {
   Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
   timeOut = math.secToMillis(timeOut) + millis();
-  double low_hue;
-  double high_hue;
-
-  // Sets low and high hue variables
-  if (color == 'B') {
-    low_hue = 200;
-    high_hue = 280;
-  } else if (color == 'R') {
-    low_hue = 005;
-    high_hue = 025;
-  } else { // Ends function if the char is not 'B' or 'R'
+  if (color != 'B' || color != 'R'){ // Ends function if the char is not 'B' or 'R'
     timeOut = millis();
   }
 
   intake.move(100); // Start intakes
 
   while (1) {
-    if (low_hue <= Intake_Optical.get_hue() && Intake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
+    double prox = Intake_Optical.get_proximity();
+    double hue = Intake_Optical.get_hue();
+    if (prox > 225 && hue < 18 && color == 'B') { // Breaks loop when blue color ball is detected
       break;
-    }
-    else if (millis() >= timeOut) { // Breaks loop when timeout is reached
+    } else if (prox > 225 && hue > 100 && color == 'R') { // Breaks loop when red color ball is detected
+      break;
+    } else if (millis() >= timeOut) { // Breaks loop when timeout is reached
       break;
     }
     delay(20); // Loop speed, prevent overload

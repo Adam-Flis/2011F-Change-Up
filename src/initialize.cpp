@@ -1,12 +1,10 @@
 #include "main.h"
 #include "define.hpp"
-#include "functions/chassis.hpp"
 #include "functions/odometry.hpp"
 
 // Code that runs when you start the program
 void initialize() {
   lcd::initialize();
-  Chassis chassis; //Define classes
   Odom odom;
 
   /* ********** Calibrate IMU ********** */
@@ -23,12 +21,10 @@ void initialize() {
   /* ********** Initalize Chassis and Odometry Tasks ********** */
 
   trackingTask = new Task(odom.startTask, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "Track Task");
-  chassisTask = new Task(chassis.startTask, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_MIN, "Chassis Task");
   lcd::set_text(0, "Tasks Initalizing");
   cout<<"Tasks Initializing"<<endl;
   delay(1500);
   cout<<trackingTask<<endl; // Print to console task information
-  cout<<chassisTask<<endl;
   cout<<"Tasks Done Initializing"<<endl;
 }
 

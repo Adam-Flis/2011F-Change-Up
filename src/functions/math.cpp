@@ -72,9 +72,9 @@ float Math::percentToVoltage(float percent) {
  * @param angle (In radians)
  */
 float Math::angleWrap(float rad) {
-  rad = fmod(rad, 2*M_PI);
+  rad = fmod(rad, 2 * M_PI);
     if (rad < 0) {
-        rad += 2*M_PI;
+        rad += 2 * M_PI;
     }
   return rad;
 }
@@ -82,7 +82,7 @@ float Math::angleWrap(float rad) {
 float Math::angleIn180(float rad) {
   float halfCircle = M_PI;
   rad = angleWrap(rad);
-  if(rad >= halfCircle){
+  if (rad >= halfCircle) {
     rad -= (2 * halfCircle);
   }
   return rad;

@@ -12,7 +12,7 @@ static Math math;
 void Odom::reset() {
   VEnc.reset();
   HEnc.reset();
-  odom.x = odom.y = odom.theta = 0;
+  odom.x = odom.y = 0;
 }
 
 /**
@@ -30,10 +30,10 @@ float Odom::getY() {
 }
 
 /**
- * Returns current theta value (In degress)
+ * Returns current theta value (In radians)
  */
 float Odom::getTheta() {
-  return math.angleWrap(odom.theta);
+  return odom.theta;
 }
 
 /**
@@ -42,6 +42,7 @@ float Odom::getTheta() {
 void Odom::startTask() {
   isRunning = true;
   odom.reset();
+  odom.theta = 0;
   cout<<"Encoders and odometry reset"<<endl;
   cout<<"Odometry Task Started"<<endl;
 

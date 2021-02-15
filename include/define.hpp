@@ -24,6 +24,5 @@ extern Controller Main; // Main controller
 /* ********** Declare Tasks ********** */
 
 extern Task *trackingTask;
-extern Task *chassisTask;
 
 #endif

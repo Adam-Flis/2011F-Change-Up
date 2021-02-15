@@ -14,27 +14,13 @@ public:
   void coast();
 
   void move(float velocity, char side);
-  void reset();
 
-  void setFinalVL(float finalVL_);
-  void setFinalVR(float finalVR_);
-  void setStuckTimer(float stuckTimer_);
+  void driveToPoint(float targetX, float targetY, float maxVel,
+                        float pctCutoff, char errorType, bool reversed = false);
 
-  static void startTask();
-  static void endTask();
+  void arcToPoint(float targetX, float targetY, float minVel, bool reversed = false);
 
-  Chassis& driveToPoint(float targetX_, float targetY_, float maxVel_,
-                        float pctCutoff_, char errorType_, bool reversed_ = false);
-
-  Chassis& arcToPoint(float targetX_, float targetY_, float targetVelocity_, bool reversed_ = false);
-
-  Chassis& turnToAngle(float targetTheta_, float maxVel_, float pctCutoff_, char side_ = 'B', bool longestPath_ = false);
-
-  void waitUntilSettled();
-
-private:
-  static bool isRunning, isSettled, isTurning, isDriving, isArcing;
-  float finalVL, finalVR, stuckTimer;
+  void turnToAngle(float targetTheta, float maxVel, float pctCutoff = 0.2, char side = 'B');
 
 };
 

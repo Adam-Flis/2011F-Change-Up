@@ -66,4 +66,3 @@ Controller Main (CONTROLLER_MASTER);
 /* ********** Creates Tasks ********** */
 
 Task *trackingTask = nullptr;
-Task *chassisTask = nullptr;

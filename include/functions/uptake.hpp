@@ -13,6 +13,7 @@ public:
 
   void move(float velocity);
 
+  void waitUntilColor(char color, float timeOut);
   void waitUntilIndexedBottom(float timeOut);
   void waitUntilIndexedMiddle(float timeOut);
   void waitUntilIndexedTop(float timeOut);

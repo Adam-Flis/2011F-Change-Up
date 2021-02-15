@@ -9,12 +9,6 @@ Uptake::~Uptake(){}
 Uptake uptake; // Class definition
 static Math math;
 
-int bottomThresh = 2918;
-int middleThresh = 2929;
-int topThresh = 2907;
-
-int distanceThresh = 230;
-
 /**
  * Stops the uptakes
  */
@@ -42,13 +36,47 @@ void Uptake::move(float voltage) {
 }
 
 /**
+ * Waits until a certain ball color is detected in the uptakes
+ * Pervents overcycling of balls in autonomous
+ * @param color 'B', or 'R' (Ball color; Blue or Red)
+ * @param timeOut (In seconds)
+ */
+void Uptake::waitUntilColor(char color, float timeOut) {
+  Uptake_Optical.set_led_pwm(100); // Turn on optical sensor LED
+  timeOut = math.secToMillis(timeOut) + millis();
+  if (color != 'B' || color != 'R'){ // Ends function if the char is not 'B' or 'R'
+    timeOut = millis();
+  }
+
+  uptake.move(100); // Start intakes
+
+  while (1) {
+    double prox = Uptake_Optical.get_proximity();
+    double hue = Uptake_Optical.get_hue();
+    if (prox > 225 && hue < 18 && color == 'B') { // Breaks loop when blue color ball is detected
+      break;
+    } else if (prox > 225 && hue > 100 && color == 'R') { // Breaks loop when red color ball is detected
+      break;
+    } else if (millis() >= timeOut) { // Breaks loop when timeout is reached
+      break;
+    }
+    delay(20); // Loop speed, prevent overload
+  }
+  delay(50);
+  uptake.stop().brake(); // Stop uptakes
+  Uptake_Optical.set_led_pwm(0); // Turn off optical sensor LED
+}
+
+/**
  * Waits until a ball is indexed to the bottom roller
  * Accurately index a ball to bottom roller
  * @param timeOut (In seconds)
  */
 void Uptake::waitUntilIndexedBottom(float timeOut) {
   timeOut = math.secToMillis(timeOut) + millis();
-  //uptake.move(100); // Start Uptakes
+  uptake.move(100); // Start Uptakes
+  int bottomThresh = Bottom_Line.get_value() - 3;
+  int middleThresh = Middle_Line.get_value() - 3;
   while (1) {
     if (Bottom_Line.get_value() <= bottomThresh) {
       break;
@@ -69,7 +97,8 @@ void Uptake::waitUntilIndexedBottom(float timeOut) {
  */
 void Uptake::waitUntilIndexedMiddle(float timeOut) {
   timeOut = math.secToMillis(timeOut) + millis();
-  uptake.move(65); // Start uptakes
+  uptake.move(70); // Start uptakes
+  int middleThresh = Middle_Line.get_value() - 3;
   while (1) {
     if (Middle_Line.get_value() <= middleThresh) {
       break;
@@ -89,6 +118,7 @@ void Uptake::waitUntilIndexedMiddle(float timeOut) {
 void Uptake::waitUntilIndexedTop(float timeOut) {
   timeOut = math.secToMillis(timeOut) + millis();
   uptake.move(50); // Start uptakes
+  int topThresh = Top_Line.get_value() - 3;
   while (1) {
     if (Top_Line.get_value() <= topThresh) {
       break;
@@ -110,6 +140,7 @@ void Uptake::waitUntilIndexedTop(float timeOut) {
   timeOut = math.secToMillis(timeOut) + millis();
   int lp = 0;
   bool passed = false;
+  int distanceThresh = Distance_Sensor.get() - 5;
   while (lp != amount) {
     if (!passed) {
       uptake.move(100); // Start uptakes
