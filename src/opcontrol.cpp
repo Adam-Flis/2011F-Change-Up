@@ -15,7 +15,8 @@ void opcontrol() {
   Intake intake;
   Uptake uptake;
 
-  Middle_Optical.set_led_pwm(0); // Turn off optical sensor LED
+  Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
+  Uptake_Optical.set_led_pwm(0);
   odom.endTask(); // End tasks to prevent brain overload
   chassis.endTask();
   chassis.brake();
@@ -48,11 +49,11 @@ void opcontrol() {
     /* ********** Ball Uptakes ********** */
 
     if (Main.get_digital(DIGITAL_L1)) { // Button L1 pressed, uptake balls
-      LU.move_velocity(600);
-      RU.move_velocity(600);
+      LU.move_voltage(12000);
+      RU.move_voltage(12000);
     } else if (Main.get_digital(DIGITAL_L2)) { // Button L2 pressed, downtake balls
-      LU.move_velocity(-600);
-      RU.move_velocity(-600);
+      LU.move_voltage(-12000);
+      RU.move_voltage(-12000);
     } else { // Nothing pressed, stop uptake
       LU.set_brake_mode(MOTOR_BRAKE_BRAKE);
       RU.set_brake_mode(MOTOR_BRAKE_BRAKE);
@@ -63,11 +64,11 @@ void opcontrol() {
     /* ********** Ball Intakes ********** */
 
     if (Main.get_digital(DIGITAL_R1)) { // Button L1 pressed, intake balls
-      LI.move_velocity(600);
-      RI.move_velocity(600);
+      LI.move_voltage(12000);
+      RI.move_voltage(12000);
     } else if (Main.get_digital(DIGITAL_R2)) { // Button L2 pressed, outtake balls
-      LI.move_velocity(-600);
-      RI.move_velocity(-600);
+      LI.move_voltage(-12000);
+      RI.move_voltage(-12000);
     } else { //Nothing pressed, stop intake
       LI.set_brake_mode(MOTOR_BRAKE_BRAKE);
       RI.set_brake_mode(MOTOR_BRAKE_BRAKE);

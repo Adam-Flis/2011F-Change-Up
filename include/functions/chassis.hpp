@@ -16,20 +16,25 @@ public:
   void move(float velocity, char side);
   void reset();
 
+  void setFinalVL(float finalVL_);
+  void setFinalVR(float finalVR_);
+  void setStuckTimer(float stuckTimer_);
+
   static void startTask();
   static void endTask();
 
-  Chassis& drive(float distance, float targetVelocity_, float timeOut_);
-  Chassis& turn(float theta, float targetVelocity_, float timeOut_);
-  Chassis& driveToPoint(float targetX_, float targetY_, float targetVelocity_, float timeOut_, bool reversed_ = false);
-  Chassis& arcToPoint(float targetX_, float targetY_, float targetVelocity_, float timeOut_, bool reversed_ = false);
-  Chassis& turnToPoint(float targetX_, float targetY_, float targetVelocity_, float timeOut_, bool longestPath_ = false);
-  Chassis& turnToAngle(float targetTheta_, float targetVelocity_, float timeOut_, char side_ = 'B', bool longestPath_ = false);
+  Chassis& driveToPoint(float targetX_, float targetY_, float maxVel_,
+                        float pctCutoff_, char errorType_, bool reversed_ = false);
+
+  Chassis& arcToPoint(float targetX_, float targetY_, float targetVelocity_, bool reversed_ = false);
+
+  Chassis& turnToAngle(float targetTheta_, float maxVel_, float pctCutoff_, char side_ = 'B', bool longestPath_ = false);
 
   void waitUntilSettled();
 
 private:
   static bool isRunning, isSettled, isTurning, isDriving, isArcing;
+  float finalVL, finalVR, stuckTimer;
 
 };
 

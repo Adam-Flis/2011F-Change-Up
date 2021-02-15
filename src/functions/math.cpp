@@ -68,40 +68,40 @@ float Math::percentToVoltage(float percent) {
 }
 
 /**
- * Returns an angle between 0 and 360 degress
- * @param angle (In degress)
+ * Returns an angle between 0 and 2pi degress
+ * @param angle (In radians)
  */
-float Math::angleWrap(float angle) {
-  angle = fmod(x, 360);
-    if (angle < 0) {
-        angle += 360;
+float Math::angleWrap(float rad) {
+  rad = fmod(rad, 2*M_PI);
+    if (rad < 0) {
+        rad += 2*M_PI;
     }
-  return angle;
+  return rad;
 }
 
-float Math::angleIn180(float angle) {
-  float halfCircle = 180;
-  angle = angleWrap(angle);
-  if(angle >= halfCircle){
-    angle -= (2 * halfCircle);
+float Math::angleIn180(float rad) {
+  float halfCircle = M_PI;
+  rad = angleWrap(rad);
+  if(rad >= halfCircle){
+    rad -= (2 * halfCircle);
   }
-  return angle;
+  return rad;
 }
 
 /**
  * Converts degress to radians, then returns
  * @param angle (In degress)
  */
-float Math::degToRad(float angle) {
-  return angle * M_PI / 180.0;
+float Math::degToRad(float deg) {
+  return deg * M_PI / 180.0;
 }
 
 /**
  * Converts radians to degress, then returns
  * @param angle (In radians)
  */
-float Math::radToDeg(float angle) {
-  return angle / M_PI * 180.0;
+float Math::radToDeg(float rad) {
+  return rad / M_PI * 180.0;
 }
 
 /**

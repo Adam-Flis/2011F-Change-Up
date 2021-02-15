@@ -67,4 +67,3 @@ Controller Main (CONTROLLER_MASTER);
 
 Task *trackingTask = nullptr;
 Task *chassisTask = nullptr;
-Task *rollerTask = nullptr;

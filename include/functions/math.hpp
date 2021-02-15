@@ -13,10 +13,10 @@ public:
   static float percentToVelocity(float percent, char cartColor);
   static float percentToVoltage(float percent);
 
-  static float angleWrap(float angle);
-  static float angleIn180(float angle);
-  static float degToRad(float angle);
-  static float radToDeg(float angle);
+  static float angleWrap(float rad);
+  static float angleIn180(float rad);
+  static float degToRad(float deg);
+  static float radToDeg(float rad);
 
   static float secToMillis(float seconds);
 

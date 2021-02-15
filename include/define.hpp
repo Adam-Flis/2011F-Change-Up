@@ -25,7 +25,5 @@ extern Controller Main; // Main controller
 
 extern Task *trackingTask;
 extern Task *chassisTask;
-extern Task *rollerTask;
-
 
 #endif

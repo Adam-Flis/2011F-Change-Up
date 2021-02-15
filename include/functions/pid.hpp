@@ -6,10 +6,11 @@
 class PID {
 public:
 
-  float drive(float errorTicks_, float maxVelocity_);
-  float drift();
-  float turn(float errorTheta_, float maxVelocity_);
-  float* arc(float errorX_, float errorY_, float maxVelocity_);
+  static float intergral_D, intergral_T, lErrorDistance, lErrorTheta;
+
+  void drive(float errorDistance, float errorTheta, float maxVel, bool reversed);
+  void arc(float errorDistance, float errorTheta, float maxVel, bool reversed);
+  void turn(float errorTheta, float maxVel, char side = 'B', bool longestPath = false);
 
 private:
 

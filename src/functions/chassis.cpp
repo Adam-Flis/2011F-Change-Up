@@ -5,7 +5,6 @@
 #include "functions/pid.hpp"
 #include "functions/math.hpp"
 
-
 Chassis::Chassis(){}
 Chassis::~Chassis(){}
 
@@ -16,50 +15,24 @@ static Odom odom;
 
 /* ********** Define variables ********** */
 
-float kP_D = 0,
-      kI_D = 0,
-      kD_D = 0,
-
-      kP_T = 0,
-      kI_T = 0,
-      kD_T = 0,
-
-      kP_DA = 0,
-      kI_DA = 0,
-      kD_DA = 0,
-
-      kP_TA = 0,
-      kI_TA = 0,
-      kD_TA = 0;
 
 
-float errorX,
-      errorY,
-      errorTheta,
-      errorTicks,
-      lastErrorTicks,
-      errorRotation,
-      targetVelocity,
-      targetX,
+
+float targetX,
       targetY,
       targetTheta,
-      driveVelocity,
-      turnVelocity,
-      velocityL,
-      velocityR,
-      drift,
-      timeOut,
+      maxVel,
+      pctCutoff,
 
-      proportionD,
-      integralD,
-      integralZoneD = 10,
-      integralLimitD = 10 * kI_D,
-      derivativeD,
-      turnD = 0.1, dTurn, lastErrorR;
+      errorX,
+      errorY,
+      errorDistance,
+      errorTheta,
+      aTan;
 
-bool reversed;
+bool reversed, longestPath, first;
 
-char side;
+char side, errorType;
 
 /**
  * Stops the chassis
@@ -122,18 +95,39 @@ void Chassis::move(float velocity, char side) {
   }
 }
 
+void Chassis::setFinalVL(float finalVL_) {
+  chassis.finalVL = finalVL_;
+}
+
+void Chassis::setFinalVR(float finalVR_) {
+  chassis.finalVR = finalVR_;
+}
+
+void Chassis::setStuckTimer(float stuckTimer_) {
+  chassis.stuckTimer = stuckTimer_;
+}
+
 /**
  * Resets the chassis variables
  */
 void Chassis::reset() {
+  finalVR = finalVL = stuckTimer = 0;
+  PID::intergral_T = PID::intergral_D = PID::lErrorTheta = PID::lErrorDistance = 0;
+  chassis.brake();
+  chassis.move(chassis.finalVL, 'L');
+  chassis.move(chassis.finalVR, 'R');
+  first = true;
   isSettled = true;
-  chassis.stop().brake();
+  isTurning = false;
+  isDriving = false;
+  isArcing = false;
 }
 
 /**
  * Starts the chassis drive task
  */
 void Chassis::startTask() {
+  first = false;
   isRunning = true;
   isSettled = false;
   isTurning = false;
@@ -142,113 +136,63 @@ void Chassis::startTask() {
 
   chassis.reset();
   cout<<"Chassis Task Started"<<endl;
+
   while(isRunning) {
     if (!isSettled) {
-      if (isTurning) {
-        // velocity = pid.turn(errorTheta, targetVelocity);
-        // if (side == 'B') {
-        //   velocityL = velocity;
-        //   velocityR = -velocity;
-        // } else if (side == 'L') {
-        //   velocityL = velocity;
-        //   velocityR = 0;
-        // } else if (side == 'R') {
-        //   velocityL = 0;
-        //   velocityR = -velocity;
-        // }
-      } else if (isDriving) {
+      errorX = math.filter(targetX, odom.getX());
 
-        errorX = math.filter(targetX, odom.getX());
-        errorY = math.filter(targetY, odom.getY());
+      errorY = math.filter(targetY, odom.getY());
 
-        errorTicks = sqrt(errorX * errorX + errorY * errorY);
+      errorDistance = sqrt(errorX * errorX + errorY * errorY);
 
-        errorRotation = (math.angleIn180(math.radToDeg(atan2(errorX, errorY))) -
-                        math.angleIn180(math.radToDeg(odom.getTheta())));
-
-        proportionD = errorTicks;
-
-        if(fabs(errorTicks) < integralZoneD && errorTicks != 0){
-            integralD = integralD + errorTicks;
-        } else {
-            integralD = 0;
-        }
-        if(integralD > integralLimitD){
-            integralD = integralLimitD;
-        }
-
-    derivativeD = errorTicks - lastErrorTicks;
-    lastErrorTicks = errorTicks;
-
-    driveVelocity = (kP_D * proportionD + kI_D * integralD + kD_D * derivativeD);
-    if(driveVelocity > targetVelocity){
-      driveVelocity = targetVelocity;
-    }
-    if(driveVelocity < -targetVelocity){
-      driveVelocity = -targetVelocity;
-    }
-    if (reversed) {
-      driveVelocity = -driveVelocity;
-    }
-
-    dTurn = fabs(errorR) - lastErrorR;
-    turnVelocity = dTurn * turnD;
-    lastErrorR = fabs(errorR);
-
-    finalVL = (driveVelocity + turnVelocity);
-    finalVR = (driveVelocity - turnVelocity);
-    if(errorType == "y"){
-      if(fabs(errorY) < pctCutoff){
-        enabled = false;
-      }
-    }
-    else if(errorType == "x"){
-      if(fabs(errorX) < pctCutoff){
-        enabled = false;
-      }
-    }
-    else if(errorType == "d"){
-      if(fabs(errorD) < pctCutoff){
-        enabled = false;
-      }
-
-    }
-    lDrive_V(finalVL * 2);
-    rDrive_V(finalVR * 2);
-  }
-}
+      if (isDriving) {
+        errorTheta = math.radToDeg(math.angleIn180(atan2(errorX, errorY))) -
+                      math.radToDeg((math.angleIn180(odom.getTheta())));
+        pid.drive(errorDistance, errorTheta, maxVel, reversed);
       } else if (isArcing) {
-        velocityArr = pid.arc(errorX, errorY, targetVelocity);
-        velocityL = velocityArr[0];
-        velocityR = velocityArr[1];
+        if (first) {
+          aTan = 2 * math.radToDeg(math.angleIn180(atan2(errorX, errorY)));
+          first = false;
+        }
+        errorTheta = fabs(aTan - math.radToDeg((math.angleIn180(odom.getTheta()))));
+        pid.arc(errorDistance, errorTheta, maxVel, reversed);
+      } else if (isTurning) {
+        errorTheta = math.radToDeg(math.angleWrap(fabs(math.degToRad(targetTheta) - odom.getTheta())));
+        pid.turn(errorTheta, maxVel, side, longestPath);
       }
 
-      if (timeOut <= millis()) {
-        chassis.reset();
-      } else if (targetX <= odom.getX()) {
-        chassis.reset();
-      } else if (targetY <= odom.getY()) {
-        chassis.reset();
-      } else if (targetTheta <= math.radToDeg(odom.getTheta())) {
+      if (errorType == 'Y' && fabs(errorY) < pctCutoff) {
+          chassis.reset();
+      } else if (errorType == 'X' && fabs(errorX) < pctCutoff) {
+          chassis.reset();
+      } else if (errorType == 'D' && fabs(errorDistance) < pctCutoff) {
+          chassis.reset();
+      } else if (errorTheta < 0.2 && isTurning) {
+          chassis.reset();
+      } else if (millis() > chassis.stuckTimer) {
         chassis.reset();
       }
-
-      LFD.move_velocity(velocityL);
-      RFD.move_velocity(velocityR);
-      LBD.move_velocity(velocityL);
-      RBD.move_velocity(velocityR);
+      chassis.move(chassis.finalVL, 'L');
+      chassis.move(chassis.finalVR, 'R');
     }
-    delay(10); // Loop speed, prevent overload
+    delay(10);
   }
 }
 
-Chassis& Chassis::driveToPoint(float targetX_, float targetY_, float targetVelocity_, float timeOut_, bool reversed_) {
+Chassis& Chassis::driveToPoint(float targetX_, float targetY_, float maxVel_,
+                               float pctCutoff_, char errorType_, bool reversed_) {
   if (isRunning) {
     targetX = targetX_;
     targetY = targetY_;
+
+    maxVel = math.percentToVelocity(maxVel_, 'G');
+
+    pctCutoff = pctCutoff_;
+
+    errorType = errorType_;
+
     reversed = reversed_;
-    targetVelocity = math.percentToVelocity(targetVelocity_, 'G');
-    timeOut = math.secToMillis(timeOut_) + millis();
+
     isDriving = true;
     isTurning = false;
     isArcing = false;
@@ -257,39 +201,18 @@ Chassis& Chassis::driveToPoint(float targetX_, float targetY_, float targetVeloc
   return *this;
 }
 
-
-
-
-/**
- * Moves the chassis a certain distance using a PID loop
- * @param distance (In inches -backwards +forwards)
- * @param targetVelocity_ 0 to 100 (In percentage of drive max speed)
- * @param timeOut_ (In seconds)
- */
-Chassis& Chassis::drive(float distance, float targetVelocity_, float timeOut_) {
+Chassis& Chassis::turnToAngle(float targetTheta_, float maxVel_, float pctCutoff_, char side_, bool longestPath_) {
   if (isRunning) {
-    errorTicks = math.inchToTicks(distance);
-    targetVelocity = math.percentToVelocity(targetVelocity_, 'G');
-    timeOut = math.secToMillis(timeOut_) + millis();
-    isDriving = true;
-    isTurning = false;
-    isArcing = false;
-    isSettled = false;
-  }
-  return *this;
-}
+    targetTheta = targetTheta_;
 
-/**
- * Truns the chassis a certain degress using a PID loop
- * @param theta_ (In degress -180 to 180)
- * @param targetVoltage_ 0 to 100 (In percentage of drive max speed)
- * @param timeOut_ (In seconds)
- */
-Chassis& Chassis::turn(float theta, float targetVelocity_, float timeOut_) {
-  if (isRunning) {
-    errorTheta = theta;
-    targetVelocity = math.percentToVelocity(targetVelocity_, 'G');
-    timeOut = math.secToMillis(timeOut_) + millis();
+    maxVel = math.percentToVelocity(maxVel_, 'G');
+
+    pctCutoff = pctCutoff_;
+
+    side = side_;
+
+    longestPath = longestPath_;
+
     isDriving = false;
     isTurning = true;
     isArcing = false;
