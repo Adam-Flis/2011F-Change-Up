@@ -12,9 +12,9 @@ void skills () {
   intake.brake();
   uptake.brake();
 
-  intake.move(-100);
+  intake.move(100);
   delay(500); // Deploy hood
-  chassis.driveToPoint(0, 26, 100, 1.0);
+  chassis.driveToPoint(0, 26, 90, 1.1);
   intake.move(100); // Grab red ball infront of robot
   chassis.waitUntilSettled();
   intake.stop();
@@ -26,7 +26,7 @@ void skills () {
   delay(100);
   uptake.waitUntilShot(1, 0.8); // Score in 1st goal
   chassis.stop().brake();
-  chassis.turnToAngle(-135, 100, 0.7).waitUntilSettled(); // Align on 1st goal
+  chassis.turnToAngle(-135, 100, 0.6).waitUntilSettled(); // Align on 1st goal
   intake.move(-50);
   chassis.drive(-15, 95, 1.1); // Drive away from 1st goal
   delay(200);
