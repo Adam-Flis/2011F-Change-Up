@@ -15,10 +15,11 @@ public:
 
   void move(float velocity, char side);
 
-  void driveToPoint(float targetX, float targetY, float maxVel,
-                        float pctCutoff, char errorType, bool reversed = false);
+  void driveToPoint(float targetX, float targetY, float maxVel, float pctCutoff,
+                    char errorType, bool reversed = false, bool stop = true);
 
-  void arcToPoint(float targetX, float targetY, float minVel, bool reversed = false);
+  void arcToPoint(float targetX, float targetY, float targetTheta, float timeOut,
+                  float minVel, bool reversed = false, bool stop = true);
 
   void turnToAngle(float targetTheta, float maxVel, float pctCutoff = 0.2, char side = 'B');
 

@@ -6,6 +6,8 @@
 Odom odom; // Class definition
 static Math math;
 
+bool Odom::isRunning = false;
+
 /**
  * Resets the odometry variables
  */
@@ -48,8 +50,8 @@ void Odom::startTask() {
 
   // Define variables
   // Constants
-  float Sv = 2.8, // Distance from tracking center to middle of vertical wheel
-        Sh = 7.5, // Distance from tracking center to middle of horizontial wheel
+  float Sv = 3.0, // Distance from tracking center to middle of vertical wheel
+        Sh = 9.5, // Distance from tracking center to middle of horizontial wheel
         verticalSF = 1.028, // Slop adjustment for vertical tracking wheel
         horizontialSF = 1.028,  // Slop adjustment for horizontial trackinng wheel
 
@@ -115,11 +117,11 @@ void Odom::startTask() {
 
       // Calculating the traslation of the vertical wheel
 		  verticalRadius = deltaVertical / deltaTheta + Sv;
-		  verticalCord = (2*sin(deltaTheta/2)) * verticalRadius;
+		  verticalCord = (2 * sin(deltaTheta / 2)) * verticalRadius;
 
       // Calculating the translation with the horizontial wheel
 		  horizontialRadius = deltaHorizontial / deltaTheta + Sh;
-		  horizontialCord = (2*sin(deltaTheta/2)) * horizontialRadius;
+		  horizontialCord = (2 * sin(deltaTheta / 2)) * horizontialRadius;
 
     } else { // If the robot did not turn
 
@@ -133,7 +135,7 @@ void Odom::startTask() {
 	  }
 
     // Finding the average of the current and last theta
-    alpha = deltaTheta/2;
+    alpha = deltaTheta / 2;
     thetaAverage = odom.theta + alpha;
 
     // Adding the change in the axis to the global coordonates

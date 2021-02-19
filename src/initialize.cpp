@@ -24,6 +24,11 @@ void initialize() {
   lcd::set_text(0, "Tasks Initalizing");
   cout<<"Tasks Initializing"<<endl;
   delay(1500);
+  // if (odom.getX() == undefined) {
+  //   lcd::set_text(0, "Redoing Tasks Initalize");
+  //   trackingTask = new Task(odom.startTask, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "Track Task");
+  //   delay(1500);
+  // }
   cout<<trackingTask<<endl; // Print to console task information
   cout<<"Tasks Done Initializing"<<endl;
 }

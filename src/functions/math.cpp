@@ -13,7 +13,7 @@ float ticksPerRevolution = 360; //Number of ticks in one full revolution of enco
  * @param ticks
  */
 float Math::ticksToInch(float ticks) {
-  float wheelRevolutions = ticks/ticksPerRevolution * 1/1; //Teeth of driven/Teeth of driver
+  float wheelRevolutions = ticks / ticksPerRevolution * 1 / 1; //Teeth of driven/Teeth of driver
   float inches = wheelRevolutions * wheelCircumference;
   return inches;
 }
@@ -23,7 +23,7 @@ float Math::ticksToInch(float ticks) {
  * @param inches
  */
 float Math::inchToTicks(float inches) {
-  float motorRevolutions = inches/wheelCircumference * 1/1; //Teeth of driver/Teeth of driven
+  float motorRevolutions = inches / wheelCircumference * 1 / 1; //Teeth of driver/Teeth of driven
   float ticks = motorRevolutions * ticksPerRevolution;
   return ticks;
 }
@@ -47,7 +47,7 @@ float Math::filter(float current, float last) {
  * @param cartColor 'R', 'G', 'B' (Color cart of motor insert; Red, Green, Blue)
  */
 float Math::percentToVelocity(float percent, char cartColor) {
-  int multiplier;
+  float multiplier;
   if (cartColor == 'R') {
     multiplier = 1;
   }
@@ -57,7 +57,7 @@ float Math::percentToVelocity(float percent, char cartColor) {
   else if (cartColor == 'B') {
     multiplier = 6;
   }
-  return percent * multiplier;
+  return (percent * multiplier);
 }
 
 /**
