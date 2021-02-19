@@ -12,9 +12,9 @@ static Odom odom;
 
 /* ********** Define variables ********** */
 
-float kP = 8.8, kI = 0.1, kD = 5.8;
-float kP_t = 325, kI_t = 0.1, kD_t = 2100;
-float kP_d = 9000, kD_d = 575;
+float kP = 8.8, kI = 0.1, kD = 5.9;
+float kP_t = 300, kI_t = 30, kD_t = 3000;
+float kP_d = 10000, kD_d = 575;
 
 float intergralActive = math.inchToTicks(3);
 float intergralActive_t = 5;

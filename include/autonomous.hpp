@@ -15,5 +15,6 @@ static Uptake uptake;
 
 void homeRow(char color);
 void skills();
+void middleGoal();
 
 #endif

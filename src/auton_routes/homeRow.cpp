@@ -20,7 +20,7 @@ void homeRow(char color) {
   /* ********** 1st Middle Goal (1st Goal) ********** */
   intake.brake();
   uptake.brake();
-  intake.move(-100);
+  intake.move(100);
   delay(500); // Deploy hood and shoot preload ball into middle goal
   intake.stop();
 
@@ -47,9 +47,9 @@ void homeRow(char color) {
   intake.stop();
 
   /* ********** Drive across the field ********** */
-  chassis.turnToAngle(-140, 85, 1.2).waitUntilSettled(); // Turn to face downfield
+  chassis.turnToAngle(-140, 85, 1.25).waitUntilSettled(); // Turn to face downfield
   delay(50);
-  chassis.driveToPoint(-37, -25, 90, 2.0).waitUntilSettled(); // Drive across the field
+  chassis.driveToPoint(-38, -26.5, 90, 2.05).waitUntilSettled(); // Drive across the field
 
   /* ********** 2nd Corner Goal (3rd Goal) ********** */
   chassis.turnToAngle(175, 90, 0.9).waitUntilSettled(); // Turn towards goal
@@ -70,4 +70,5 @@ void homeRow(char color) {
   chassis.waitUntilSettled();
   intake.stop();
   uptake.stop();
+  chassis.turnToAngle(-45, 90, 2.0);
 }

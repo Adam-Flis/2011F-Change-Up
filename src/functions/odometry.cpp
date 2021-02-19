@@ -123,6 +123,7 @@ void Odom::startTask() {
     lcd::print(1, "Y: %f \n", odom.getY());
     lcd::print(2, "Theta: %f degress\n", odom.getTheta());
     lcd::print(3, "Left IMU: %f degress\n", LIMU.get_rotation());
+    lcd::print(4, "Right IMU: %f degress\n", RIMU.get_rotation());
 
 	  delay(10);
   }

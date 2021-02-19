@@ -5,10 +5,10 @@
 #define LFD_Port 13
 #define LBD_Port 11
 #define RFD_Port 18
-#define RBD_Port 20
+#define RBD_Port 16
 
 #define Intake_Left_Port 2
-#define Intake_Right_Port 10
+#define Intake_Right_Port 7
 
 #define Uptake_Left_Port 1
 #define Uptake_Right_Port 8
@@ -18,7 +18,7 @@
 #define LIMU_Port 14
 #define RIMU_Port 17
 
-#define Distance_Port 5
+#define Distance_Port 6
 
 #define Intake_Optical_Port 15
 #define Uptake_Optical_Port 3
