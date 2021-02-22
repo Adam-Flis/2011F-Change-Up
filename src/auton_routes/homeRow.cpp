@@ -49,7 +49,7 @@ void homeRow(char color) {
   /* ********** Drive across the field ********** */
   chassis.turnToAngle(-140, 85, 1.25).waitUntilSettled(); // Turn to face downfield
   delay(50);
-  chassis.driveToPoint(-38, -26.5, 90, 2.05).waitUntilSettled(); // Drive across the field
+  chassis.driveToPoint(-38.5, -26.5, 90, 2.05).waitUntilSettled(); // Drive across the field
 
   /* ********** 2nd Corner Goal (3rd Goal) ********** */
   chassis.turnToAngle(175, 90, 0.9).waitUntilSettled(); // Turn towards goal

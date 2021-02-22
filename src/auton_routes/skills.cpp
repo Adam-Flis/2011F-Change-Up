@@ -14,7 +14,7 @@ void skills () {
 
   intake.move(100);
   delay(500); // Deploy hood
-  chassis.driveToPoint(0, 26, 90, 1.1);
+  chassis.driveToPoint(0, 25.5, 90, 1.1);
   intake.move(100); // Grab red ball infront of robot
   chassis.waitUntilSettled();
   intake.stop();
@@ -28,10 +28,10 @@ void skills () {
   chassis.stop().brake();
   chassis.turnToAngle(-135, 100, 0.6).waitUntilSettled(); // Align on 1st goal
   intake.move(-50);
-  chassis.drive(-15, 95, 1.1); // Drive away from 1st goal
+  chassis.drive(-16.5, 95, 1.1); // Drive away from 1st goal
   delay(200);
   intake.move(100);
-  uptake.waitUntilIndexedMiddle(1.2); // Reposition red ball
+  uptake.waitUntilColor('R', 1.2); // Reposition red ball
   intake.stop();
   chassis.waitUntilSettled();
 
@@ -44,7 +44,9 @@ void skills () {
   intake.move(100); // Grab red ball in front of 2nd goal
   chassis.driveToPoint(-17, 57, 90, 1.4).waitUntilSettled(); // Drive towards mid field
   chassis.turnToAngle(-90, 85, 1.0); // Turn towards 2nd goal
-  uptake.waitUntilIndexedTop(1.2); // Index both red balls
+  uptake.move(100); // Index both red balls
+  delay(300);
+  uptake.stop();
   chassis.waitUntilSettled();
   intake.stop();
   chassis.driveToPoint(-26, 57, 90, 0.9).waitUntilSettled(); // Drive towards 2nd goal
@@ -60,12 +62,12 @@ void skills () {
 
   /* ********** 3rd Goal ********** */
   chassis.turnToAngle(0, 75, 1.2).waitUntilSettled(); // Turn towards far field
-  chassis.driveToPoint(0, 108, 90, 2.0); // Drive to far side of field
+  chassis.driveToPoint(0, 109, 90, 2.0); // Drive to far side of field
   intake.move(100);
-  uptake.waitUntilIndexedMiddle(1.8); // Grab red ball for 3rd goal ball
+  uptake.waitUntilColor('R', 1.8); // Grab red ball for 3rd goal ball
   chassis.waitUntilSettled();
   chassis.turnToAngle(-70, 85, 1.1); // Turn towards 3rd goal
-  uptake.waitUntilIndexedMiddle(1.0); // Make sure red ball is inside robot
+  uptake.waitUntilColor('R', 0.8); // Make sure red ball is inside robot
   intake.stop();
   chassis.waitUntilSettled();
   chassis.driveToPoint(-30, 118, 90, 1.0).waitUntilSettled(); // Drive to 3rd goal
@@ -83,7 +85,7 @@ void skills () {
   chassis.turnToAngle(-90, 90, 0.8).waitUntilSettled(); // Turn towards wall
   chassis.driveToPoint(-33.5, 92, 75, 1.4); // Drive to wall
   intake.move(100);
-  uptake.waitUntilIndexedMiddle(1.4); // Grab red wall ball
+  uptake.waitUntilColor('R', 1.3); // Grab red wall ball
   intake.stop();
   chassis.waitUntilSettled();
   delay(100);
@@ -104,7 +106,7 @@ void skills () {
   chassis.turnToAngle(90, 85, 1.0).waitUntilSettled(); // Turn towards wall
   intake.move(100);
   chassis.driveToPoint(73, 100, 90, 1.4).waitUntilSettled(); // Drive across the field
-  uptake.waitUntilIndexedMiddle(1.3); // Index red ball
+  uptake.waitUntilColor('R', 1.3); // Index red ball
   intake.stop();
   chassis.turnToAngle(47, 85, 0.6).waitUntilSettled(); // Turn to 5th goal
   chassis.driveToPoint(93, 118, 90, 1.2).waitUntilSettled(); // Drive to 5th goal
@@ -122,7 +124,7 @@ void skills () {
   chassis.turnToAngle(90, 90, 0.8).waitUntilSettled(); // Turn towards wall
   chassis.driveToPoint(95, 92, 75, 1.6); // Drive to wall
   intake.move(100);
-  uptake.waitUntilIndexedMiddle(1.6); // Grab red wall ball
+  uptake.waitUntilColor('R', 1.6); // Grab red wall ball
   intake.stop();
   chassis.waitUntilSettled();
   chassis.drive(-14, 85, 1.2).waitUntilSettled(); // Drive away from wall
@@ -153,10 +155,10 @@ void skills () {
   chassis.turnToAngle(-90, 70, 1.4).waitUntilSettled();
   chassis.driveToPoint(50, 63, 90, 1.1); // Drive towards middle goal
   intake.move(100);
-  uptake.waitUntilIndexedMiddle(1.1); // Move red ball up into robot
+  uptake.waitUntilColor('R', 1.1); // Move red ball up into robot
   chassis.waitUntilSettled();
   chassis.turnToAngle(-77, 90, 1.0); // Slight turn towards middle goal
-  uptake.waitUntilIndexedMiddle(0.9); // Make sure red ball is inside robot
+  uptake.waitUntilColor('R', 0.5); // Make sure red ball is inside robot
   intake.stop();
   chassis.waitUntilSettled();
   intake.move(-100);

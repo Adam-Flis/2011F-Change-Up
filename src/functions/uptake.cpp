@@ -9,9 +9,9 @@ Uptake::~Uptake(){}
 Uptake uptake; // Class definition
 static Math math;
 
-int bottomThresh = 2913;
-int middleThresh = 2925;
-int topThresh = 2898;
+int bottomThresh = 2910;
+int middleThresh = 2885;
+int topThresh = 2870;
 
 int distanceThresh = 230;
 
