@@ -140,7 +140,7 @@ void Uptake::waitUntilIndexedTop(float timeOut) {
  * @param timeOut (In seconds)
  */
 void Uptake::waitUntilColor(char color, float timeOut) {
-  Uptake_Optical.set_led_pwm(100); // Turn on optical sensor LED
+  Middle_Uptake_Optical.set_led_pwm(100); // Turn on optical sensor LED
   timeOut = math.secToMillis(timeOut) + millis();
   double low_hue;
   double high_hue;
@@ -159,7 +159,7 @@ void Uptake::waitUntilColor(char color, float timeOut) {
   uptake.move(100); // Start uptakes
 
   while (1) {
-    if (low_hue <= Uptake_Optical.get_hue() && Uptake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
+    if (low_hue <= Middle_Uptake_Optical.get_hue() && Middle_Uptake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
       break;
     }
     else if (millis() >= timeOut) { // Breaks loop when timeout is reached
@@ -169,5 +169,43 @@ void Uptake::waitUntilColor(char color, float timeOut) {
   }
   delay(50);
   uptake.stop().brake(); // Stop uptakes
-  Uptake_Optical.set_led_pwm(0); // Turn off optical sensor LED
+  Middle_Uptake_Optical.set_led_pwm(0); // Turn off optical sensor LED
+}
+
+/**
+ * Waits until a certain ball color is detected in the uptakes
+ * Pervents overcycling of balls in autonomous
+ * @param color 'B', or 'R' (Ball color; Blue or Red)
+ * @param timeOut (In seconds)
+ */
+void Uptake::waitUntilColor2(char color, float timeOut) {
+  Top_Uptake_Optical.set_led_pwm(100); // Turn on optical sensor LED
+  timeOut = math.secToMillis(timeOut) + millis();
+  double low_hue;
+  double high_hue;
+
+  // Sets low and high hue variables
+  if (color == 'B') {
+    low_hue = 200;
+    high_hue = 280;
+  } else if (color == 'R') {
+    low_hue = 005;
+    high_hue = 025;
+  } else { // Ends function if the char is not 'B' or 'R'
+    timeOut = millis();
+  }
+
+  uptake.move(50); // Start uptakes
+
+  while (1) {
+    if (low_hue <= Top_Uptake_Optical.get_hue() && Top_Uptake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
+      break;
+    }
+    else if (millis() >= timeOut) { // Breaks loop when timeout is reached
+      break;
+    }
+    delay(20); // Loop speed, prevent overload
+  }
+  uptake.stop().brake(); // Stop uptakes
+  Top_Uptake_Optical.set_led_pwm(0); // Turn off optical sensor LED
 }

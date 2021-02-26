@@ -6,7 +6,7 @@ void middleGoal() {
   /* ********** Deploy hood ********** */
   intake.brake();
   uptake.brake();
-  intake.move(100);
+  intake.move(-100);
   delay(500); // Deploy hood
   intake.stop();
   delay(8000); // Wait to drive towards middle goal

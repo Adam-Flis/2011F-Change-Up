@@ -5,7 +5,7 @@
 #define LFD_Port 11
 #define LBD_Port 12
 #define RFD_Port 20
-#define RBD_Port 19
+#define RBD_Port 18
 
 #define Intake_Left_Port 2
 #define Intake_Right_Port 9
@@ -16,12 +16,13 @@
 /* ********** Define Sensor Ports ********** */
 
 #define LIMU_Port 13
-#define RIMU_Port 18
+#define RIMU_Port 17
 
 #define Distance_Port 4
 
 #define Intake_Optical_Port 14
-#define Uptake_Optical_Port 3
+#define Middle_Uptake_Optical_Port 3
+#define Top_Uptake_Optical_Port 5
 
 #define Bottom_Line_Port 'd'
 #define Middle_Line_Port 'c'
@@ -51,7 +52,8 @@ Imu LIMU (LIMU_Port),
     RIMU (RIMU_Port);
 Distance Distance_Sensor (Distance_Port);
 Optical Intake_Optical (Intake_Optical_Port),
-        Uptake_Optical (Uptake_Optical_Port);
+        Middle_Uptake_Optical (Middle_Uptake_Optical_Port),
+        Top_Uptake_Optical (Top_Uptake_Optical_Port);
 ADILineSensor Bottom_Line (Bottom_Line_Port),
               Middle_Line (Middle_Line_Port),
               Top_Line (Top_Line_Port);
