@@ -18,6 +18,7 @@ public:
   void waitUntilIndexedTop(float timeOut);
   void waitUntilShot(int amount, float timeOut);
   void waitUntilColor(char color, float timeOut);
+  void waitUntilColor2(char color, float timeOut);
 
 };
 
