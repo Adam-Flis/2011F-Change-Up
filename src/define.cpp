@@ -2,27 +2,27 @@
 
 /* ********** Define Motor Ports ********** */
 
-#define LFD_Port 11
-#define LBD_Port 12
+#define LFD_Port 12
+#define LBD_Port 13
 #define RFD_Port 20
 #define RBD_Port 18
 
-#define Intake_Left_Port 2
-#define Intake_Right_Port 9
+#define Intake_Left_Port 3
+#define Intake_Right_Port 10
 
-#define Uptake_Left_Port 1
-#define Uptake_Right_Port 10
+#define Uptake_Left_Port 4
+#define Uptake_Right_Port 9
 
 /* ********** Define Sensor Ports ********** */
 
-#define LIMU_Port 13
+#define LIMU_Port 14
 #define RIMU_Port 17
 
-#define Distance_Port 4
+#define Distance_Port 11
 
-#define Intake_Optical_Port 14
-#define Middle_Uptake_Optical_Port 3
-#define Top_Uptake_Optical_Port 5
+#define Intake_Optical_Port 2
+#define Middle_Uptake_Optical_Port 5
+#define Top_Uptake_Optical_Port 1
 
 #define Bottom_Line_Port 'd'
 #define Middle_Line_Port 'c'
