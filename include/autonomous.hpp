@@ -7,7 +7,6 @@
 #ifndef AUTON_HPP
 #define AUTON_HPP
 
-static Chassis chassis;
 static Intake intake;
 static Odom odom;
 static Math math;

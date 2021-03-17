@@ -10,19 +10,33 @@ public:
 
   Chassis& stop();
   void brake();
-  void hold();
   void coast();
+  void hold();
 
-  void move(float velocity, char side);
+  Chassis& moveVel(double velocity_, char side_ = 'B');
 
-  void driveToPoint(float targetX, float targetY, float maxVel, float pctCutoff,
-                    char errorType, bool reversed = false, bool stop = true);
+  Chassis& driveToPoint(double targetX_, double targetY_, double maxVelocity_,
+                        char errorType_, bool reversed_ = false);
 
-  void arcToPoint(float targetX, float targetY, float targetTheta, float timeOut,
-                  float minVel, bool reversed = false, bool stop = true);
+  Chassis& arcToPoint(double targetX_, double targetY_, double maxVelocity_,
+                      char errorType_, bool reversed_ = false);
 
-  void turnToAngle(float targetTheta, float maxVel, float pctCutoff = 0.2, char side = 'B');
+  Chassis& turnToAngle(double targetTheta_, double maxVelocity_, char side_ = 'B', bool reversed_ = false);
 
+  Chassis& withMinVel(double minVelocity_);
+  Chassis& withTolerance(double tolerance_);
+  Chassis& withMultiplier(double multiplier_);
+
+  Chassis& waitUntillSettled();
+
+  static void start();
+  static void end();
+
+private:
+  static bool isRunning, isSettled, isTurning, isDriving, isArching, reversed, first;
+  static double targetTheta, targetX, targetY, timeOut, tolerance, multiplier,
+                maxVelocity, minVelocity, leftVelocity, rightVelocity;
+  static char errorType, side;
 };
 
 #endif

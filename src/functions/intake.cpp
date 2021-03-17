@@ -1,4 +1,4 @@
- #include "main.h"
+#include "main.h"
 #include "define.hpp"
 #include "functions/intake.hpp"
 #include "functions/math.hpp"
@@ -6,14 +6,23 @@
 Intake::Intake(){}
 Intake::~Intake(){}
 
-Intake intake; // Class definition
+Intake intake;
 static Math math;
 
+// Define variables
+bool Intake::isRunning = false,
+     Intake::hasColor = false;
+
+char Intake::desiredColor, Intake::currentColor;
+
+double Intake::velocity, Intake::voltage, Intake::timeOut;
 
 /**
  * Stops the intakes
  */
 Intake& Intake::stop() {
+  velocity = 0;
+  voltage = 0;
   LI.move_velocity(0);
   RI.move_velocity(0);
   return *this;
@@ -28,38 +37,125 @@ void Intake::brake() {
 }
 
 /**
- * Sets the speed of the intakes
+ * Sets the brake mode of the intakes to coast
+ */
+void Intake::coast() {
+  LI.set_brake_mode(MOTOR_BRAKE_COAST);
+  RI.set_brake_mode(MOTOR_BRAKE_COAST);
+}
+
+/**
+ * Sets the brake mode of the intakes to hold
+ */
+void Intake::hold() {
+  LI.set_brake_mode(MOTOR_BRAKE_HOLD);
+  RI.set_brake_mode(MOTOR_BRAKE_HOLD);
+}
+
+/**
+ * Sets the voltage of the intakes
  * @param voltage -100 to 100 (In percentage of max intake speed)
  */
-void Intake::move(float voltage) {
-  LI.move_voltage(math.percentToVoltage(voltage));
-  RI.move_voltage(math.percentToVoltage(voltage));
+Intake& Intake::moveVolt(double voltage_) {
+  velocity = 0;
+  voltage = math.percentToVoltage(voltage_);
+  return *this;
+}
+
+/**
+ * Sets the velocity of the intakes
+ * @param velocity -100 to 100 (In percentage of max intake speed)
+ */
+Intake& Intake::moveVel(double velocity_) {
+  voltage = 0;
+  velocity = math.percentToVelocity(velocity_, 'B');
+  return *this;
+}
+
+/**
+ * Returns current ball color ('R', 'B', 'N')
+ */
+char Intake::getColor() {
+  return intake.currentColor;
 }
 
 /**
  * Waits until a certain ball color is detected in the intakes
  * Pervents overcycling of balls in autonomous
- * @param color 'B', or 'R' (Ball color; Blue or Red)
+ * @param color 'B' or 'R' (Ball color; Blue or Red)
  * @param timeOut (In seconds)
  */
-void Intake::waitUntilColor(char color, float timeOut) {
-  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
-  timeOut = math.secToMillis(timeOut) + millis();
-  // if (color != 'B' && color != 'R'){ // Ends function if the char is not 'B' or 'R'
-  //   timeOut = millis();
-  // }
+Intake& Intake::color(char color_, double timeOut_) {
+  desiredColor = color_;
+  timeOut = math.secToMillis(timeOut_) + millis();
+  hasColor = false;
+  return *this;
+}
 
-  while (1) {
-    double prox = Intake_Optical.get_proximity();
-    double hue = Intake_Optical.get_hue();
-    if (hue <= 18 && color == 'R') { // Breaks loop when red color ball is detected
-      break;
-    } else if (hue >= 200 && color == 'B') { // Breaks loop when blue color ball is detected
-      break;
-    } else if (millis() >= timeOut) { // Breaks loop when timeout is reached
-      break;
+/**
+ * Waits until the intake has desired color
+ */
+Intake& Intake::waitForColor() {
+  while(!hasColor) delay(10);
+  return *this;
+}
+
+/**
+ * Starts the intake task
+ */
+void Intake::start() {
+  isRunning = true;
+  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
+  string printColor;
+  double hue, prox;
+
+  while (isRunning) {
+
+    hue = Intake_Optical.get_hue();
+    prox = Intake_Optical.get_proximity();
+
+    if (voltage != 0) {
+      LI.move_voltage(voltage);
+      RI.move_voltage(voltage);
+    } else if (velocity != 0) {
+      LI.move_velocity(velocity);
+      RI.move_velocity(velocity);
     }
-    delay(20); // Loop speed, prevent overload
+
+    if (hue <= redThresh && prox >= 225) {
+      currentColor = 'R';
+      printColor = "Red";
+    } else if (hue >= blueThresh && prox >= 225) {
+      currentColor = 'B';
+      printColor = "Blue";
+    } else {
+      currentColor = 'N';
+      printColor = "Not Blue/Red";
+    }
+
+    if (!hasColor) {
+      if (millis() >= timeOut) {
+        hasColor = true;
+      } else if (desiredColor == currentColor) {
+        hasColor = true;
+      }
+    }
+
+    //lcd::print(6, "Inatke Color: %s \n", printColor);
+    delay(20);
   }
-  Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
+}
+
+/**
+ * Ends the intake task
+ */
+void Intake::end() {
+  if (intakeTask != nullptr) {
+    intake.stop();
+    isRunning = false;
+    intakeTask->remove(); // Removes memory stack task is occupying
+    delete intakeTask; // Deletes the task from memory
+    intakeTask = nullptr;
+    Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
+  }
 }

@@ -5,20 +5,19 @@
 
 class Math {
 public:
+  static double ticksToInch(double ticks);
+  static double inchToTicks(double inches);
+  static double filter(double current, double last);
 
-  static float ticksToInch(float ticks);
-  static float inchToTicks(float inches);
-  static float filter(float current, float last);
+  static double percentToVelocity(double percent, char cartColor);
+  static double percentToVoltage(double percent);
 
-  static float percentToVelocity(float percent, char cartColor);
-  static float percentToVoltage(float percent);
+  static double angleWrap(double rad);
+  static double angleIn180(double rad);
+  static double degToRad(double deg);
+  static double radToDeg(double rad);
 
-  static float angleWrap(float rad);
-  static float angleIn180(float rad);
-  static float degToRad(float deg);
-  static float radToDeg(float rad);
-
-  static float secToMillis(float seconds);
+  static double secToMillis(double seconds);
 
 };
 

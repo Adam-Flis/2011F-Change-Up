@@ -5,20 +5,19 @@
 
 class Odom {
 public:
-
   void reset();
 
-  float getX();
-  float getY();
-  float getTheta();
+  double getX();
+  double getY();
+  double getThetaRad();
+  double getThetaDeg();
 
-  static void startTask();
-  static void endTask();
+  static void start();
+  void end();
 
 private:
-  float x, y, theta;
   static bool isRunning;
-
+  static double x, y, thetaRad, thetaDeg;
 };
 
 #endif

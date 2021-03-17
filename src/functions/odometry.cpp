@@ -3,13 +3,44 @@
 #include "functions/odometry.hpp"
 #include "functions/math.hpp"
 
-Odom odom; // Class definition
+Odom odom;
 static Math math;
 
+// Define variables
 bool Odom::isRunning = false;
 
+double Odom::x, Odom::y, Odom::thetaRad, Odom::thetaDeg;
+
 /**
- * Resets the odometry variables
+ * Returns current x value (In inches)
+ */
+double Odom::getX() {
+  return odom.x;
+}
+
+/**
+ * Returns current y value (In inches)
+ */
+double Odom::getY() {
+  return odom.y;
+}
+
+/**
+ * Returns current theta value (In radians)
+ */
+double Odom::getThetaRad() {
+  return odom.thetaRad;
+}
+
+/**
+ * Returns current theta value (In degress)
+ */
+double Odom::getThetaDeg() {
+  return odom.thetaDeg;
+}
+
+/**
+ * Resets x & y odom
  */
 void Odom::reset() {
   VEnc.reset();
@@ -18,116 +49,96 @@ void Odom::reset() {
 }
 
 /**
- * Returns current x value (In inches)
+ * Starts the odometry task
  */
-float Odom::getX() {
-  return odom.x;
-}
-
-/**
- * Returns current y value (In inches)
- */
-float Odom::getY() {
-  return odom.y;
-}
-
-/**
- * Returns current theta value (In radians)
- */
-float Odom::getTheta() {
-  return odom.theta;
-}
-
-/**
- * Starts the odometry tracking task
- */
-void Odom::startTask() {
+void Odom::start() {
   isRunning = true;
+  LIMU.tare_rotation();
+  RIMU.tare_rotation();
   odom.reset();
-  odom.theta = 0;
-  cout<<"Encoders and odometry reset"<<endl;
-  cout<<"Odometry Task Started"<<endl;
+  odom.thetaRad = odom.thetaDeg = 0;
 
   // Define variables
-  // Constants
-  float Sv = 3.0, // Distance from tracking center to middle of vertical wheel
-        Sh = 9.5, // Distance from tracking center to middle of horizontial wheel
-        verticalSF = 1.028, // Slop adjustment for vertical tracking wheel
-        horizontialSF = 1.028,  // Slop adjustment for horizontial trackinng wheel
+  double Tv = 3.0, // Distance from tracking center to middle of vertical wheel
+         Th = 9.5, // Distance from tracking center to middle of horizontial wheel
+         Sv = 1.028, // Slop adjustment for vertical tracking wheel
+         Sh = 1.028,  // Slop adjustment for horizontial trackinng wheel
+         Sl = 7200/7181.9, // Scale factor of left IMU
+         Sr = 7200/7181.9, // Scale factor of right IMU
 
-  // Theta
-        deltaTheta = 0, // Change in theta between refresh cycles
-        alpha = 0, // Average theta robot took over interval
-        theta = 0, // Average theta between average angle and final
-        radius = 0, // Radius of arc traveled by robot
-        thetaFiltered = 0, // Filtered theta value
-        thetaNew = 0, // Theta returned by filter
-        thetaAverage = 0, // Average theta of refresh
-        currentRotation = 0, // Current raw theta
-        lastRotation = 0, // Previous measurement of raw theta
+   // Theta
+         deltaT = 0, // Change in theta between refresh cycles
+         alpha = 0, // Average theta robot took over interval
+         theta = 0, // Average theta between average angle and final
+         radius = 0, // Radius of arc traveled by robot
+         filteredT = 0, // Filtered theta value
+         newT = 0, // Theta returned by filter
+         averageT = 0, // Average theta of refresh
+         currentR = 0, // Current raw theta
+         lastR = 0, // Previous measurement of raw theta
 
-  // Encoder
-        currentVertical = 0, // Current rotations of vertical wheel
-        currentHorizontial = 0, // Current rotations of horizontial wheel
-        lastVertical = 0, // Previous rotation measurement of vertical wheel
-        lastHorizontial = 0, // Previous rotation measurement of horizontial wheel
-        deltaVertical = 0, // Distance traveled by vertical wheel over interval in inches
-        deltaHorizontial = 0, // Distance traveled by horizontial wheel over interval in inches
-        verticalRadius = 0, // Radius vertical wheel traveled
-        horizontialRadius = 0, // Radius horizontial wheel traveled
-        verticalCord = 0, // Traslation of vertical wheel
-        horizontialCord = 0, // Traslation of horizontial wheel
+   // Encoder
+         currentV = 0, // Current rotations of vertical wheel
+         currentH = 0, // Current rotations of horizontial wheel
+         lastV = 0, // Previous rotation measurement of vertical wheel
+         lastH = 0, // Previous rotation measurement of horizontial wheel
+         deltaV = 0, // Distance traveled by vertical wheel over interval in inches
+         deltaH = 0, // Distance traveled by horizontial wheel over interval in inches
+         radiusV = 0, // Radius vertical wheel traveled
+         radiusH = 0, // Radius horizontial wheel traveled
+         cordV = 0, // Traslation of vertical wheel
+         cordH = 0, // Traslation of horizontial wheel
 
-  // IMU
-        iL, // Left IMU sensor
-        iR, // Right IMU sensor
-        sL = 7200/7181.9, // Scale factor of left IMU
-        sR = 7200/7181.9, // Scale factor of right IMU
-        Li = LIMU.get_rotation(), // Initial value of left IMU
-        Ri = RIMU.get_rotation(); // Initial value of right IMU
+   // IMU
+         Li, // Left IMU sensor
+         Ri; // Right IMU sensor
 
   while (isRunning) {
 
-    // Establishing IMU to use
-    iL = (LIMU.get_rotation() - Li) * sL;
-    iR = (RIMU.get_rotation() - Ri) * sR;
-    currentRotation = iR;
-    if (iL > iR) {
-      currentRotation = iL;
+    // Estabblishing which IMU to use to minimize drift
+    Li = LIMU.get_rotation() * Sl;
+    Ri = RIMU.get_rotation() * Sr;
+    currentR = Ri;
+    if (Li > Ri) {
+      currentR = Li;
     }
 
-	  // Calculate theta value
-    thetaFiltered += math.filter(currentRotation, lastRotation);
-    lastRotation = currentRotation;
-    thetaNew = math.degToRad(thetaFiltered);
-    deltaTheta = thetaNew - odom.theta;
+    // Calculate theta
+    filteredT += math.filter(currentR, lastR);
+    lastR = currentR;
+    newT = math.degToRad(filteredT);
+    deltaT = newT - odom.thetaRad;
 
-    // Inches the encoders have traveled
+    // Claculate inches
     // VerticaL wheel
-	  currentVertical = math.ticksToInch(VEnc.get_value()) * verticalSF;
-    deltaVertical = currentVertical - lastVertical;
-    lastVertical = currentVertical;
+	  currentV = math.ticksToInch(VEnc.get_value()) * Sv;
+    deltaV = currentV - lastV;
+    lastV = currentV;
+
     // Horizontial wheel
-	  currentHorizontial = math.ticksToInch(HEnc.get_value()) * horizontialSF;
-    deltaHorizontial = currentHorizontial - lastHorizontial;
-    lastHorizontial = currentHorizontial;
+	  currentH = math.ticksToInch(HEnc.get_value()) * Sh;
+    deltaH = currentH - lastH;
+    lastH = currentH;
 
     // Calculate wheel traslations if the robot has turned
-    if (deltaTheta != 0) {
+    if (deltaT != 0) {
 
       // Calculating the traslation of the vertical wheel
-		  verticalRadius = deltaVertical / deltaTheta + Sv;
-		  verticalCord = (2 * sin(deltaTheta / 2)) * verticalRadius;
+		  radiusV = deltaV / deltaT + Tv;
+		  cordV = (2 * sin(deltaT / 2)) * radiusV;
 
       // Calculating the translation with the horizontial wheel
-		  horizontialRadius = deltaHorizontial / deltaTheta + Sh;
-		  horizontialCord = (2 * sin(deltaTheta / 2)) * horizontialRadius;
+		  radiusH = deltaH / deltaT + Th;
+		  cordH = (2 * sin(deltaT / 2)) * radiusH;
 
-    } else { // If the robot did not turn
+    }
+
+    // If the robot did not turn
+    else {
 
       // Setting the vertical and horizontial movement to the inches rotated
-		  verticalCord = deltaVertical;
-		  horizontialCord = deltaHorizontial;
+		  cordV = deltaV;
+      cordH = deltaH;
 
       // Setting the offset to 0 because it didn't turn
 		  alpha = 0;
@@ -135,38 +146,40 @@ void Odom::startTask() {
 	  }
 
     // Finding the average of the current and last theta
-    alpha = deltaTheta / 2;
-    thetaAverage = odom.theta + alpha;
+    alpha = deltaT / 2;
+    averageT = odom.thetaRad + alpha;
 
     // Adding the change in the axis to the global coordonates
-    odom.x += verticalCord * sin(thetaAverage);
-    odom.y += verticalCord * cos(thetaAverage);
+    odom.x += cordV * sin(averageT);
+    odom.y += cordV * cos(averageT);
 
-    odom.x += horizontialCord * cos(thetaAverage);
-    odom.y += horizontialCord * -sin(thetaAverage);
+    odom.x += cordH * cos(averageT);
+    odom.y += cordH * -sin(averageT);
 
     // Updating the global theta
-    odom.theta += deltaTheta;
+    odom.thetaRad += deltaT;
+    odom.thetaDeg = math.radToDeg(odom.thetaRad);
 
     // Display sensor values to LCD display
     lcd::print(0, "X: %f \n", odom.x);
     lcd::print(1, "Y: %f \n", odom.y);
-    lcd::print(2, "Theta: %f degress\n", math.radToDeg(odom.theta));
-    lcd::print(3, "Left IMU: %f degress\n", iL);
-    lcd::print(4, "Right IMU: %f degress\n", iR);
+    lcd::print(2, "Theta: %f radians\n", odom.thetaRad);
+    lcd::print(3, "Theta: %f degress\n", odom.thetaDeg);
+    lcd::print(4, "Left IMU: %f degress\n", Li);
+    lcd::print(5, "Right IMU: %f degress\n", Ri);
 
-	  delay(10); // Loop speed
+    delay(10);
   }
 }
 
 /**
  * Ends the odometry task
  */
-void Odom::endTask() {
+void Odom::end() {
   if (trackingTask != nullptr) {
+    isRunning = false;
     trackingTask->remove(); // Removes memory stack task is occupying
     delete trackingTask; // Deletes the task from memory
     trackingTask = nullptr;
-    cout<<"Odometry task ended"<<endl;
   }
 }

@@ -10,10 +10,23 @@ public:
 
   Intake& stop();
   void brake();
+  void coast();
+  void hold();
 
-  void move(float velocity);
+  Intake& moveVel(double velocity_);
+  Intake& moveVolt(double voltage_);
 
-  void waitUntilColor(char color, float timeOut);
+  char getColor();
+  Intake& color(char color_, double timeOut_);
+  Intake& waitForColor();
+
+  static void start();
+  void end();
+
+private:
+  static bool isRunning, hasColor;
+  static char desiredColor, currentColor;
+  static double velocity, voltage, timeOut;
 
 };
 

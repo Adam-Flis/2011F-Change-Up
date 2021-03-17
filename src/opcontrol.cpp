@@ -1,21 +1,12 @@
 #include "main.h"
 #include "define.hpp"
-#include "functions/chassis.hpp"
-#include "functions/odometry.hpp"
-#include "functions/math.hpp"
-
 
 void opcontrol() {
 
-  Chassis chassis; // Defines classes
-  Odom odom;
-
-  Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
-  Uptake_Optical.set_led_pwm(0);
-  //odom.endTask(); // End tasks to prevent brain overload
-  chassis.brake();
-  //lcd::clear();
-  //lcd::shutdown(); // Turns off LCD display
+  LFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  LBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  RFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  RBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
   while(1) {
 

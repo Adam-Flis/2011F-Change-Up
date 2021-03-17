@@ -2,19 +2,20 @@
 #include "define.hpp"
 #include "functions/math.hpp"
 
-/* ********** Define variables ********** */
-
-float wheelDiameter = 2.75; //In inches
+// Define variables
+double wheelDiameter = 2.75; //In inches
 double wheelCircumference = wheelDiameter * M_PI;
-float ticksPerRevolution = 360; //Number of ticks in one full revolution of encoder/motor
+double ticksPerRevolution = 360; //Number of ticks in one full revolution of encoder/motor
+double driven = 1;
+double driver = 1;
 
 /**
  * Converts ticks to inches, then returns
  * @param ticks
  */
-float Math::ticksToInch(float ticks) {
-  float wheelRevolutions = ticks / ticksPerRevolution * 1 / 1; //Teeth of driven/Teeth of driver
-  float inches = wheelRevolutions * wheelCircumference;
+double Math::ticksToInch(double ticks) {
+  double wheelRevolutions = ticks / ticksPerRevolution * driven / driver;
+  double inches = wheelRevolutions * wheelCircumference;
   return inches;
 }
 
@@ -22,9 +23,9 @@ float Math::ticksToInch(float ticks) {
  * Converts inches to ticks, then returns
  * @param inches
  */
-float Math::inchToTicks(float inches) {
-  float motorRevolutions = inches / wheelCircumference * 1 / 1; //Teeth of driver/Teeth of driven
-  float ticks = motorRevolutions * ticksPerRevolution;
+double Math::inchToTicks(double inches) {
+  double motorRevolutions = inches / wheelCircumference * driver / driven;
+  double ticks = motorRevolutions * ticksPerRevolution;
   return ticks;
 }
 
@@ -33,8 +34,8 @@ float Math::inchToTicks(float inches) {
  * @param current (Current sensor value)
  * @param last (Last sensor value)
  */
-float Math::filter(float current, float last) {
-  float filteredVal = (current - last);
+double Math::filter(double current, double last) {
+  double filteredVal = current - last;
   if (fabs(filteredVal) < 0.01) {
     filteredVal = 0;
   }
@@ -46,8 +47,8 @@ float Math::filter(float current, float last) {
  * @param percent -100 to 100 (In percentage of max speed)
  * @param cartColor 'R', 'G', 'B' (Color cart of motor insert; Red, Green, Blue)
  */
-float Math::percentToVelocity(float percent, char cartColor) {
-  float multiplier;
+double Math::percentToVelocity(double percent, char cartColor) {
+  double multiplier;
   if (cartColor == 'R') {
     multiplier = 1;
   }
@@ -63,7 +64,7 @@ float Math::percentToVelocity(float percent, char cartColor) {
 /**
  * Converts percent to voltage, then returns
  */
-float Math::percentToVoltage(float percent) {
+double Math::percentToVoltage(double percent) {
   return percent * 120;
 }
 
@@ -71,7 +72,7 @@ float Math::percentToVoltage(float percent) {
  * Returns an angle between 0 and 2pi degress
  * @param angle (In radians)
  */
-float Math::angleWrap(float rad) {
+double Math::angleWrap(double rad) {
   rad = fmod(rad, 2 * M_PI);
     if (rad < 0) {
         rad += 2 * M_PI;
@@ -79,8 +80,8 @@ float Math::angleWrap(float rad) {
   return rad;
 }
 
-float Math::angleIn180(float rad) {
-  float halfCircle = M_PI;
+double Math::angleIn180(double rad) {
+  double halfCircle = M_PI;
   rad = angleWrap(rad);
   if (rad >= halfCircle) {
     rad -= (2 * halfCircle);
@@ -92,7 +93,7 @@ float Math::angleIn180(float rad) {
  * Converts degress to radians, then returns
  * @param angle (In degress)
  */
-float Math::degToRad(float deg) {
+double Math::degToRad(double deg) {
   return deg * M_PI / 180.0;
 }
 
@@ -100,7 +101,7 @@ float Math::degToRad(float deg) {
  * Converts radians to degress, then returns
  * @param angle (In radians)
  */
-float Math::radToDeg(float rad) {
+double Math::radToDeg(double rad) {
   return rad / M_PI * 180.0;
 }
 
@@ -108,6 +109,6 @@ float Math::radToDeg(float rad) {
  * Converts seconds to milliseconds, then returns
  * @param seconds (In seconds)
  */
-float Math::secToMillis(float seconds) {
+double Math::secToMillis(double seconds) {
   return seconds * 1000;
 }

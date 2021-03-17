@@ -10,14 +10,30 @@ public:
 
   Uptake& stop();
   void brake();
+  void coast();
+  void hold();
 
-  void move(float velocity);
+  Uptake& moveVel(double velocity_);
+  Uptake& moveVolt(double voltage_);
 
-  void waitUntilColor(char color, float timeOut);
-  void waitUntilIndexedBottom(float timeOut);
-  void waitUntilIndexedMiddle(float timeOut);
-  void waitUntilIndexedTop(float timeOut);
-  void waitUntilShot(int amount, float timeOut);
+  char getColorB();
+  char getColorM();
+  Uptake& color(char color_, int position_, double timeOut_);
+  Uptake& waitForColor();
+
+  void resetCount();
+  int getCount();
+  Uptake& shot(int amount_, double timeOut_);
+  Uptake& waitForShot();
+
+  static void start();
+  void end();
+
+private:
+  static bool isRunning, isShooting, hasColor;
+  static char desiredColorB, currentColorB, desiredColorM, currentColorM;
+  static double velocity, voltage, timeOut;
+  static int position, desiredAmount, currentAmount;
 
 };
 
