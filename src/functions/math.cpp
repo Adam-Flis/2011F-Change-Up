@@ -81,10 +81,9 @@ double Math::angleWrap(double rad) {
 }
 
 double Math::angleIn180(double rad) {
-  double halfCircle = M_PI;
   rad = angleWrap(rad);
-  if (rad >= halfCircle) {
-    rad -= (2 * halfCircle);
+  if (rad >= M_PI) {
+    rad -= (2 * M_PI);
   }
   return rad;
 }
@@ -111,4 +110,39 @@ double Math::radToDeg(double rad) {
  */
 double Math::secToMillis(double seconds) {
   return seconds * 1000;
+}
+
+double Math::pid(double error, double lastError, double kP, double kI, double kD, string movement) {
+  double velocity, proportion, intergral, derivative,
+         intergralLimit, intergralActive;
+
+  if (movement == "Drive") {
+    intergralLimit = 10 * kI;
+    intergralActive = inchToTicks(5);
+  } else if (movement == "Turn") {
+    intergralLimit = 5 * kI;
+    intergralActive = 3;
+  } else if (movement == "Drift") {
+    intergralLimit = 2 * kI;
+    intergralActive = 1;
+  }
+
+
+  proportion = fabs(error);
+
+  if (proportion < intergralActive && proportion != 0) {
+      intergral = intergral + proportion;
+    } else {
+      intergral = 0;
+    }
+
+    if (intergral > intergralLimit) {
+      intergral = intergralLimit;
+    }
+
+    derivative = proportion - fabs(lastError);
+
+    velocity = kP * proportion + kI * intergral - kD * derivative;
+
+  return velocity;
 }

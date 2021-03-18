@@ -1,12 +1,29 @@
 #include "main.h"
 #include "define.hpp"
+#include "functions/odometry.hpp"
+#include "functions/chassis.hpp"
+#include "functions/intake.hpp"
+#include "functions/uptake.hpp"
+
 
 void opcontrol() {
+
+  Odom odom;
+  Intake intake;
+  Uptake uptake;
+  Chassis chassis;
 
   LFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
   LBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
   RFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
   RBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
+
+  odom.end();
+  chassis.end();
+  intake.end();
+  uptake.end();
+  lcd::clear();
+  lcd::shutdown();
 
   while(1) {
 
@@ -34,10 +51,10 @@ void opcontrol() {
 
     /* ********** Ball Intakes ********** */
 
-    if (Main.get_digital(DIGITAL_R1)) { // Button L1 pressed, intake balls
+    if (Main.get_digital(DIGITAL_R1)) { // Button R1 pressed, intake balls
       LI.move_voltage(12000);
       RI.move_voltage(12000);
-    } else if (Main.get_digital(DIGITAL_R2)) { // Button L2 pressed, outtake balls
+    } else if (Main.get_digital(DIGITAL_R2)) { // Button R2 pressed, outtake balls
       LI.move_voltage(-12000);
       RI.move_voltage(-12000);
     } else { //Nothing pressed, stop intake

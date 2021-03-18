@@ -162,8 +162,8 @@ Uptake& Uptake::waitForShot() {
 void Uptake::start() {
   isRunning = true;
   uptake.resetCount();
-  Bottom_Uptake_Optical.set_led_pwm(100); // Turn on optical sensor LED
-  Middle_Uptake_Optical.set_led_pwm(100);
+  //Bottom_Uptake_Optical.set_led_pwm(100); // Turn on optical sensor LED
+  //Middle_Uptake_Optical.set_led_pwm(100);
   string printColorB, printColorM;
   double hueB, proxB,
          hueM, proxM;
@@ -233,9 +233,9 @@ void Uptake::start() {
       }
     }
 
-    lcd::print(5, "Bottom Uptake Color: %s \n", printColorB);
-    lcd::print(6, "Middle Uptake Color: %s \n", printColorM);
-    lcd::print(7, "Count: %i \n", currentAmount);
+    // lcd::print(5, "Bottom Uptake Color: %s \n", printColorB);
+    // lcd::print(6, "Middle Uptake Color: %s \n", printColorM);
+    // lcd::print(7, "Count: %i \n", currentAmount);
     delay(20);
   }
 
@@ -246,7 +246,7 @@ void Uptake::start() {
  */
 void Uptake::end() {
   if (uptakeTask != nullptr) {
-    uptake.stop();
+    uptake.stop().brake(); // Stops uptake
     isRunning = false;
     uptakeTask->remove(); // Removes memory stack task is occupying
     delete uptakeTask; // Deletes the task from memory

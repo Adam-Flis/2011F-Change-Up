@@ -105,10 +105,10 @@ Intake& Intake::waitForColor() {
  */
 void Intake::start() {
   isRunning = true;
-  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
+  //Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
   string printColor;
   double hue, prox;
-
+  
   while (isRunning) {
 
     hue = Intake_Optical.get_hue();
@@ -151,7 +151,7 @@ void Intake::start() {
  */
 void Intake::end() {
   if (intakeTask != nullptr) {
-    intake.stop();
+    intake.stop().brake(); // Stops intakes
     isRunning = false;
     intakeTask->remove(); // Removes memory stack task is occupying
     delete intakeTask; // Deletes the task from memory

@@ -19,6 +19,8 @@ public:
 
   static double secToMillis(double seconds);
 
+  static double pid(double error, double lastError, double kP, double kI, double kD, string movement);
+
 };
 
 #endif

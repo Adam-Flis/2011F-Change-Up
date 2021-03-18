@@ -16,7 +16,7 @@ bool Chassis::isRunning = false,
      Chassis::isSettled = true,
      Chassis::isTurning = false,
      Chassis::isDriving = false,
-     Chassis::isArching = false,
+     Chassis::isArcing = false,
      Chassis::reversed,
      Chassis::first;
 
@@ -26,6 +26,8 @@ double Chassis::targetTheta, Chassis::targetX, Chassis::targetY,
 
 char Chassis::errorType, Chassis::side;
 
+double lastTheta, errorThetaL, errorDistanceL, errorDriftL;
+
 Chassis& Chassis::stop() {
   leftVelocity = 0;
   rightVelocity = 0;
@@ -33,24 +35,25 @@ Chassis& Chassis::stop() {
   LBD.move_velocity(0);
   RFD.move_velocity(0);
   RBD.move_velocity(0);
+  chassis.reset();
   return *this;
 }
 
-void brake() {
+void Chassis::brake() {
   LFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
   LBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
   RFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
   RBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
 }
 
-void coast() {
+void Chassis::coast() {
   LFD.set_brake_mode(MOTOR_BRAKE_COAST);
   LBD.set_brake_mode(MOTOR_BRAKE_COAST);
   RFD.set_brake_mode(MOTOR_BRAKE_COAST);
   RBD.set_brake_mode(MOTOR_BRAKE_COAST);
 }
 
-void hold() {
+void Chassis::hold() {
   LFD.set_brake_mode(MOTOR_BRAKE_HOLD);
   LBD.set_brake_mode(MOTOR_BRAKE_HOLD);
   RFD.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -75,31 +78,51 @@ Chassis& Chassis::moveVel(double velocity_, char side_) {
 Chassis& Chassis::driveToPoint(double targetX_, double targetY_, double maxVelocity_, char errorType_, bool reversed_) {
   targetX = targetX_;
   targetY = targetY_;
-  maxVelocity = maxVelocity_;
+  maxVelocity = math.percentToVelocity(maxVelocity_, 'G');
   errorType = errorType_;
   reversed = reversed_;
+  isDriving = true;
+  isTurning = false;
+  isArcing = false;
+  isSettled = false;
+  minVelocity = tolerance = 0;
+  multiplier = 1;
   return *this;
 }
 
 Chassis& Chassis::arcToPoint(double targetX_, double targetY_, double maxVelocity_, char errorType_, bool reversed_) {
   targetX = targetX_;
   targetY = targetY_;
-  maxVelocity = maxVelocity_;
+  maxVelocity = math.percentToVelocity(maxVelocity_, 'G');
   errorType = errorType_;
   reversed = reversed_;
+  isDriving = false;
+  isTurning = false;
+  isArcing = true;
+  isSettled = false;
+  first = true;
+  minVelocity = tolerance = 0;
+  multiplier = 1;
   return *this;
 }
 
 Chassis& Chassis::turnToAngle(double targetTheta_, double maxVelocity_, char side_, bool reversed_) {
   targetTheta = targetTheta_;
-  maxVelocity = maxVelocity_;
+  maxVelocity = math.percentToVelocity(maxVelocity_, 'G');
   side = side_;
   reversed = reversed_;
+  isDriving = false;
+  isTurning = true;
+  isArcing = false;
+  isSettled = false;
+  first = true;
+  minVelocity = tolerance = 0;
+  multiplier = 1;
   return *this;
 }
 
 Chassis& Chassis::withMinVel(double minVelocity_) {
-  minVelocity = minVelocity_;
+  minVelocity = math.percentToVelocity(minVelocity_, 'G');
   return *this;
 }
 
@@ -114,47 +137,75 @@ Chassis& Chassis::withMultiplier(double multiplier_) {
 }
 
 Chassis& Chassis::waitUntillSettled() {
-  while(isSettled) delay(10);
+  while(!isSettled) delay(10);
   return *this;
 }
 
+void Chassis::reset() {
+  isSettled = true;
+  first = isDriving = isTurning = isArcing = false;
+  lastTheta = errorThetaL = errorDistanceL, errorDriftL = 0;
+  minVelocity = tolerance = 0;
+  multiplier = 1;
+}
+
 void Chassis::start() {
+
   isRunning = true;
+  isDriving = false;
+  isTurning = false;
+  isArcing = false;
   isSettled = true;
   chassis.stop().brake();
   double turnVel, driveVel, driftVel, numOfTurns,
-         errorTheta, errorX, errorY, errorDistance;
-  while(isRunning) {
+         currentX, currentY,
+         errorTheta, errorX, errorY, errorDistance, errorDrift;
+
+  while (isRunning) {
     if (!isSettled) {
 
-      errorX = math.filter(targetX, odom.getX());
-      errorY = math.filter(targetY, odom.getY());
-      errorDistance = sqrt(pow(errorX, 2) * pow(errorY, 2));
+      currentX = odom.getX();
+      currentY = odom.getY();
+
+      errorX = math.filter(targetX, currentX);
+      errorY = math.filter(targetY, currentY);
+      errorDistance = sqrt(pow(errorX, 2) + pow(errorY, 2));
 
       numOfTurns = fabs(odom.getThetaDeg() / 360);
+      lcd::print(6, "%f", numOfTurns);
 
-      if (numOfTurns > 1) {
-        targetTheta *= numOfTurns;
+      if (first) { 
+        if (numOfTurns > 1 && !isArcing) {
+          targetTheta = fabs(odom.getThetaDeg()) + targetTheta;
+        }
+        if (isArcing) {
+          targetTheta = math.radToDeg(atan2(errorX, errorY)) * numOfTurns * 2;
+        }
+        first = false;
       }
 
-      //Turn logic for when gyro > 360
 
       if (isTurning) {
-        errorTheta = targetTheta - odom.getThetaDeg();
+        errorTheta = math.filter(targetTheta, odom.getThetaDeg());
+
         if (reversed) {
-          errorTheta = (ceil(numOfTurns) * 360) - abs(errorTheta);
+          errorTheta = 360 - fabs(errorTheta);
         }
+        lcd::print(7, "%f", errorTheta);
+
         if (side == 'B') {
-          //turnVel = math.pid(errorTheta, kp, kd, ki, "Turn");
+          turnVel = math.pid(errorTheta, errorThetaL, 0.1, 0, 0, "Turn");
         } else if (side == 'L') {
-          //turnVel = math.pid(errorTheta, kp, kd, ki, "Turn");
+          turnVel = math.pid(errorTheta, errorThetaL, 1, 0, 0, "Turn");
         } else if (side == 'R') {
-          //turnVel = math.pid(errorTheta, kp, kd, ki, "Turn");
+          turnVel = math.pid(errorTheta, errorThetaL, 1, 0, 0, "Turn");
         }
 
-        if (abs(turnVel) > maxVelocity) {
+        errorThetaL = errorTheta;
+
+        if (fabs(turnVel) > maxVelocity) {
           turnVel = maxVelocity;
-        } else if (abs(turnVel) < minVelocity) {
+        } else if (fabs(turnVel) < minVelocity) {
           turnVel = minVelocity;
         }
 
@@ -166,41 +217,58 @@ void Chassis::start() {
         } else if (side == 'R') {
           leftVelocity = 0;
         }
+      } else if (isDriving) {
+        targetTheta = math.radToDeg(atan2(errorX, errorY)) * numOfTurns;
+        errorDrift = math.filter(targetTheta, odom.getThetaDeg());
+        driveVel = math.pid(errorDistance, errorDistanceL, 4.0, 1.0, 2.0, "Drive");
+        driftVel = math.pid(errorDrift, errorDriftL, 0, 0, 0, "Drift");
 
-      }
-      else if (isDriving) {
-        targetTheta = math.radToDeg(math.angleIn180(atan2(errorX, errorY)));
-        errorTheta = targetTheta - math.radToDeg(math.angleIn180(odom.getThetaRad()));
-        //driveVel = math.pid(errorDistance, kp, kd, ki, "Drive");
-        //driftVel = math.pid(errorDistance, kp, kd, ki, "Drift");
-
-        if (abs(driveVel) > maxVelocity) {
-          turnVel = maxVelocity;
-        } else if (abs(driveVel) < minVelocity) {
-          turnVel = minVelocity;
-        }
-
-        leftVelocity = (driveVel + driftVel);
-        rightVelocity = (driveVel - driftVel);
-
-      }
-      else if (isArching) {
-        if (first) {
-          targetTheta = math.radToDeg(math.angleIn180(atan2(errorX, errorY)));
-          first = false;
-        }
-        errorTheta = targetTheta - math.radToDeg(math.angleIn180(odom.getThetaRad()));
-        //driveVel = math.pid(errorDistance, kp, kd, ki, "Drive");
-        //turnVel = math.pid(errorTheta, kp, kd, ki, "Turn");
-
-        if (abs(driveVel) > maxVelocity) {
+        if (fabs(driveVel) > maxVelocity) {
           driveVel = maxVelocity;
-        } else if (abs(driveVel) < minVelocity) {
+        } else if (fabs(driveVel) < minVelocity) {
           driveVel = minVelocity;
         }
 
-        leftVelocity = (driveVel + turnVel);
-        rightVelocity = (driveVel - turnVel);
+        leftVelocity = driveVel + driftVel;
+        rightVelocity = driveVel - driftVel;
+
+      } else if (isArcing) {
+
+        errorTheta = math.filter(targetTheta, odom.getThetaDeg());
+        errorDrift = math.filter(odom.getThetaDeg(), lastTheta);
+
+        // Start turn component of arc
+        if ((targetTheta / 2) < math.radToDeg(atan2(errorX, errorY))) {
+          turnVel = math.pid(errorTheta, errorThetaL, 1, 0, 0, "Turn");
+          driftVel = 0;
+        } else {
+          driftVel = math.pid(errorDrift, errorDriftL, 1, 0, 0, "Drift");
+          turnVel = 0;
+        }
+
+        driveVel = math.pid(errorDistance, errorDistanceL, 1, 0, 0, "Drive");
+
+        errorDistanceL = errorDistance;
+        errorThetaL = errorTheta;
+        errorDriftL = errorDrift;
+
+        if (fabs(driveVel) > maxVelocity) {
+          driveVel = maxVelocity;
+        } else if (fabs(driveVel) < minVelocity) {
+          driveVel = minVelocity;
+        }
+
+        if (errorTheta < 0) {
+          turnVel *= -1;
+        }
+
+        leftVelocity = driveVel + turnVel + driftVel;
+        rightVelocity = driveVel - turnVel - driftVel;
+      }
+
+      if (reversed) {
+        leftVelocity *= -1;
+        rightVelocity *= -1;
       }
 
       leftVelocity *= multiplier;
@@ -210,7 +278,43 @@ void Chassis::start() {
       LBD.move_velocity(leftVelocity);
       RFD.move_velocity(rightVelocity);
       RBD.move_velocity(rightVelocity);
+
+      if (errorType == 'Y') {
+        if (fabs(errorY) <= tolerance) {
+          chassis.reset();
+        }
+      } else if (errorType == 'X') {
+        if (fabs(errorX) <= tolerance) {
+          chassis.reset();
+        }
+      } else if (errorType == 'D') {
+        if (fabs(errorDistance) <= tolerance) {
+          chassis.reset();
+        }
+      } else {
+        if (fabs(errorTheta) <= tolerance) {
+          chassis.stop();
+          chassis.reset();
+        }
+      }
+
+      // if (millis() >= stuckTimer) {
+      //   chassis.reset();
+      // }
+
+      lastTheta = odom.getThetaDeg();
+
     }
+    delay(10);
   }
-  delay(10);
+}
+
+void Chassis::end() {
+  if (isRunning) {
+    chassis.stop().brake(); // Stops the drivetrain
+    isRunning = false;
+    chassisTask->remove(); // Removes memory stack task is occupying
+    delete chassisTask; // Deletes task from memory
+    chassisTask = nullptr;
+  }
 }

@@ -10,7 +10,7 @@
 
 // Intake
 #define LI_Port 3
-#define RI_Port 10
+#define RI_Port 8
 
 // Uptake
 #define LU_Port 4

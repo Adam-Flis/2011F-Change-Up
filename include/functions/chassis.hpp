@@ -13,6 +13,8 @@ public:
   void coast();
   void hold();
 
+  void reset();
+
   Chassis& moveVel(double velocity_, char side_ = 'B');
 
   Chassis& driveToPoint(double targetX_, double targetY_, double maxVelocity_,
@@ -30,10 +32,10 @@ public:
   Chassis& waitUntillSettled();
 
   static void start();
-  static void end();
+  void end();
 
 private:
-  static bool isRunning, isSettled, isTurning, isDriving, isArching, reversed, first;
+  static bool isRunning, isSettled, isTurning, isDriving, isArcing, reversed, first;
   static double targetTheta, targetX, targetY, timeOut, tolerance, multiplier,
                 maxVelocity, minVelocity, leftVelocity, rightVelocity;
   static char errorType, side;
