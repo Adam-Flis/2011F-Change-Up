@@ -24,9 +24,9 @@
 #define Distance_Port 12
 
 // Optical
-#define Intake_Optical_Port 2
+#define Intake_Optical_Port 1
 #define Bottom_Uptake_Optical_Port 5
-#define Middle_Uptake_Optical_Port 1
+#define Middle_Uptake_Optical_Port 2
 
 // Encoder
 #define HEnc_Top_Port 'e'

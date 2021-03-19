@@ -96,7 +96,7 @@ Intake& Intake::color(char color_, double timeOut_) {
  * Waits until the intake has desired color
  */
 Intake& Intake::waitForColor() {
-  while(!hasColor) delay(10);
+  while (!hasColor) delay(20);
   return *this;
 }
 
@@ -105,10 +105,11 @@ Intake& Intake::waitForColor() {
  */
 void Intake::start() {
   isRunning = true;
-  //Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
+  hasColor = true;
+  Intake_Optical.set_led_pwm(0);
   string printColor;
   double hue, prox;
-  
+
   while (isRunning) {
 
     hue = Intake_Optical.get_hue();
@@ -122,10 +123,10 @@ void Intake::start() {
       RI.move_velocity(velocity);
     }
 
-    if (hue <= redThresh && prox >= 225) {
+    if (hue <= redThresh && prox >= 245) {
       currentColor = 'R';
       printColor = "Red";
-    } else if (hue >= blueThresh && prox >= 225) {
+    } else if (hue >= blueThresh && prox >= 245) {
       currentColor = 'B';
       printColor = "Blue";
     } else {

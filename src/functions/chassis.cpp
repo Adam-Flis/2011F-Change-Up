@@ -85,7 +85,8 @@ Chassis& Chassis::driveToPoint(double targetX_, double targetY_, double maxVeloc
   isTurning = false;
   isArcing = false;
   isSettled = false;
-  minVelocity = tolerance = 0;
+  minVelocity = 0;
+  tolerance = 0.1;
   multiplier = 1;
   return *this;
 }
@@ -101,7 +102,8 @@ Chassis& Chassis::arcToPoint(double targetX_, double targetY_, double maxVelocit
   isArcing = true;
   isSettled = false;
   first = true;
-  minVelocity = tolerance = 0;
+  minVelocity = 0;
+  tolerance = 0.1;
   multiplier = 1;
   return *this;
 }
@@ -116,7 +118,8 @@ Chassis& Chassis::turnToAngle(double targetTheta_, double maxVelocity_, char sid
   isArcing = false;
   isSettled = false;
   first = true;
-  minVelocity = tolerance = 0;
+  minVelocity = 0;
+  tolerance = 0.2;
   multiplier = 1;
   return *this;
 }
@@ -137,15 +140,16 @@ Chassis& Chassis::withMultiplier(double multiplier_) {
 }
 
 Chassis& Chassis::waitUntillSettled() {
-  while(!isSettled) delay(10);
+  while (!isSettled) delay(10);
   return *this;
 }
 
 void Chassis::reset() {
   isSettled = true;
-  first = isDriving = isTurning = isArcing = false;
+  isDriving = isTurning = isArcing = false;
   lastTheta = errorThetaL = errorDistanceL, errorDriftL = 0;
-  minVelocity = tolerance = 0;
+  minVelocity = 0;
+  tolerance = 0.1;
   multiplier = 1;
 }
 
@@ -158,7 +162,7 @@ void Chassis::start() {
   isSettled = true;
   chassis.stop().brake();
   double turnVel, driveVel, driftVel, numOfTurns,
-         currentX, currentY,
+         currentX, currentY, motorVoltage, stuckTimer,
          errorTheta, errorX, errorY, errorDistance, errorDrift;
 
   while (isRunning) {
@@ -171,30 +175,27 @@ void Chassis::start() {
       errorY = math.filter(targetY, currentY);
       errorDistance = sqrt(pow(errorX, 2) + pow(errorY, 2));
 
-      numOfTurns = fabs(odom.getThetaDeg() / 360);
-      lcd::print(6, "%f", numOfTurns);
-
-      if (first) { 
-        if (numOfTurns > 1 && !isArcing) {
-          targetTheta = fabs(odom.getThetaDeg()) + targetTheta;
-        }
-        if (isArcing) {
-          targetTheta = math.radToDeg(atan2(errorX, errorY)) * numOfTurns * 2;
-        }
-        first = false;
-      }
-
-
       if (isTurning) {
+        if (first) {
+          numOfTurns = odom.getThetaDeg() / 360;
+          if (fabs(numOfTurns) > 1) {
+            targetTheta = odom.getThetaDeg() + targetTheta;
+          }
+          first = false;
+        }
+
+        //lcd::print(6, "%f", targetTheta);
+
         errorTheta = math.filter(targetTheta, odom.getThetaDeg());
 
-        if (reversed) {
-          errorTheta = 360 - fabs(errorTheta);
-        }
-        lcd::print(7, "%f", errorTheta);
+        // if (reversed) {
+        //   errorTheta = math.filter(targetTheta, odom.getThetaDeg());
+        // }
+
+        //lcd::print(7, "%f", errorTheta);
 
         if (side == 'B') {
-          turnVel = math.pid(errorTheta, errorThetaL, 0.1, 0, 0, "Turn");
+          turnVel = math.pid(errorTheta, errorThetaL, 0.53, 0.025, 0.048, "Turn");
         } else if (side == 'L') {
           turnVel = math.pid(errorTheta, errorThetaL, 1, 0, 0, "Turn");
         } else if (side == 'R') {
@@ -209,8 +210,8 @@ void Chassis::start() {
           turnVel = minVelocity;
         }
 
-        leftVelocity = turnVel;
-        rightVelocity = -turnVel;
+        leftVelocity = turnVel * multiplier;
+        rightVelocity = -turnVel * multiplier;
 
         if (side == 'L') {
           rightVelocity = 0;
@@ -218,10 +219,15 @@ void Chassis::start() {
           leftVelocity = 0;
         }
       } else if (isDriving) {
-        targetTheta = math.radToDeg(atan2(errorX, errorY)) * numOfTurns;
-        errorDrift = math.filter(targetTheta, odom.getThetaDeg());
-        driveVel = math.pid(errorDistance, errorDistanceL, 4.0, 1.0, 2.0, "Drive");
-        driftVel = math.pid(errorDrift, errorDriftL, 0, 0, 0, "Drift");
+
+        driveVel = math.pid(errorDistance, errorDistanceL, 2.8, 1.5, 2.0, "Drive");
+        errorDistanceL = errorDistance;
+
+        errorDrift = math.filter(odom.getThetaDeg(), lastTheta);
+        lastTheta = odom.getThetaDeg();
+
+        driftVel = math.pid(errorDrift, errorDriftL, 0.01, 0.001, 0.001, "Drift");
+        errorDriftL = errorDrift;
 
         if (fabs(driveVel) > maxVelocity) {
           driveVel = maxVelocity;
@@ -229,28 +235,26 @@ void Chassis::start() {
           driveVel = minVelocity;
         }
 
-        leftVelocity = driveVel + driftVel;
-        rightVelocity = driveVel - driftVel;
+        leftVelocity = (driveVel + driftVel) * multiplier;
+        rightVelocity = (driveVel - driftVel) * multiplier;
 
       } else if (isArcing) {
 
-        errorTheta = math.filter(targetTheta, odom.getThetaDeg());
-        errorDrift = math.filter(odom.getThetaDeg(), lastTheta);
+        if (first) {
+          targetTheta = math.radToDeg(atan2(errorX, errorY)) * 2;
+          first = false;
+        }
 
-        // Start turn component of arc
-        if ((targetTheta / 2) < math.radToDeg(atan2(errorX, errorY))) {
-          turnVel = math.pid(errorTheta, errorThetaL, 1, 0, 0, "Turn");
-          driftVel = 0;
+        if (targetTheta != math.angleWrap(odom.getThetaRad())) {
+          errorTheta = math.filter(targetTheta, odom.getThetaDeg());
+          turnVel = math.pid(errorTheta, errorThetaL, 0.6, 0.025, 0.05, "Turn");
+          errorThetaL = errorTheta;
         } else {
-          driftVel = math.pid(errorDrift, errorDriftL, 1, 0, 0, "Drift");
           turnVel = 0;
         }
 
-        driveVel = math.pid(errorDistance, errorDistanceL, 1, 0, 0, "Drive");
-
+        driveVel = math.pid(errorDistance, errorDistanceL, 2.9, 1.5, 2.0, "Drive");
         errorDistanceL = errorDistance;
-        errorThetaL = errorTheta;
-        errorDriftL = errorDrift;
 
         if (fabs(driveVel) > maxVelocity) {
           driveVel = maxVelocity;
@@ -262,8 +266,8 @@ void Chassis::start() {
           turnVel *= -1;
         }
 
-        leftVelocity = driveVel + turnVel + driftVel;
-        rightVelocity = driveVel - turnVel - driftVel;
+        leftVelocity = (driveVel + turnVel) * multiplier;
+        rightVelocity = (driveVel - turnVel) * multiplier;
       }
 
       if (reversed) {
@@ -271,38 +275,40 @@ void Chassis::start() {
         rightVelocity *= -1;
       }
 
-      leftVelocity *= multiplier;
-      rightVelocity *= multiplier;
-
       LFD.move_velocity(leftVelocity);
       LBD.move_velocity(leftVelocity);
       RFD.move_velocity(rightVelocity);
       RBD.move_velocity(rightVelocity);
 
-      if (errorType == 'Y') {
-        if (fabs(errorY) <= tolerance) {
-          chassis.reset();
-        }
-      } else if (errorType == 'X') {
-        if (fabs(errorX) <= tolerance) {
-          chassis.reset();
-        }
-      } else if (errorType == 'D') {
-        if (fabs(errorDistance) <= tolerance) {
-          chassis.reset();
-        }
-      } else {
-        if (fabs(errorTheta) <= tolerance) {
+      if (errorType == 'Y' && fabs(errorY) <= tolerance) {
+        if (minVelocity == 0) {
           chassis.stop();
-          chassis.reset();
         }
+        chassis.reset();
+      } else if (errorType == 'X' && fabs(errorX) <= tolerance) {
+        if (minVelocity == 0) {
+          chassis.stop();
+        }
+        chassis.reset();
+      } else if (errorType == 'D' && fabs(errorDistance) <= tolerance) {
+        if (minVelocity == 0) {
+          chassis.stop();
+        }
+        chassis.reset();
+      } else if (fabs(errorTheta) <= tolerance && isTurning) {
+        chassis.stop();
+        chassis.reset();
       }
 
+      // motorVoltage = (LFD.get_voltage() + RFD.get_voltage()) / 2;
+      // if (motorVoltage <= 10000) {
+      //   stuckTimer = millis() + 500;
+      // }
+      //
       // if (millis() >= stuckTimer) {
+      //   chassis.stop();
       //   chassis.reset();
       // }
-
-      lastTheta = odom.getThetaDeg();
 
     }
     delay(10);

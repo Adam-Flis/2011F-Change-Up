@@ -100,10 +100,10 @@ Uptake& Uptake::color(char color_, int position_, double timeOut_) {
   position = position_;
   if (position == 1) {
     desiredColorB = color_;
-    desiredColorM = 'N';
+    desiredColorM = 'O';
   } else if (position == 2) {
     desiredColorM = color_;
-    desiredColorB = 'N';
+    desiredColorB = 'O';
   }
   timeOut = math.secToMillis(timeOut_) + millis();
   isShooting = false;
@@ -115,7 +115,7 @@ Uptake& Uptake::color(char color_, int position_, double timeOut_) {
  * Waits until the uptake has desired color
  */
 Uptake& Uptake::waitForColor() {
-  while(!hasColor) delay(10);
+  while (!hasColor) delay(20);
   return *this;
 }
 
@@ -151,7 +151,7 @@ int Uptake::getCount() {
  * Waits until the uptake has has shot desired amount
  */
 Uptake& Uptake::waitForShot() {
-  while(isShooting) delay(10);
+  while (isShooting) delay(20);
   return *this;
 }
 
@@ -161,9 +161,11 @@ Uptake& Uptake::waitForShot() {
  */
 void Uptake::start() {
   isRunning = true;
+  isShooting = false;
+  hasColor = true;
   uptake.resetCount();
-  //Bottom_Uptake_Optical.set_led_pwm(100); // Turn on optical sensor LED
-  //Middle_Uptake_Optical.set_led_pwm(100);
+  Bottom_Uptake_Optical.set_led_pwm(0); // Turn on optical sensor LED
+  Middle_Uptake_Optical.set_led_pwm(0);
   string printColorB, printColorM;
   double hueB, proxB,
          hueM, proxM;
@@ -186,10 +188,10 @@ void Uptake::start() {
     }
 
     // Bottom optical sensor
-    if (hueB <= redThresh && proxB >= 225) {
+    if (hueB <= redThresh && proxB >= 245) {
       currentColorB = 'R';
       printColorB = "Red";
-    } else if (hueB >= blueThresh && proxB >= 225) {
+    } else if (hueB >= blueThresh && proxB >= 245) {
       currentColorB = 'B';
       printColorB = "Blue";
     } else {
@@ -198,10 +200,10 @@ void Uptake::start() {
     }
 
     // Middle optical sensor
-    if (hueM <= redThresh && proxM >= 225) {
+    if (hueM <= redThresh && proxM >= 245) {
       currentColorM = 'R';
       printColorM = "Red";
-    } else if (hueM >= blueThresh && proxM >= 225) {
+    } else if (hueM >= blueThresh && proxM >= 245) {
       currentColorM = 'B';
       printColorM = "Blue";
     } else {
@@ -220,12 +222,12 @@ void Uptake::start() {
     if (!hasColor && !isShooting) {
       if (millis() >= timeOut) {
         hasColor = true;
-      } else if (desiredColorB == currentColorB && currentColorM != 'N') {
+      } else if (desiredColorB == currentColorB) {
         hasColor = true;
-      } else if (desiredColorM == currentColorM && currentColorB != 'N') {
+      } else if (desiredColorM == currentColorM) {
         hasColor = true;
       }
-    } if (hasColor && isShooting) {
+    } else if (hasColor && isShooting) {
       if (millis() >= timeOut) {
         isShooting = false;
       } else if (desiredAmount == currentAmount) {
@@ -233,7 +235,7 @@ void Uptake::start() {
       }
     }
 
-    // lcd::print(5, "Bottom Uptake Color: %s \n", printColorB);
+    //lcd::print(6, "Bottom Uptake Color: %s \n", printColorB);
     // lcd::print(6, "Middle Uptake Color: %s \n", printColorM);
     // lcd::print(7, "Count: %i \n", currentAmount);
     delay(20);

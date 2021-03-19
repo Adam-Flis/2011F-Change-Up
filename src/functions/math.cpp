@@ -127,7 +127,6 @@ double Math::pid(double error, double lastError, double kP, double kI, double kD
     intergralActive = 1;
   }
 
-
   proportion = fabs(error);
 
   if (proportion < intergralActive && proportion != 0) {
@@ -140,7 +139,11 @@ double Math::pid(double error, double lastError, double kP, double kI, double kD
       intergral = intergralLimit;
     }
 
-    derivative = proportion - fabs(lastError);
+    if (lastError != 0) {
+      derivative = proportion - fabs(lastError);
+    } else {
+      derivative = 0;
+    }
 
     velocity = kP * proportion + kI * intergral - kD * derivative;
 
