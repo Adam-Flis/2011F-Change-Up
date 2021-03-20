@@ -147,7 +147,9 @@ Chassis& Chassis::waitUntillSettled() {
 void Chassis::reset() {
   isSettled = true;
   isDriving = isTurning = isArcing = false;
+  targetX = targetY = targetTheta = 0;
   lastTheta = errorThetaL = errorDistanceL, errorDriftL = 0;
+  errorType = 'N';
   minVelocity = 0;
   tolerance = 0.1;
   multiplier = 1;
@@ -176,13 +178,13 @@ void Chassis::start() {
       errorDistance = sqrt(pow(errorX, 2) + pow(errorY, 2));
 
       if (isTurning) {
-        if (first) {
-          numOfTurns = odom.getThetaDeg() / 360;
-          if (fabs(numOfTurns) > 1) {
-            targetTheta = odom.getThetaDeg() + targetTheta;
-          }
-          first = false;
-        }
+        // if (first) {
+        //   numOfTurns = odom.getThetaDeg() / 360;
+        //   if (fabs(numOfTurns) > 1) {
+        //     targetTheta = odom.getThetaDeg() + targetTheta;
+        //   }
+        //   first = false;
+        // }
 
         //lcd::print(6, "%f", targetTheta);
 
@@ -209,6 +211,8 @@ void Chassis::start() {
         } else if (fabs(turnVel) < minVelocity) {
           turnVel = minVelocity;
         }
+
+        //lcd::print(6, "%f", turnVel);
 
         leftVelocity = turnVel * multiplier;
         rightVelocity = -turnVel * multiplier;
@@ -241,7 +245,7 @@ void Chassis::start() {
       } else if (isArcing) {
 
         if (first) {
-          targetTheta = math.radToDeg(atan2(errorX, errorY)) * 2;
+          targetTheta = math.radToDeg(atan2(targetX, targetY)) * 2;
           first = false;
         }
 
@@ -252,6 +256,8 @@ void Chassis::start() {
         } else {
           turnVel = 0;
         }
+
+        lcd::print(6, "%f", errorTheta);
 
         driveVel = math.pid(errorDistance, errorDistanceL, 2.9, 1.5, 2.0, "Drive");
         errorDistanceL = errorDistance;
@@ -264,7 +270,11 @@ void Chassis::start() {
 
         if (errorTheta < 0) {
           turnVel *= -1;
+        } else {
+          turnVel *= 1;
         }
+
+        lcd::print(7, "%f", turnVel);
 
         leftVelocity = (driveVel + turnVel) * multiplier;
         rightVelocity = (driveVel - turnVel) * multiplier;
@@ -280,17 +290,17 @@ void Chassis::start() {
       RFD.move_velocity(rightVelocity);
       RBD.move_velocity(rightVelocity);
 
-      if (errorType == 'Y' && fabs(errorY) <= tolerance) {
+      if (errorType == 'Y' && fabs(errorY) < tolerance) {
         if (minVelocity == 0) {
           chassis.stop();
         }
         chassis.reset();
-      } else if (errorType == 'X' && fabs(errorX) <= tolerance) {
+      } else if (errorType == 'X' && fabs(errorX) < tolerance) {
         if (minVelocity == 0) {
           chassis.stop();
         }
         chassis.reset();
-      } else if (errorType == 'D' && fabs(errorDistance) <= tolerance) {
+      } else if (errorType == 'D' && fabs(errorDistance) < tolerance) {
         if (minVelocity == 0) {
           chassis.stop();
         }
@@ -300,15 +310,15 @@ void Chassis::start() {
         chassis.reset();
       }
 
-      // motorVoltage = (LFD.get_voltage() + RFD.get_voltage()) / 2;
-      // if (motorVoltage <= 10000) {
-      //   stuckTimer = millis() + 500;
-      // }
-      //
-      // if (millis() >= stuckTimer) {
-      //   chassis.stop();
-      //   chassis.reset();
-      // }
+      motorVoltage = (LFD.get_voltage() + RFD.get_voltage()) / 2;
+      if (motorVoltage <= 10000) {
+        stuckTimer = millis() + 500;
+      }
+
+      if (millis() >= stuckTimer) {
+        chassis.stop();
+        chassis.reset();
+      }
 
     }
     delay(10);
