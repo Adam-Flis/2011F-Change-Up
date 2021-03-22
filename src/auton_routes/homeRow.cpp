@@ -31,7 +31,9 @@ void homeRow(char color) {
   chassis.driveToPoint(35, 35, 85, 1.8); // Drive towards goal
   intake.move(100);
   //chassis.move(40, 'B'); // Constant pressure on 1st goal
+  uptake.move(100);
   uptake.waitUntilColor(color, 1.8); // Wait until middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
+  uptake.stop();
   intake.stop();
   chassis.waitUntilSettled();
   chassis.stop().brake();
@@ -49,14 +51,16 @@ void homeRow(char color) {
   /* ********** Drive across the field ********** */
   chassis.turnToAngle(-140, 85, 1.25).waitUntilSettled(); // Turn to face downfield
   delay(50);
-  chassis.driveToPoint(-38, -26, 85, 2.1).waitUntilSettled(); // Drive across the field
+  chassis.driveToPoint(-36.5, -24.5, 70, 2.1).waitUntilSettled(); // Drive across the field
 
   /* ********** 2nd Corner Goal (3rd Goal) ********** */
   chassis.turnToAngle(175, 90, 0.9).waitUntilSettled(); // Turn towards goal
   chassis.driveToPoint(-42, -64, 90, 2.5); // Drive towards goal
   intake.move(100);
   //chassis.move(40, 'B'); // Constant pressure on 3rd goal
+  uptake.move(100);
   uptake.waitUntilColor(color, 2.5); // Wait until middle color ball (opponents color) is inside intakes (Prevent ovvercycling of balls)
+  uptake.stop();
   intake.stop();
   chassis.waitUntilSettled();
   chassis.stop().brake();

@@ -156,7 +156,7 @@ void Uptake::waitUntilColor(char color, float timeOut) {
     timeOut = millis();
   }
 
-  uptake.move(100); // Start uptakes
+  //uptake.move(100); // Start uptakes
 
   while (1) {
     if (low_hue <= Middle_Uptake_Optical.get_hue() && Middle_Uptake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
@@ -168,7 +168,7 @@ void Uptake::waitUntilColor(char color, float timeOut) {
     delay(20); // Loop speed, prevent overload
   }
   delay(50);
-  uptake.stop().brake(); // Stop uptakes
+  //uptake.stop().brake(); // Stop uptakes
   Middle_Uptake_Optical.set_led_pwm(0); // Turn off optical sensor LED
 }
 
@@ -195,7 +195,7 @@ void Uptake::waitUntilColor2(char color, float timeOut) {
     timeOut = millis();
   }
 
-  uptake.move(50); // Start uptakes
+  // uptake.move(50); // Start uptakes
 
   while (1) {
     if (low_hue <= Top_Uptake_Optical.get_hue() && Top_Uptake_Optical.get_hue() <= high_hue) { // Breaks loop when ball hue is in range
@@ -206,6 +206,6 @@ void Uptake::waitUntilColor2(char color, float timeOut) {
     }
     delay(20); // Loop speed, prevent overload
   }
-  uptake.stop().brake(); // Stop uptakes
+  // uptake.stop().brake(); // Stop uptakes
   Top_Uptake_Optical.set_led_pwm(0); // Turn off optical sensor LED
 }
