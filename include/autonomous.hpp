@@ -14,6 +14,7 @@ static Math math;
 static Uptake uptake;
 
 void homeRow(char color);
+void homeRow2(char color);
 void skills();
 void middleGoal();
 
