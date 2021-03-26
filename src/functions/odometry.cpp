@@ -61,8 +61,8 @@ void Odom::start() {
   // Define variables
   double Tv = 3.0, // Distance from tracking center to middle of vertical wheel
          Th = 9.5, // Distance from tracking center to middle of horizontial wheel
-         Sv = 1.028, // Slop adjustment for vertical tracking wheel
-         Sh = 1.028,  // Slop adjustment for horizontial trackinng wheel
+         Sv = 1.0, // Slop adjustment for vertical tracking wheel
+         Sh = 1.0,  // Slop adjustment for horizontial trackinng wheel
          Sl = 7200/7181.9, // Scale factor of left IMU
          Sr = 7200/7181.9, // Scale factor of right IMU
 

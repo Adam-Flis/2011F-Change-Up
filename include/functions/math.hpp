@@ -19,8 +19,12 @@ public:
 
   static double secToMillis(double seconds);
 
-  static double pid(double error, double lastError, double kP, double kI, double kD, string movement);
+  static double slew(double velocity, double lastVelocity);
 
+  static double pid(double error, double lastError, double kP, double kI,
+                    double kD, double intergralActive, string movement);
+
+  static double intergral;
 };
 
 #endif

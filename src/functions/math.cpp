@@ -112,25 +112,36 @@ double Math::secToMillis(double seconds) {
   return seconds * 1000;
 }
 
-double Math::pid(double error, double lastError, double kP, double kI, double kD, string movement) {
-  double velocity, proportion, intergral, derivative,
-         intergralLimit, intergralActive;
+double Math::slew(double velocity, double lastVelocity) {
+  double vOut;
+  double vDeriv = velocity - lastVelocity;
+  if (fabs(vDeriv) > 13.5) {
+    vOut = lastVelocity + 13.5;
+  } else {
+    vOut = velocity;
+  }
+  return vOut;
+}
+
+double Math::intergral;
+
+double Math::pid(double error, double lastError, double kP, double kI,
+                 double kD, double intergralActive, string movement) {
+  double velocity, proportion, derivative,
+         intergralLimit;
 
   if (movement == "Drive") {
-    intergralLimit = 10 * kI;
-    intergralActive = inchToTicks(5);
+    intergralLimit = 10 / kI;
   } else if (movement == "Turn") {
-    intergralLimit = 5 * kI;
-    intergralActive = 3;
+    intergralLimit = 5 / kI;
   } else if (movement == "Drift") {
-    intergralLimit = 2 * kI;
-    intergralActive = 1;
+    intergralLimit = 2 / kI;
   }
 
-  proportion = fabs(error);
+  proportion = error;
 
-  if (proportion < intergralActive && proportion != 0) {
-      intergral = intergral + proportion;
+  if (fabs(error) < intergralActive && error != 0) {
+      intergral = intergral + error;
     } else {
       intergral = 0;
     }
@@ -140,12 +151,12 @@ double Math::pid(double error, double lastError, double kP, double kI, double kD
     }
 
     if (lastError != 0) {
-      derivative = proportion - fabs(lastError);
+      derivative = proportion - lastError;
     } else {
       derivative = 0;
     }
 
-    velocity = kP * proportion + kI * intergral - kD * derivative;
+    velocity = kP * proportion + kI * intergral + kD * derivative;
 
   return velocity;
 }

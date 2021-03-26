@@ -5,12 +5,12 @@
 // Drivetrain
 #define LFD_Port 13
 #define LBD_Port 14
-#define RFD_Port 20
-#define RBD_Port 18
+#define RFD_Port 19
+#define RBD_Port 17
 
 // Intake
 #define LI_Port 3
-#define RI_Port 8
+#define RI_Port 20
 
 // Uptake
 #define LU_Port 4
@@ -18,7 +18,7 @@
 
 // IMU
 #define LIMU_Port 15
-#define RIMU_Port 17
+#define RIMU_Port 16
 
 // Distance
 #define Distance_Port 12

@@ -9,8 +9,8 @@ void autonomous() {
 
   homeRow('R');
 
-  // chassis.driveToPoint(0, 48, 90, 'Y').waitUntillSettled();
-  // chassis.turnToAngle(90, 90).waitUntillSettled();
+  //chassis.driveToPoint(0, 36, 100, 'Y').waitUntillSettled();
+  //chassis.turnToAngle(90, 90).waitUntillSettled();
   //chassis.arcToPoint(24, 24, 90, 'Y').waitUntillSettled();
   //chassis.stop();
 

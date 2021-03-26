@@ -13,10 +13,10 @@ void opcontrol() {
   Uptake uptake;
   Chassis chassis;
 
-  LFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
-  LBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
-  RFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
-  RBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  // LFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  // LBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  // RFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  // RBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
   odom.end();
   chassis.end();
@@ -24,6 +24,7 @@ void opcontrol() {
   uptake.end();
   lcd::clear();
   lcd::shutdown();
+  chassis.brake();
 
   while(1) {
 

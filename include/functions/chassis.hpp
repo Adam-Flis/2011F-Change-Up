@@ -18,12 +18,12 @@ public:
   Chassis& moveVel(double velocity_, char side_ = 'B');
 
   Chassis& driveToPoint(double targetX_, double targetY_, double maxVelocity_,
-                        char errorType_, bool reversed_ = false);
+                        char errorType_, double timeOut_, double angle_, bool reversed_ = false);
 
   Chassis& arcToPoint(double targetX_, double targetY_, double maxVelocity_,
-                      char errorType_, bool reversed_ = false);
+                      char errorType_, double timeOut_, bool reversed_ = false);
 
-  Chassis& turnToAngle(double targetTheta_, double maxVelocity_, char side_ = 'B', bool reversed_ = false);
+  Chassis& turnToAngle(double targetTheta_, double maxVelocity_, double timeOut_, char side_ = 'B', bool reversed_ = false);
 
   Chassis& withMinVel(double minVelocity_);
   Chassis& withTolerance(double tolerance_);
@@ -36,8 +36,8 @@ public:
 
 private:
   static bool isRunning, isSettled, isTurning, isDriving, isArcing, reversed, first;
-  static double targetTheta, targetX, targetY, timeOut, tolerance, multiplier,
-                maxVelocity, minVelocity, leftVelocity, rightVelocity;
+  static double targetTheta, targetX, targetY, timeOut, tolerance, multiplier, stuckTimer,
+                maxVelocity, minVelocity, leftVelocity, rightVelocity, angle;
   static char errorType, side;
 };
 
