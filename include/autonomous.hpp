@@ -17,5 +17,6 @@ void homeRow(char color);
 void homeRow2(char color);
 void skills();
 void middleGoal();
+void u();
 
 #endif

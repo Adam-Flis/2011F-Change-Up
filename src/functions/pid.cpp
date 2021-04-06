@@ -12,7 +12,7 @@ static Odom odom;
 
 /* ********** Define variables ********** */
 
-float kP = 8.8, kI = 0.1, kD = 5.9;
+float kP = 8.5, kI = 0.1, kD = 6.5;
 float kP_t = 300, kI_t = 30, kD_t = 3000;
 float kP_d = 10000, kD_d = 575;
 

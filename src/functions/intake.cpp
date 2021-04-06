@@ -70,6 +70,5 @@ void Intake::waitUntilColor(char color, float timeOut) {
     }
     delay(20); // Loop speed, prevent overload
   }
-  intake.stop().brake(); // Stop intakes
   Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
 }
