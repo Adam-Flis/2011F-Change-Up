@@ -8,7 +8,8 @@ void autonomous() {
    //homeRow('R'); // Line up on right side of middle goal
    //homeRow('B');
    //homeRow2('B');
-   homeRow2('R');
+   //homeRow2('R');
    //middleGoal();
+   u();
 
 }

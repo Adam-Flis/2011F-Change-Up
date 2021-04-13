@@ -12,7 +12,7 @@
 
 // Uptake
 #define LU_Port 4
-#define RU_Port 9
+#define RU_Port 7
 
 // IMU
 #define LIMU_Port 15
