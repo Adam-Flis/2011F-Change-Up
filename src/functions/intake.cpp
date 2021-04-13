@@ -123,10 +123,10 @@ void Intake::start() {
       RI.move_velocity(velocity);
     }
 
-    if (hue <= redThresh && prox >= 245) {
+    if (hue <= redThresh && prox >= 200) {
       currentColor = 'R';
       printColor = "Red";
-    } else if (hue >= blueThresh && prox >= 245) {
+    } else if (hue >= blueThresh && prox >= 200) {
       currentColor = 'B';
       printColor = "Blue";
     } else {

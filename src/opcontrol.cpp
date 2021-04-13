@@ -18,13 +18,13 @@ void opcontrol() {
   // RFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
   // RBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
+  chassis.stop().brake();
   odom.end();
   chassis.end();
   intake.end();
   uptake.end();
   lcd::clear();
   lcd::shutdown();
-  chassis.brake();
 
   while(1) {
 

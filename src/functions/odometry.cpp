@@ -160,6 +160,12 @@ void Odom::start() {
     odom.thetaRad += deltaT;
     odom.thetaDeg = math.radToDeg(odom.thetaRad);
 
+    if (competition::is_disabled()) {
+      Main.print(2, 0, "Theta: %0.1f", odom.thetaDeg);
+    } else {
+      Main.clear_line(2);
+    }
+
     // Display sensor values to LCD display
     lcd::print(0, "X: %f \n", odom.x);
     lcd::print(1, "Y: %f \n", odom.y);

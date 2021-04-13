@@ -14,7 +14,7 @@
 
 // Uptake
 #define LU_Port 4
-#define RU_Port 9
+#define RU_Port 7
 
 // IMU
 #define LIMU_Port 15
@@ -74,7 +74,7 @@ Controller Main (CONTROLLER_MASTER);
 double blueThresh = 200;
 double redThresh = 18;
 // Distance
-double distanceThresh = 230;
+double distanceThresh = 220;
 
 // Tasks
 Task *trackingTask = nullptr;

@@ -21,7 +21,7 @@ bool Chassis::isRunning = false,
      Chassis::first;
 
 double Chassis::targetTheta, Chassis::targetX, Chassis::targetY,
-       Chassis::timeOut, Chassis::tolerance, Chassis::multiplier, Chassis::stuckTimer,
+       Chassis::timeOut, Chassis::tolerance, Chassis::multiplier,
        Chassis::maxVelocity, Chassis::minVelocity, Chassis::leftVelocity, Chassis::rightVelocity,
        Chassis::angle;
 
@@ -29,9 +29,18 @@ char Chassis::errorType, Chassis::side;
 
 double lastTheta, errorThetaL, errorDistanceL, errorDriftL, lastVelocity, intergralActive;
 
+double turnVel, driveVel, driftVel,
+       currentX, currentY, motorVoltage,
+       errorTheta, errorX, errorY, errorDistance, errorDrift,
+       minMovement = math.percentToVelocity(15, 'G');
+
 Chassis& Chassis::stop() {
   leftVelocity = 0;
   rightVelocity = 0;
+  minVelocity = 0;
+  driftVel = 0;
+  driveVel = 0;
+  turnVel = 0;
   LFD.move_velocity(0);
   LBD.move_velocity(0);
   RFD.move_velocity(0);
@@ -84,13 +93,8 @@ Chassis& Chassis::driveToPoint(double targetX_, double targetY_, double maxVeloc
   timeOut = math.secToMillis(timeOut_) + millis();
   reversed = reversed_;
   isDriving = true;
-  isTurning = false;
-  isArcing = false;
   isSettled = false;
-  first = true;
-  minVelocity = 0;
   tolerance = 0.2;
-  multiplier = 1;
   return *this;
 }
 
@@ -101,14 +105,9 @@ Chassis& Chassis::arcToPoint(double targetX_, double targetY_, double maxVelocit
   errorType = errorType_;
   timeOut = math.secToMillis(timeOut_) + millis();
   reversed = reversed_;
-  isDriving = false;
-  isTurning = false;
   isArcing = true;
   isSettled = false;
-  first = true;
-  minVelocity = 0;
   tolerance = 0.1;
-  multiplier = 1;
   return *this;
 }
 
@@ -118,19 +117,17 @@ Chassis& Chassis::turnToAngle(double targetTheta_, double maxVelocity_, double t
   side = side_;
   timeOut = math.secToMillis(timeOut_) + millis();
   reversed = reversed_;
-  isDriving = false;
   isTurning = true;
-  isArcing = false;
   isSettled = false;
-  first = true;
-  minVelocity = 0;
-  tolerance = 0.2;
-  multiplier = 1;
+  tolerance = 0.025;
   return *this;
 }
 
 Chassis& Chassis::withMinVel(double minVelocity_) {
   minVelocity = math.percentToVelocity(minVelocity_, 'G');
+  if (minVelocity <= minMovement) {
+    minVelocity = minMovement;
+  }
   return *this;
 }
 
@@ -152,13 +149,13 @@ Chassis& Chassis::waitUntillSettled() {
 void Chassis::reset() {
   isSettled = true;
   isDriving = isTurning = isArcing = false;
-  targetX = targetY = targetTheta = timeOut = 0;
-  stuckTimer = 0;
+  targetX = targetY = targetTheta = timeOut = maxVelocity = 0;
+  errorTheta = errorDistance = errorX = errorY = 0;
   lastTheta = errorThetaL = errorDistanceL = errorDriftL = lastVelocity = intergralActive = 0;
   errorType = 'N';
-  minVelocity = 0;
-  tolerance = 0.1;
   multiplier = 1;
+  first = true;
+  minVelocity = minMovement;
 }
 
 void Chassis::start() {
@@ -168,10 +165,6 @@ void Chassis::start() {
   isArcing = false;
   isSettled = true;
   chassis.stop().brake();
-  double turnVel, driveVel, driftVel, numOfTurns,
-         currentX, currentY, motorVoltage,
-         errorTheta, errorX, errorY, errorDistance, errorDrift;
-
   while (isRunning) {
     if (!isSettled) {
 
@@ -188,36 +181,15 @@ void Chassis::start() {
           math.intergral = 0;
           first = false;
         }
-        // if (first) {
-        //   numOfTurns = odom.getThetaDeg() / 360;
-        //   if (fabs(numOfTurns) > 1) {
-        //     targetTheta = odom.getThetaDeg() + targetTheta;
-        //   }
-        //   first = false;
-        // }
-
-        //lcd::print(6, "%f", targetTheta);
 
         errorTheta = math.filter(targetTheta, odom.getThetaDeg());
 
-        // if (errorTheta < 0) {
-        //   reversed = true;
-        // } else {
-        //   reversed = false;
-        // }
-
-        // if (reversed) {
-        //   errorTheta = math.filter(targetTheta, odom.getThetaDeg());
-        // }
-
-        //lcd::print(7, "%f", errorTheta);
-
         if (side == 'B') {
-          turnVel = math.pid(errorTheta, errorThetaL, 0.93, 0.012, 11.5, 15, "Turn");
+          turnVel = math.pid(errorTheta, errorThetaL, 0.92, 0.012, 11.5, 15, "Turn");
         } else if (side == 'L') {
-          turnVel = math.pid(errorTheta, errorThetaL, 1, 0, 0, 3, "Turn");
+          turnVel = math.pid(errorTheta, errorThetaL, 0.92, 0.012, 11.5, 15, "Turn");
         } else if (side == 'R') {
-          turnVel = math.pid(errorTheta, errorThetaL, 1, 0, 0, 3, "Turn");
+          turnVel = math.pid(errorTheta, errorThetaL, 0.92, 0.012, 11.5, 15, "Turn");
         }
 
         errorThetaL = errorTheta;
@@ -228,7 +200,13 @@ void Chassis::start() {
           turnVel = minVelocity;
         }
 
-        //lcd::print(6, "%f", turnVel);
+        if (minVelocity <= minMovement) {
+          minVelocity = 0;
+        }
+
+        lcd::print(7, "%f", turnVel);
+
+        cout<<turnVel<<endl;
 
         leftVelocity = turnVel * multiplier;
         rightVelocity = -turnVel * multiplier;
@@ -246,13 +224,15 @@ void Chassis::start() {
           first = false;
         }
 
-        lcd::print(7, "%f", intergralActive);
-
-        driveVel = math.pid(errorDistance, errorDistanceL, 4.0, 0.05, 12, intergralActive, "Drive");
+        //driveVel = math.pid(errorDistance, errorDistanceL, 2.9, 0.01, 5.25, intergralActive, "Drive");
+        driveVel = math.pid(errorDistance, errorDistanceL, 3.2, 0.01, 5.4, intergralActive, "Drive");
         errorDistanceL = errorDistance;
 
-        // errorDrift = angle - odom.getThetaDeg();
-        // driftVel = errorDrift * 0.02;
+        errorDrift = odom.getThetaDeg() - angle;
+        driftVel = errorDrift * 0.002;
+
+        driveVel = math.slew(driveVel, lastVelocity);
+        lastVelocity = driveVel;
 
         if (fabs(driveVel) > maxVelocity) {
           driveVel = maxVelocity;
@@ -260,16 +240,17 @@ void Chassis::start() {
           driveVel = minVelocity;
         }
 
-        // driveVel = math.slew(driveVel, lastVelocity);
-        // lastVelocity = driveVel;
+        lcd::print(7, "%f", driveVel);
 
-        if (!reversed) {
-          driveVel = math.slew(driveVel, lastVelocity);
-          lastVelocity = driveVel;
-        }
+        cout<<driveVel<<endl;
 
-        leftVelocity = (driveVel + driftVel) * multiplier;
-        rightVelocity = (driveVel - driftVel) * multiplier;
+        // if (!reversed) {
+        //   driveVel = math.slew(driveVel, lastVelocity);
+        //   lastVelocity = driveVel;
+        // }
+
+        leftVelocity = (driveVel - driftVel) * multiplier;
+        rightVelocity = (driveVel + driftVel) * multiplier;
 
       } else if (isArcing) {
 
@@ -315,22 +296,22 @@ void Chassis::start() {
       }
 
       LFD.move_velocity(leftVelocity);
-      LBD.move_velocity(leftVelocity);
       RFD.move_velocity(rightVelocity);
+      LBD.move_velocity(leftVelocity);
       RBD.move_velocity(rightVelocity);
 
-      if (errorType == 'Y' && fabs(errorY) < tolerance) {
-        if (minVelocity == 0) {
+      if (errorType == 'Y' && fabs(errorY) <= tolerance) {
+        if (minVelocity <= minMovement) {
           chassis.stop();
         }
         chassis.reset();
-      } else if (errorType == 'X' && fabs(errorX) < tolerance) {
-        if (minVelocity == 0) {
+      } else if (errorType == 'X' && fabs(errorX) <= tolerance) {
+        if (minVelocity <= minMovement) {
           chassis.stop();
         }
         chassis.reset();
-      } else if (errorType == 'D' && fabs(errorDistance) < tolerance) {
-        if (minVelocity == 0) {
+      } else if (errorType == 'D' && fabs(errorDistance) <= tolerance) {
+        if (minVelocity <= minMovement) {
           chassis.stop();
         }
         chassis.reset();
@@ -339,23 +320,10 @@ void Chassis::start() {
         chassis.reset();
       }
 
-      // c::imu_accel_s_t LAccel = LIMU.get_accel();
-      // c::imu_accel_s_t RAccel = RIMU.get_accel();
-      // lcd::print(6, "{x: %.2f, y: %.2f, z: %.2f}\n", LAccel.x, LAccel.y, LAccel.z);
-      // if (fabs(LAccel.x) > 0.05 || fabs(RAccel.x) > 0.05) {
-      //   stuckTimer = millis() + 500;
-      // }
-      //
-      // if (millis() > stuckTimer && stuckTimer != 0) {
-      //   chassis.stop();
-      //   chassis.reset();
-      // }
-
       if (millis() > timeOut && timeOut != 0) {
          chassis.stop();
          chassis.reset();
       }
-
     }
     delay(10);
   }

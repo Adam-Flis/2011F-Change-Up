@@ -36,7 +36,7 @@ public:
 
 private:
   static bool isRunning, isSettled, isTurning, isDriving, isArcing, reversed, first;
-  static double targetTheta, targetX, targetY, timeOut, tolerance, multiplier, stuckTimer,
+  static double targetTheta, targetX, targetY, timeOut, tolerance, multiplier,
                 maxVelocity, minVelocity, leftVelocity, rightVelocity, angle;
   static char errorType, side;
 };

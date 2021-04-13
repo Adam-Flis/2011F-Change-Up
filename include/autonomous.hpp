@@ -15,7 +15,7 @@ static Uptake uptake;
 static Chassis chassis;
 
 void homeRow(char color);
-void leftCorner(char color);
+void rightCorner(char color);
 void skills();
 
 #endif

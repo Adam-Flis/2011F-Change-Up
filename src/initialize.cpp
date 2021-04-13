@@ -26,7 +26,7 @@ void initialize() {
   // Initalize Tasks
   trackingTask = new Task(odom.start, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "Tracking Task");
   delay(300);
-  chassisTask = new Task(chassis.start, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Chassis Task");
+  chassisTask = new Task(chassis.start, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "Chassis Task");
   delay(300);
   intakeTask = new Task(intake.start, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Intake Task");
   delay(300);

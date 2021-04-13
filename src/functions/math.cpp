@@ -131,9 +131,9 @@ double Math::pid(double error, double lastError, double kP, double kI,
          intergralLimit;
 
   if (movement == "Drive") {
-    intergralLimit = 10 / kI;
+    intergralLimit = 1000;
   } else if (movement == "Turn") {
-    intergralLimit = 5 / kI;
+    intergralLimit = 600;
   } else if (movement == "Drift") {
     intergralLimit = 2 / kI;
   }
