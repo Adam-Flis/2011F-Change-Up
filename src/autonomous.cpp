@@ -10,12 +10,14 @@ void autonomous() {
   Bottom_Uptake_Optical.set_led_pwm(100);
   Middle_Uptake_Optical.set_led_pwm(100);
 
-  //homeRow('R');
+  homeRow('R');
+  //homeRow('B');
   //rightCorner('R');
-  skills();
+  //rightCorner('B');
+  //skills();
 
   //chassis.driveToPoint(0, 48, 100, 'Y', 10.0, 0).waitUntillSettled();
-  // chassis.turnToAngle(90, 100, 5.0).waitUntillSettled();
+  //chassis.turnToAngle(180, 100, 5.0).waitUntillSettled();
   //chassis.arcToPoint(24, 24, 90, 'Y').waitUntillSettled();
   //chassis.stop();
 

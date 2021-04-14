@@ -225,11 +225,11 @@ void Chassis::start() {
         }
 
         //driveVel = math.pid(errorDistance, errorDistanceL, 2.9, 0.01, 5.25, intergralActive, "Drive");
-        driveVel = math.pid(errorDistance, errorDistanceL, 3.2, 0.01, 5.4, intergralActive, "Drive");
+        driveVel = math.pid(errorDistance, errorDistanceL, 3.2, 0.01, 5.55, intergralActive, "Drive");
         errorDistanceL = errorDistance;
 
         errorDrift = odom.getThetaDeg() - angle;
-        driftVel = errorDrift * 0.002;
+        driftVel = errorDrift * 0.01;
 
         driveVel = math.slew(driveVel, lastVelocity);
         lastVelocity = driveVel;
