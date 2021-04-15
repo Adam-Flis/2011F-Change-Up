@@ -101,9 +101,9 @@ Chassis& Chassis::moveVel(double velocity_, char side_) {
 }
 
 /**
- * Moves the robot to a certain point on the field
+ * Moves the robot to a specific point
  * @param targetX_ (In inches)
- * @param y (In inches)
+ * @param targetY_ (In inches)
  * @param maxVelocity_ 0 to 100 (In percentage of chassis max speed)
  * @param errorType_ 'X', 'Y', or 'D' (Breaking error type; X, Y, or Distance)
  * @param timeOut_ (In seconds)
@@ -125,7 +125,14 @@ Chassis& Chassis::driveToPoint(double targetX_, double targetY_, double maxVeloc
   return *this;
 }
 
-
+/**
+ * Turns the robot to a specific angle
+ * @param targetTheta (In degress)
+ * @param maxVelocity_ 0 to 100 (In percentage of chassis max speed)
+ * @param timeOut_ (In seconds)
+ * @param side_ 'B', 'L', 'R' (Chassis side that will move; Both, Left, or Right)
+ * @param reverse_ True or False (Perform action backwards; false by default)
+ */
 Chassis& Chassis::turnToAngle(double targetTheta_, double maxVelocity_, double timeOut_, char side_, bool reversed_) {
   targetTheta = targetTheta_;
   maxVelocity = math.percentToVelocity(maxVelocity_, 'G');
@@ -138,7 +145,10 @@ Chassis& Chassis::turnToAngle(double targetTheta_, double maxVelocity_, double t
   return *this;
 }
 
-
+/**
+ * Minimum velocity for movements
+ * @param minVelocity_ 0 to 100 (In percentage of chassis max speed)
+ */
 Chassis& Chassis::withMinVel(double minVelocity_) {
   minVelocity = math.percentToVelocity(minVelocity_, 'G');
   if (minVelocity <= minMovement) {
@@ -147,25 +157,35 @@ Chassis& Chassis::withMinVel(double minVelocity_) {
   return *this;
 }
 
-
+/**
+ * isSettled or break tolerance for movements
+ * @param tolerance_ (In inches or degress)
+ */
 Chassis& Chassis::withTolerance(double tolerance_) {
   tolerance = tolerance_;
   return *this;
 }
 
-
+/**
+ * Speed multiplier for movements
+ * @param multiplier_
+ */
 Chassis& Chassis::withMultiplier(double multiplier_) {
   multiplier = multiplier_;
   return *this;
 }
 
-
+/**
+ * Waits until the chassis has settled
+ */
 Chassis& Chassis::waitUntillSettled() {
   while (!isSettled) delay(10);
   return *this;
 }
 
-
+/**
+ * Resets the chassis variables
+ */
 void Chassis::reset() {
   isSettled = true;
   isDriving = isTurning = false;
@@ -178,7 +198,9 @@ void Chassis::reset() {
   minVelocity = minMovement;
 }
 
-
+/**
+ * Starts the chassis drive task
+ */
 void Chassis::start() {
   isRunning = true;
   isDriving = false;
@@ -193,7 +215,7 @@ void Chassis::start() {
 
       errorX = math.filter(targetX, currentX);
       errorY = math.filter(targetY, currentY);
-      errorDistance = sqrt(pow(errorX, 2) + pow(errorY, 2));
+      errorDistance = sqrt(pow(errorX, 2) + pow(errorY, 2)); // Calculate distance from target in inches
 
       if (isTurning) {
 
@@ -204,6 +226,7 @@ void Chassis::start() {
 
         errorTheta = math.filter(targetTheta, odom.getThetaDeg());
 
+        // Pass error into PID loop to calculate velocity
         if (side == 'B') {
           turnVel = math.pid(errorTheta, errorThetaL, 0.95, 0.0015, 7.9, 15, "Turn");
           // turnVel = math.pid(errorTheta, errorThetaL, 0.92, 0.012, 11.5, 15, "Turn");
@@ -213,8 +236,9 @@ void Chassis::start() {
           turnVel = math.pid(errorTheta, errorThetaL, 0.92, 0.012, 11.5, 15, "Turn");
         }
 
-        errorThetaL = errorTheta;
+        errorThetaL = errorTheta; // Set last error to current error
 
+        // Constrain velocity
         if (fabs(turnVel) > maxVelocity) {
           turnVel = maxVelocity;
         } else if (fabs(turnVel) < minVelocity) {
@@ -225,13 +249,14 @@ void Chassis::start() {
           minVelocity = 0;
         }
 
-        lcd::print(7, "%f", turnVel);
+        // Display velocity to lcd; useful for debugging
+        // lcd::print(7, "%f", turnVel);
 
-        cout<<turnVel<<endl;
-
+        // Set velocity variables
         leftVelocity = turnVel * multiplier;
         rightVelocity = -turnVel * multiplier;
 
+        // Sets velocity of a side to 0 only if one side is set to move
         if (side == 'L') {
           rightVelocity = 0;
         } else if (side == 'R') {
@@ -245,39 +270,49 @@ void Chassis::start() {
           first = false;
         }
 
-        // driveVel = math.pid(errorDistance, errorDistanceL, 2.9, 0.01, 5.25, intergralActive, "Drive");
+        // Pass error into PID loop to calculate velocity
         driveVel = math.pid(errorDistance, errorDistanceL, 3.2, 0.01, 5.55, intergralActive, "Drive");
+        // driveVel = math.pid(errorDistance, errorDistanceL, 2.9, 0.01, 5.25, intergralActive, "Drive");
         //driveVel = math.pid(errorDistance, errorDistanceL, 3.22, 0.02, 5.58, intergralActive, "Drive");
-        errorDistanceL = errorDistance;
 
+        errorDistanceL = errorDistance; // Set last error to current error
+
+        // Calculate drift if the robot is not at desired angle
         errorDrift = odom.getThetaDeg() - angle;
         driftVel = errorDrift * 0.01;
 
+        // Constain velocity to allow for smoother acceleration
         driveVel = math.slew(driveVel, lastVelocity);
         lastVelocity = driveVel;
 
+        // Constrain velocity
         if (fabs(driveVel) > maxVelocity) {
           driveVel = maxVelocity;
         } else if (fabs(driveVel) < minVelocity) {
           driveVel = minVelocity;
         }
 
-        lcd::print(7, "%f", driveVel);
+        // Display velocity to lcd; useful for debugging
+        // lcd::print(7, "%f", driveVel);
 
+        // Set velocity variables
         leftVelocity = (driveVel - driftVel) * multiplier;
         rightVelocity = (driveVel + driftVel) * multiplier;
       }
 
+      // Inverses the velocity if reversed is true
       if (reversed) {
         leftVelocity *= -1;
         rightVelocity *= -1;
       }
 
+      // Sets the velocity of the right and left drivetrain
       LFD.move_velocity(leftVelocity);
       RFD.move_velocity(rightVelocity);
       LBD.move_velocity(leftVelocity);
       RBD.move_velocity(rightVelocity);
 
+      // Brake when robot reaches target based on errorType and tolerance
       if (errorType == 'Y' && fabs(errorY) <= tolerance) {
         if (minVelocity <= minMovement) {
           chassis.stop();
@@ -293,12 +328,12 @@ void Chassis::start() {
           chassis.stop();
         }
         chassis.reset();
-
       } else if (fabs(errorTheta) <= tolerance && isTurning) {
         chassis.stop();
         chassis.reset();
       }
 
+      // Brake when the robot when a certain amount of time has passed
       if (millis() > timeOut && timeOut != 0) {
          chassis.stop();
          chassis.reset();
@@ -308,7 +343,9 @@ void Chassis::start() {
   }
 }
 
-
+/**
+ * Ends the chassis drive task
+ */
 void Chassis::end() {
   if (isRunning) {
     chassis.stop().brake(); // Stops the drivetrain
