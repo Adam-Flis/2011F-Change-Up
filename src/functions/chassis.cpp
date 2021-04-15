@@ -16,7 +16,6 @@ bool Chassis::isRunning = false,
      Chassis::isSettled = true,
      Chassis::isTurning = false,
      Chassis::isDriving = false,
-     Chassis::isArcing = false,
      Chassis::reversed,
      Chassis::first;
 
@@ -34,6 +33,9 @@ double turnVel, driveVel, driftVel,
        errorTheta, errorX, errorY, errorDistance, errorDrift,
        minMovement = math.percentToVelocity(15, 'G');
 
+/**
+* Stops the chassis
+*/
 Chassis& Chassis::stop() {
   leftVelocity = 0;
   rightVelocity = 0;
@@ -49,6 +51,9 @@ Chassis& Chassis::stop() {
   return *this;
 }
 
+/**
+ * Sets the brake mode of the chassis to brake
+ */
 void Chassis::brake() {
   LFD.set_brake_mode(MOTOR_BRAKE_BRAKE);
   LBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
@@ -56,6 +61,9 @@ void Chassis::brake() {
   RBD.set_brake_mode(MOTOR_BRAKE_BRAKE);
 }
 
+/**
+ * Sets the brake mode of the chassis to coast
+ */
 void Chassis::coast() {
   LFD.set_brake_mode(MOTOR_BRAKE_COAST);
   LBD.set_brake_mode(MOTOR_BRAKE_COAST);
@@ -63,6 +71,9 @@ void Chassis::coast() {
   RBD.set_brake_mode(MOTOR_BRAKE_COAST);
 }
 
+/**
+ * Sets the brake mode of the chassis to hold
+ */
 void Chassis::hold() {
   LFD.set_brake_mode(MOTOR_BRAKE_HOLD);
   LBD.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -70,6 +81,11 @@ void Chassis::hold() {
   RBD.set_brake_mode(MOTOR_BRAKE_HOLD);
 }
 
+/**
+ * Sets the velocity of the chassis
+ * @param velocity_ -100 to 100 (In percentage of max chassis speed)
+ * @param side_ 'B', 'L', 'R' (Chassis side that will move; Both, Left, or Right)
+ */
 Chassis& Chassis::moveVel(double velocity_, char side_) {
   isSettled = false;
   side = side_;
@@ -84,7 +100,18 @@ Chassis& Chassis::moveVel(double velocity_, char side_) {
   return *this;
 }
 
-Chassis& Chassis::driveToPoint(double targetX_, double targetY_, double maxVelocity_, char errorType_, double timeOut_, double angle_, bool reversed_) {
+/**
+ * Moves the robot to a certain point on the field
+ * @param targetX_ (In inches)
+ * @param y (In inches)
+ * @param maxVelocity_ 0 to 100 (In percentage of chassis max speed)
+ * @param errorType_ 'X', 'Y', or 'D' (Breaking error type; X, Y, or Distance)
+ * @param timeOut_ (In seconds)
+ * @param angle_ (In degress; angle robot drives at)
+ * @param reverse_ True or False (Perform action backwards; false by default)
+ */
+Chassis& Chassis::driveToPoint(double targetX_, double targetY_, double maxVelocity_, char errorType_,
+                               double timeOut_, double angle_, bool reversed_) {
   targetX = targetX_;
   targetY = targetY_;
   maxVelocity = math.percentToVelocity(maxVelocity_, 'G');
@@ -98,18 +125,6 @@ Chassis& Chassis::driveToPoint(double targetX_, double targetY_, double maxVeloc
   return *this;
 }
 
-Chassis& Chassis::arcToPoint(double targetX_, double targetY_, double maxVelocity_, char errorType_, double timeOut_, bool reversed_) {
-  targetX = targetX_;
-  targetY = targetY_;
-  maxVelocity = math.percentToVelocity(maxVelocity_, 'G');
-  errorType = errorType_;
-  timeOut = math.secToMillis(timeOut_) + millis();
-  reversed = reversed_;
-  isArcing = true;
-  isSettled = false;
-  tolerance = 0.1;
-  return *this;
-}
 
 Chassis& Chassis::turnToAngle(double targetTheta_, double maxVelocity_, double timeOut_, char side_, bool reversed_) {
   targetTheta = targetTheta_;
@@ -123,6 +138,7 @@ Chassis& Chassis::turnToAngle(double targetTheta_, double maxVelocity_, double t
   return *this;
 }
 
+
 Chassis& Chassis::withMinVel(double minVelocity_) {
   minVelocity = math.percentToVelocity(minVelocity_, 'G');
   if (minVelocity <= minMovement) {
@@ -131,24 +147,28 @@ Chassis& Chassis::withMinVel(double minVelocity_) {
   return *this;
 }
 
+
 Chassis& Chassis::withTolerance(double tolerance_) {
   tolerance = tolerance_;
   return *this;
 }
+
 
 Chassis& Chassis::withMultiplier(double multiplier_) {
   multiplier = multiplier_;
   return *this;
 }
 
+
 Chassis& Chassis::waitUntillSettled() {
   while (!isSettled) delay(10);
   return *this;
 }
 
+
 void Chassis::reset() {
   isSettled = true;
-  isDriving = isTurning = isArcing = false;
+  isDriving = isTurning = false;
   targetX = targetY = targetTheta = timeOut = maxVelocity = 0;
   errorTheta = errorDistance = errorX = errorY = 0;
   lastTheta = errorThetaL = errorDistanceL = errorDriftL = lastVelocity = intergralActive = 0;
@@ -158,11 +178,11 @@ void Chassis::reset() {
   minVelocity = minMovement;
 }
 
+
 void Chassis::start() {
   isRunning = true;
   isDriving = false;
   isTurning = false;
-  isArcing = false;
   isSettled = true;
   chassis.stop().brake();
   while (isRunning) {
@@ -185,7 +205,8 @@ void Chassis::start() {
         errorTheta = math.filter(targetTheta, odom.getThetaDeg());
 
         if (side == 'B') {
-          turnVel = math.pid(errorTheta, errorThetaL, 0.92, 0.012, 11.5, 15, "Turn");
+          turnVel = math.pid(errorTheta, errorThetaL, 0.95, 0.0015, 7.9, 15, "Turn");
+          // turnVel = math.pid(errorTheta, errorThetaL, 0.92, 0.012, 11.5, 15, "Turn");
         } else if (side == 'L') {
           turnVel = math.pid(errorTheta, errorThetaL, 0.92, 0.012, 11.5, 15, "Turn");
         } else if (side == 'R') {
@@ -224,8 +245,9 @@ void Chassis::start() {
           first = false;
         }
 
-        //driveVel = math.pid(errorDistance, errorDistanceL, 2.9, 0.01, 5.25, intergralActive, "Drive");
+        // driveVel = math.pid(errorDistance, errorDistanceL, 2.9, 0.01, 5.25, intergralActive, "Drive");
         driveVel = math.pid(errorDistance, errorDistanceL, 3.2, 0.01, 5.55, intergralActive, "Drive");
+        //driveVel = math.pid(errorDistance, errorDistanceL, 3.22, 0.02, 5.58, intergralActive, "Drive");
         errorDistanceL = errorDistance;
 
         errorDrift = odom.getThetaDeg() - angle;
@@ -242,52 +264,8 @@ void Chassis::start() {
 
         lcd::print(7, "%f", driveVel);
 
-        cout<<driveVel<<endl;
-
-        // if (!reversed) {
-        //   driveVel = math.slew(driveVel, lastVelocity);
-        //   lastVelocity = driveVel;
-        // }
-
         leftVelocity = (driveVel - driftVel) * multiplier;
         rightVelocity = (driveVel + driftVel) * multiplier;
-
-      } else if (isArcing) {
-
-        if (first) {
-          targetTheta = math.radToDeg(atan2(targetX, targetY)) * 2;
-          first = false;
-        }
-
-        if (targetTheta != math.angleWrap(odom.getThetaRad())) {
-          errorTheta = math.filter(targetTheta, odom.getThetaDeg());
-          //turnVel = math.pid(errorTheta, errorThetaL, 0.6, 0.025, 0.05, "Turn");
-          errorThetaL = errorTheta;
-        } else {
-          turnVel = 0;
-        }
-
-        // lcd::print(6, "%f", errorTheta);
-
-        //driveVel = math.pid(errorDistance, errorDistanceL, 2.9, 1.5, 2.0, "Drive");
-        errorDistanceL = errorDistance;
-
-        if (fabs(driveVel) > maxVelocity) {
-          driveVel = maxVelocity;
-        } else if (fabs(driveVel) < minVelocity) {
-          driveVel = minVelocity;
-        }
-
-        if (errorTheta < 0) {
-          turnVel *= -1;
-        } else {
-          turnVel *= 1;
-        }
-
-        // lcd::print(7, "%f", turnVel);
-
-        leftVelocity = (driveVel + turnVel) * multiplier;
-        rightVelocity = (driveVel - turnVel) * multiplier;
       }
 
       if (reversed) {
@@ -315,6 +293,7 @@ void Chassis::start() {
           chassis.stop();
         }
         chassis.reset();
+
       } else if (fabs(errorTheta) <= tolerance && isTurning) {
         chassis.stop();
         chassis.reset();
@@ -328,6 +307,7 @@ void Chassis::start() {
     delay(10);
   }
 }
+
 
 void Chassis::end() {
   if (isRunning) {

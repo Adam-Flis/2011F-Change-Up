@@ -2,6 +2,12 @@
 #include "define.hpp"
 #include "autonomous.hpp"
 
+/**
+ * Partner autonomous
+ * Full cycle right corner goal then defend center goal
+ * Line up on right of the field facing the right wall with
+ * left side of drive wheels on the white line
+ */
 void rightCorner(char color) {
 
   char opponentColor;
@@ -24,8 +30,7 @@ void rightCorner(char color) {
 
   // Cycle 1st goal
   uptake.resetCount();
-  uptake.moveVolt(90).shot(3, 1.2).waitForShot();
-  delay(30);
+  uptake.moveVolt(85).shot(3, 1.5).waitForShot();
   uptake.stop().brake();
   intake.moveVolt(-100);
   chassis.turnToAngle(45, 100, 0.5).withMultiplier(2.5).waitUntillSettled(); // Align on goal

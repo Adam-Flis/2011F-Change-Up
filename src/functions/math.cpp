@@ -3,6 +3,7 @@
 #include "functions/math.hpp"
 
 // Define variables
+double Math::intergral;
 double wheelDiameter = 2.75; //In inches
 double wheelCircumference = wheelDiameter * M_PI;
 double ticksPerRevolution = 360; //Number of ticks in one full revolution of encoder/motor
@@ -30,9 +31,9 @@ double Math::inchToTicks(double inches) {
 }
 
 /**
- * Filters sensor values
- * @param current (Current sensor value)
- * @param last (Last sensor value)
+ * Filters variable values
+ * @param current (Current variable value)
+ * @param last (Last variable value)
  */
 double Math::filter(double current, double last) {
   double filteredVal = current - last;
@@ -69,7 +70,7 @@ double Math::percentToVoltage(double percent) {
 }
 
 /**
- * Returns an angle between 0 and 2pi degress
+ * Returns an angle between 0 and 2pi radians
  * @param angle (In radians)
  */
 double Math::angleWrap(double rad) {
@@ -80,6 +81,10 @@ double Math::angleWrap(double rad) {
   return rad;
 }
 
+/**
+ * Makes sure angle is between 0 and pi radians
+ * @param angle (In radians)
+ */
 double Math::angleIn180(double rad) {
   rad = angleWrap(rad);
   if (rad >= M_PI) {
@@ -112,6 +117,11 @@ double Math::secToMillis(double seconds) {
   return seconds * 1000;
 }
 
+/**
+ * Accelerate the drivetrain based on difference between velocity and last velocity
+ * @param velocity
+ * @param lastVelocity
+ */
 double Math::slew(double velocity, double lastVelocity) {
   double vOut;
   double vDeriv = velocity - lastVelocity;
@@ -123,40 +133,61 @@ double Math::slew(double velocity, double lastVelocity) {
   return vOut;
 }
 
-double Math::intergral;
-
+/**
+ * Calulates velocity based on distance away from target, the returns
+ * @param error (Distance from target)
+ * @param lastError (Last distance from target)
+ * @param kP (Proportion constant)
+ * @param kI (Intergral constant)
+ * @param kD (Derivative constant)
+ * @param intergralActive (Zone intergral is utalized)
+ * @param movement "Drive" or "Turn" (Drive for linear movements or turn for turns)
+ */
 double Math::pid(double error, double lastError, double kP, double kI,
                  double kD, double intergralActive, string movement) {
-  double velocity, proportion, derivative,
-         intergralLimit;
 
+  // Define variables
+  double velocity, proportion, derivative, intergralLimit;
+
+  // Determine intergralLimit based on type of movement
   if (movement == "Drive") {
     intergralLimit = 1000;
   } else if (movement == "Turn") {
     intergralLimit = 600;
-  } else if (movement == "Drift") {
-    intergralLimit = 2 / kI;
   }
 
+  // Set proportion to distance from target or error
   proportion = error;
 
+  // Intergral takes area under the error and is useful for major adjustment
   if (fabs(error) < intergralActive && error != 0) {
       intergral = intergral + error;
     } else {
       intergral = 0;
     }
 
+    //Set intergral output to limit
     if (intergral > intergralLimit) {
       intergral = intergralLimit;
+    } else if (intergral < intergralLimit) {
+      intergral = -intergralLimit;
     }
 
-    if (lastError != 0) {
-      derivative = proportion - lastError;
-    } else {
-      derivative = 0;
+    // Derivative finds difference between current error and last recrded to recieve ROC, good for fine adjustment
+    if (movement == "Turn") {
+      if (lastError != 0 || error != 0) {
+        derivative = proportion - lastError;
+      } else { // Sets var equal to zero if no adjustment is needed
+        derivative = 0;
+      }
+    } else if (movement == "Drive") {
+      if (lastError != 0) {
+        derivative = proportion - lastError;
+      } else { // Sets var equal to zero if no adjustment is needed
+        derivative = 0;
+      }
     }
 
-    velocity = kP * proportion + kI * intergral + kD * derivative;
-
-  return velocity;
-}
+    // Returns velocity of drive after it applies the PID constant
+    return velocity = kP * proportion + kI * intergral + kD * derivative;
+  }

@@ -115,6 +115,7 @@ void Intake::start() {
     hue = Intake_Optical.get_hue();
     prox = Intake_Optical.get_proximity();
 
+    // Sets voltage or velocity of intakes
     if (voltage != 0) {
       LI.move_voltage(voltage);
       RI.move_voltage(voltage);
@@ -123,6 +124,7 @@ void Intake::start() {
       RI.move_velocity(velocity);
     }
 
+    // Optical sensor
     if (hue <= redThresh && prox >= 210) {
       currentColor = 'R';
       printColor = "Red";
@@ -134,7 +136,8 @@ void Intake::start() {
       printColor = "Not Blue/Red";
     }
 
-    if (!hasColor) {
+    // Detection logic for cycling functions
+    if (!hasColor) { // Color
       if (millis() >= timeOut) {
         hasColor = true;
       } else if (desiredColor == currentColor) {
@@ -142,7 +145,9 @@ void Intake::start() {
       }
     }
 
-    //lcd::print(6, "Inatke Color: %s \n", printColor);
+    // Display variables to LCD display
+    // Useful for debugging
+    // lcd::print(6, "Inatke Color: %s \n", printColor);
     delay(20);
   }
 }

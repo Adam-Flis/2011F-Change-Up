@@ -15,7 +15,7 @@ void initialize() {
 
   float timer = millis();
 
-  // Calibrate IMUs
+  // Calibrate and initalize IMUs
   LIMU.reset();
   RIMU.reset();
   delay(50);
@@ -35,7 +35,7 @@ void initialize() {
 
   lcd::set_text(1, "Tasks Initalized");
   lcd::print(2, "Initalization took: %f ms\n", millis() - timer);
-  delay(1000);
+  delay(1500);
 
 }
 

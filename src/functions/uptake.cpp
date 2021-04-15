@@ -179,6 +179,7 @@ void Uptake::start() {
     hueM = Middle_Uptake_Optical.get_hue();
     proxM = Middle_Uptake_Optical.get_proximity();
 
+    // Sets voltage or velocity of uptakes
     if (voltage != 0) {
       LU.move_voltage(voltage);
       RU.move_voltage(voltage);
@@ -219,7 +220,8 @@ void Uptake::start() {
       passed = true;
     }
 
-    if (!hasColor && !isShooting) {
+    // Detection logic for cycling functions
+    if (!hasColor && !isShooting) { // Color
       if (millis() >= timeOut) {
         hasColor = true;
       } else if (desiredColorB == currentColorB) {
@@ -227,7 +229,7 @@ void Uptake::start() {
       } else if (desiredColorM == currentColorM) {
         hasColor = true;
       }
-    } else if (hasColor && isShooting) {
+    } else if (hasColor && isShooting) { // Shooting
       if (millis() >= timeOut) {
         isShooting = false;
       } else if (desiredAmount == currentAmount) {
@@ -235,7 +237,9 @@ void Uptake::start() {
       }
     }
 
-    //lcd::print(6, "Bottom Uptake Color: %s \n", printColorB);
+    // Display variables to LCD display
+    // Useful for debugging
+    // lcd::print(6, "Bottom Uptake Color: %s \n", printColorB);
     // lcd::print(6, "Middle Uptake Color: %s \n", printColorM);
     // lcd::print(7, "Count: %i \n", currentAmount);
     delay(20);

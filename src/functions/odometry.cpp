@@ -53,22 +53,22 @@ void Odom::reset() {
  */
 void Odom::start() {
   isRunning = true;
-  LIMU.tare_rotation();
+  LIMU.tare_rotation(); // Reset IMU sensors
   RIMU.tare_rotation();
-  odom.reset();
-  odom.thetaRad = odom.thetaDeg = 0;
+  odom.reset(); // Reset odom x & y values
+  odom.thetaRad = odom.thetaDeg = 0; // Reset theta values
 
   // Define variables
   double Tv = 3.0, // Distance from tracking center to middle of vertical wheel
-  //9.5
-  //7.035
          Th = 7.035, // Distance from tracking center to middle of horizontial wheel
+         //9.5
+         //7.035
          Sv = 1.0, // Slop adjustment for vertical tracking wheel
          Sh = 1.0,  // Slop adjustment for horizontial trackinng wheel
          Sl = 7200/7181.9, // Scale factor of left IMU
          Sr = 7200/7181.9, // Scale factor of right IMU
 
-   // Theta
+   // Theta variables
          deltaT = 0, // Change in theta between refresh cycles
          alpha = 0, // Average theta robot took over interval
          theta = 0, // Average theta between average angle and final
@@ -79,7 +79,7 @@ void Odom::start() {
          currentR = 0, // Current raw theta
          lastR = 0, // Previous measurement of raw theta
 
-   // Encoder
+   // Encoder variables
          currentV = 0, // Current rotations of vertical wheel
          currentH = 0, // Current rotations of horizontial wheel
          lastV = 0, // Previous rotation measurement of vertical wheel
@@ -111,7 +111,7 @@ void Odom::start() {
     newT = math.degToRad(filteredT);
     deltaT = newT - odom.thetaRad;
 
-    // Claculate inches
+    // Calaculate inches
     // VerticaL wheel
 	  currentV = math.ticksToInch(VEnc.get_value()) * Sv;
     deltaV = currentV - lastV;
@@ -124,7 +124,6 @@ void Odom::start() {
 
     // Calculate wheel traslations if the robot has turned
     if (deltaT != 0) {
-
       // Calculating the traslation of the vertical wheel
 		  radiusV = deltaV / deltaT + Tv;
 		  cordV = (2 * sin(deltaT / 2)) * radiusV;
@@ -132,19 +131,16 @@ void Odom::start() {
       // Calculating the translation with the horizontial wheel
 		  radiusH = deltaH / deltaT + Th;
 		  cordH = (2 * sin(deltaT / 2)) * radiusH;
-
     }
 
     // If the robot did not turn
     else {
-
       // Setting the vertical and horizontial movement to the inches rotated
 		  cordV = deltaV;
       cordH = deltaH;
 
       // Setting the offset to 0 because it didn't turn
 		  alpha = 0;
-
 	  }
 
     // Finding the average of the current and last theta
@@ -152,23 +148,25 @@ void Odom::start() {
     averageT = odom.thetaRad + alpha;
 
     // Adding the change in the axis to the global coordonates
-    odom.x += cordV * sin(averageT);
+    odom.x += cordV * sin(averageT); // Vertical wheel
     odom.y += cordV * cos(averageT);
-
-    odom.x += cordH * cos(averageT);
+    odom.x += cordH * cos(averageT); // Horizontial wheel
     odom.y += cordH * -sin(averageT);
 
     // Updating the global theta
     odom.thetaRad += deltaT;
     odom.thetaDeg = math.radToDeg(odom.thetaRad);
 
+    // Display theta value to controller when robot is set to disabled mode
+    // Useful for debugging
     if (competition::is_disabled()) {
       Main.print(2, 0, "Theta: %0.1f", odom.thetaDeg);
     } else {
       Main.clear_line(2);
     }
 
-    // Display sensor values to LCD display
+    // Display sensor values and variables to LCD display
+    // Useful for debugging
     lcd::print(0, "X: %f \n", odom.x);
     lcd::print(1, "Y: %f \n", odom.y);
     lcd::print(2, "Theta: %f radians\n", odom.thetaRad);
