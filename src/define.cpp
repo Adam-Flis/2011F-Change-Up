@@ -74,7 +74,7 @@ Controller Main (CONTROLLER_MASTER);
 double blueThresh = 200;
 double redThresh = 18;
 // Distance
-double distanceThresh = 220;
+double distanceThresh = 225;
 
 // Tasks
 Task *trackingTask = nullptr;

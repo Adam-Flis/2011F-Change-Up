@@ -14,15 +14,16 @@ void autonomous() {
 
   //homeRow('R');
   //homeRow('B');
-  rightCorner('R');
-  //rightCorner('B');
+  //rightCorner('R');
+  rightCorner('B');
   //skills();
 
 /* ************************************************** */
 
   //chassis.driveToPoint(0, 48, 100, 'Y', 10.0, 0).waitUntillSettled();
-  //chassis.turnToAngle(90, 100, 5.0).waitUntillSettled();
+  //chassis.turnToAngle(90, 100, 10.0).waitUntillSettled();
   //chassis.stop();
+  //intake.moveVel(100);
 
   time = (millis() - time)/1000;
 

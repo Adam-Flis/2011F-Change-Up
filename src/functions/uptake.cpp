@@ -189,10 +189,10 @@ void Uptake::start() {
     }
 
     // Bottom optical sensor
-    if (hueB <= redThresh && proxB >= 210) {
+    if (hueB <= redThresh && proxB >= 220) {
       currentColorB = 'R';
       printColorB = "Red";
-    } else if (hueB >= blueThresh && proxB >= 210) {
+    } else if (hueB >= blueThresh && proxB >= 220) {
       currentColorB = 'B';
       printColorB = "Blue";
     } else {
@@ -201,10 +201,10 @@ void Uptake::start() {
     }
 
     // Middle optical sensor
-    if (hueM <= redThresh && proxM >= 210) {
+    if (hueM <= redThresh && proxM >= 220) {
       currentColorM = 'R';
       printColorM = "Red";
-    } else if (hueM >= blueThresh && proxM >= 210) {
+    } else if (hueM >= blueThresh && proxM >= 220) {
       currentColorM = 'B';
       printColorM = "Blue";
     } else {

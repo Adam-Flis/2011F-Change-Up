@@ -25,23 +25,63 @@ void rightCorner(char color) {
   chassis.stop().brake();
   chassis.moveVel(80, 'L');
   chassis.moveVel(20, 'R');
-  delay(450);
+  delay(425);
   chassis.moveVel(20);
 
   // Cycle 1st goal
+  delay(50);
+  chassis.stop().brake();
   uptake.resetCount();
-  uptake.moveVolt(85).shot(3, 1.5).waitForShot();
+  chassis.stop().brake();
+  uptake.moveVolt(100).shot(3, 1.75).waitForShot(); // Shoot 3 balls in 1st goal
+  // float time = millis() + 400;
+  // bool ball = true;
+  // while (uptake.getColorB() != color || uptake.getColorM() != color || millis() <= time) {
+  //   uptake.moveVolt(-80);
+  //   ball = false;
+  // }
+  // if (ball) {
+  //   uptake.moveVolt(100);
+  //   delay(400);
+  // }
+  delay(120);
   uptake.stop().brake();
-  intake.moveVolt(-100);
+  intake.moveVel(-10);
   chassis.turnToAngle(45, 100, 0.5).withMultiplier(2.5).waitUntillSettled(); // Align on goal
 
-  chassis.driveToPoint(-18.5, -9, 100, 'X', 1.2, 45, true).withMultiplier(1.35).waitUntillSettled(); // Drive away from first goal
+  chassis.driveToPoint(-18.5, -9, 100, 'X', 1.4, 45, true).waitUntillSettled(); // Drive away from first goal
 
-  chassis.turnToAngle(226, 65, 2.0).waitUntillSettled(); // Turn towards middle goal
+  chassis.turnToAngle(27, 65, 1.8).waitUntillSettled();
 
-  chassis.driveToPoint(-50.7, -42, 90, 'X', 2.7, 226).waitUntillSettled(); // Drive towards middle goal
+  delay(1600);
 
-  intake.stop();
-  chassis.moveVel(10);
+  chassis.driveToPoint(-28, -44, 100, 'Y', 1.9, 27, true).waitUntillSettled();
+
+  chassis.turnToAngle(-96, 65, 0.8).waitUntillSettled();
+
+  intake.moveVolt(-100);
+  chassis.driveToPoint(-49.2, -42.5, 100, 'X', 1.0, -96).waitUntillSettled(); // Drive towards middle goal
+  chassis.driveToPoint(-41, -42.5, 100, 'X', 0.8, -96, true).waitUntillSettled(); // Drive away from middle goal
+
+  chassis.driveToPoint(-49.2, -42.5, 100, 'X', 1.0, -96).waitUntillSettled(); // Drive towards middle goal
+  chassis.driveToPoint(-41, -42.5, 100, 'X', 0.8, -96, true).waitUntillSettled(); // Drive away from middle goal
+
+  chassis.driveToPoint(-49.2, -42.5, 100, 'X', 1.0, -96).waitUntillSettled(); // Drive towards middle goal
+  chassis.driveToPoint(-41, -42.5, 100, 'X', 0.8, -96, true).waitUntillSettled(); // Drive away from middle goal
+
+  chassis.driveToPoint(-49.2, -42.5, 100, 'X', 1.0, -96).waitUntillSettled(); // Drive towards middle goal
+  chassis.driveToPoint(-41, -42.5, 100, 'X', 0.8, -96, true).waitUntillSettled(); // Drive away from middle goal
+
+  chassis.driveToPoint(-49.2, -42.5, 100, 'X', 1.0, -96).waitUntillSettled(); // Drive towards middle goal
+  chassis.driveToPoint(-41, -42.5, 100, 'X', 0.8, -96, true).waitUntillSettled(); // Drive away from middle goal
+
+  chassis.driveToPoint(-47.2, -42.5, 100, 'X', 1.0, -96).waitUntillSettled(); // Drive towards middle goal
+  chassis.driveToPoint(-39, -42.5, 100, 'X', 0.8, -96, true).waitUntillSettled(); // Drive away from middle goal
+
+  chassis.driveToPoint(-47.2, -42.5, 100, 'X', 1.0, -96).waitUntillSettled(); // Drive towards middle goal
+  chassis.driveToPoint(-39, -42.5, 100, 'X', 0.8, -96, true).waitUntillSettled(); // Drive away from middle goal
+
+  chassis.driveToPoint(-47.2, -42.5, 100, 'X', 1.0, -96).waitUntillSettled(); // Drive towards middle goal
+  chassis.driveToPoint(-39, -42.5, 100, 'X', 0.8, -96, true).waitUntillSettled(); // Drive away from middle goal
 
 }

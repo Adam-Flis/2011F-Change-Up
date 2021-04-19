@@ -228,7 +228,8 @@ void Chassis::start() {
 
         // Pass error into PID loop to calculate velocity
         if (side == 'B') {
-          turnVel = math.pid(errorTheta, errorThetaL, 0.95, 0.0015, 7.9, 15, "Turn");
+          turnVel = math.pid(errorTheta, errorThetaL, 0.6, 0.002, 1.42, 15, "Turn");
+          //turnVel = math.pid(errorTheta, errorThetaL, 0.95, 0.0015, 7.9, 15, "Turn");
           // turnVel = math.pid(errorTheta, errorThetaL, 0.92, 0.012, 11.5, 15, "Turn");
         } else if (side == 'L') {
           turnVel = math.pid(errorTheta, errorThetaL, 0.92, 0.012, 11.5, 15, "Turn");
@@ -328,14 +329,17 @@ void Chassis::start() {
           chassis.stop();
         }
         chassis.reset();
-      } else if (fabs(errorTheta) <= tolerance && isTurning) {
-        chassis.stop();
-        chassis.reset();
       }
+      // } else if (fabs(errorTheta) <= tolerance && isTurning) {
+      //   chassis.stop();
+      //   chassis.reset();
+      // }
 
       // Brake when the robot when a certain amount of time has passed
       if (millis() > timeOut && timeOut != 0) {
-         chassis.stop();
+        if (minVelocity <= minMovement) {
+            chassis.stop();
+         }
          chassis.reset();
       }
     }
