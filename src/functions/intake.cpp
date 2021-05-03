@@ -11,7 +11,8 @@ static Math math;
 
 // Define variables
 bool Intake::isRunning = false,
-     Intake::hasColor = false;
+     Intake::hasColor = false,
+     Intake::getValue = false;
 
 char Intake::desiredColor, Intake::currentColor;
 
@@ -59,6 +60,8 @@ void Intake::hold() {
 Intake& Intake::moveVolt(double voltage_) {
   velocity = 0;
   voltage = math.percentToVoltage(voltage_);
+  LI.move_voltage(voltage);
+  RI.move_voltage(voltage);
   return *this;
 }
 
@@ -69,6 +72,8 @@ Intake& Intake::moveVolt(double voltage_) {
 Intake& Intake::moveVel(double velocity_) {
   voltage = 0;
   velocity = math.percentToVelocity(velocity_, 'B');
+  LI.move_velocity(velocity);
+  RI.move_velocity(velocity);
   return *this;
 }
 
@@ -76,7 +81,10 @@ Intake& Intake::moveVel(double velocity_) {
  * Returns current ball color ('R', 'B', 'N')
  */
 char Intake::getColor() {
+  getValue = true;
+  delay(20);
   return intake.currentColor;
+  getValue = false;
 }
 
 /**
@@ -89,6 +97,7 @@ Intake& Intake::color(char color_, double timeOut_) {
   desiredColor = color_;
   timeOut = math.secToMillis(timeOut_) + millis();
   hasColor = false;
+  getValue = true;
   return *this;
 }
 
@@ -106,48 +115,55 @@ Intake& Intake::waitForColor() {
 void Intake::start() {
   isRunning = true;
   hasColor = true;
+  getValue = false;
   Intake_Optical.set_led_pwm(0);
   string printColor;
   double hue, prox;
+  delay(300);
 
   while (isRunning) {
 
-    hue = Intake_Optical.get_hue();
-    prox = Intake_Optical.get_proximity();
+    if (getValue) {
 
-    // Sets voltage or velocity of intakes
-    if (voltage != 0) {
-      LI.move_voltage(voltage);
-      RI.move_voltage(voltage);
-    } else if (velocity != 0) {
-      LI.move_velocity(velocity);
-      RI.move_velocity(velocity);
-    }
+      // Optical sensor
+      hue = Intake_Optical.get_hue();
+      prox = Intake_Optical.get_proximity();
 
-    // Optical sensor
-    if (hue <= redThresh && prox >= 210) {
-      currentColor = 'R';
-      printColor = "Red";
-    } else if (hue >= blueThresh && prox >= 210) {
-      currentColor = 'B';
-      printColor = "Blue";
-    } else {
-      currentColor = 'N';
-      printColor = "Not Blue/Red";
-    }
-
-    // Detection logic for cycling functions
-    if (!hasColor) { // Color
-      if (millis() >= timeOut) {
-        hasColor = true;
-      } else if (desiredColor == currentColor) {
-        hasColor = true;
+      if (hue <= redThresh && prox >= 210) {
+        currentColor = 'R';
+        //printColor = "Red";
+      } else if (hue >= blueThresh && prox >= 210) {
+        currentColor = 'B';
+        //printColor = "Blue";
+      } else {
+        currentColor = 'N';
+        //printColor = "Not Blue/Red";
       }
-    }
 
-    // Display variables to LCD display
-    // Useful for debugging
-    // lcd::print(6, "Inatke Color: %s \n", printColor);
+      // // Sets voltage or velocity of intakes
+      // if (voltage != 0) {
+      //   LI.move_voltage(voltage);
+      //   RI.move_voltage(voltage);
+      // } else if (velocity != 0) {
+      //   LI.move_velocity(velocity);
+      //   RI.move_velocity(velocity);
+      // }
+
+      // Detection logic for cycling functions
+      if (!hasColor) { // Color
+        if (millis() >= timeOut) {
+          hasColor = true;
+          getValue = false;
+        } else if (desiredColor == currentColor) {
+          hasColor = true;
+          getValue = false;
+        }
+      }
+
+      // Display variables to LCD display
+      // Useful for debugging
+      // lcd::print(6, "Inatke Color: %s \n", printColor);
+    }
     delay(20);
   }
 }

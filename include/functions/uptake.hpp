@@ -30,7 +30,7 @@ public:
   void end();
 
 private:
-  static bool isRunning, isShooting, hasColor;
+  static bool isRunning, isShooting, hasColor, getValue;
   static char desiredColorB, currentColorB, desiredColorM, currentColorM;
   static double velocity, voltage, timeOut;
   static int position, desiredAmount, currentAmount;

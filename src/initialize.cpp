@@ -25,12 +25,12 @@ void initialize() {
 
   // Initalize Tasks
   trackingTask = new Task(odom.start, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "Tracking Task");
-  delay(300);
-  chassisTask = new Task(chassis.start, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "Chassis Task");
-  delay(300);
-  intakeTask = new Task(intake.start, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Intake Task");
-  delay(300);
-  uptakeTask = new Task(uptake.start, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Uptake Task");
+  delay(50);
+  chassisTask = new Task(chassis.start, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Chassis Task");
+  delay(50);
+  intakeTask = new Task(intake.start, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_MIN, "Intake Task");
+  delay(50);
+  uptakeTask = new Task(uptake.start, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_MIN, "Uptake Task");
   delay(300);
 
   lcd::set_text(1, "Tasks Initalized");

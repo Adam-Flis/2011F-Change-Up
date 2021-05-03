@@ -125,8 +125,8 @@ double Math::secToMillis(double seconds) {
 double Math::slew(double velocity, double lastVelocity) {
   double vOut;
   double vDeriv = velocity - lastVelocity;
-  if (fabs(vDeriv) > 13.5) {
-    vOut = lastVelocity + 13.5;
+  if (fabs(vDeriv) > 600) {
+    vOut = lastVelocity + 600;
   } else {
     vOut = velocity;
   }
@@ -147,7 +147,7 @@ double Math::pid(double error, double lastError, double kP, double kI,
                  double kD, double intergralActive, string movement) {
 
   // Define variables
-  double velocity, proportion, derivative, intergralLimit;
+  double speed, proportion, derivative, intergralLimit;
 
   // Determine intergralLimit based on type of movement
   if (movement == "Drive") {
@@ -174,20 +174,12 @@ double Math::pid(double error, double lastError, double kP, double kI,
     }
 
     // Derivative finds difference between current error and last recrded to recieve ROC, good for fine adjustment
-    if (movement == "Turn") {
-      if (lastError != 0 || error != 0) {
-        derivative = proportion - lastError;
-      } else { // Sets var equal to zero if no adjustment is needed
-        derivative = 0;
-      }
-    } else if (movement == "Drive") {
-      if (lastError != 0) {
-        derivative = proportion - lastError;
-      } else { // Sets var equal to zero if no adjustment is needed
-        derivative = 0;
-      }
+    if (lastError != 0 || error != 0) {
+      derivative = proportion - lastError;
+    } else { // Sets var equal to zero if no adjustment is needed
+      derivative = 0;
     }
 
     // Returns velocity of drive after it applies the PID constant
-    return velocity = kP * proportion + kI * intergral + kD * derivative;
+    return speed = kP * proportion + kI * intergral + kD * derivative;
   }

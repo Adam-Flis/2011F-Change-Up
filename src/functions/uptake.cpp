@@ -12,7 +12,8 @@ static Math math;
 // Define variables
 bool Uptake::isRunning = false,
      Uptake::isShooting = false,
-     Uptake::hasColor = false;
+     Uptake::hasColor = false,
+     Uptake::getValue = false;
 
 char Uptake::desiredColorB, Uptake::currentColorB, Uptake::desiredColorM, Uptake::currentColorM;
 
@@ -62,6 +63,8 @@ void Uptake::hold() {
 Uptake& Uptake::moveVolt(double voltage_) {
   velocity = 0;
   voltage = math.percentToVoltage(voltage_);
+  LU.move_voltage(voltage);
+  RU.move_voltage(voltage);
   return *this;
 }
 
@@ -72,6 +75,8 @@ Uptake& Uptake::moveVolt(double voltage_) {
 Uptake& Uptake::moveVel(double velocity_) {
   voltage = 0;
   velocity = math.percentToVelocity(velocity_, 'B');
+  LU.move_velocity(velocity);
+  RU.move_velocity(velocity);
   return *this;
 }
 
@@ -79,14 +84,20 @@ Uptake& Uptake::moveVel(double velocity_) {
  * Returns current ball color at bottom position ('R', 'B', 'N')
  */
 char Uptake::getColorB() {
+  getValue = true;
+  delay(20);
   return uptake.currentColorB;
+  getValue = false;
 }
 
 /**
  * Returns current ball color at middle position ('R', 'B', 'N')
  */
 char Uptake::getColorM() {
+  getValue = true;
+  delay(20);
   return uptake.currentColorM;
+  getValue = false;
 }
 
 /**
@@ -108,6 +119,7 @@ Uptake& Uptake::color(char color_, int position_, double timeOut_) {
   timeOut = math.secToMillis(timeOut_) + millis();
   isShooting = false;
   hasColor = false;
+  getValue = true;
   return *this;
 }
 
@@ -130,7 +142,10 @@ void Uptake::resetCount() {
  * Return the shot counter value
  */
 int Uptake::getCount() {
+  getValue = true;
+  delay(20);
   return uptake.currentAmount;
+  getValue = false;
 }
 
 /**
@@ -144,6 +159,7 @@ int Uptake::getCount() {
    timeOut = math.secToMillis(timeOut_) + millis();
    hasColor = true;
    isShooting = true;
+   getValue = true;
    return *this;
 }
 
@@ -163,88 +179,97 @@ void Uptake::start() {
   isRunning = true;
   isShooting = false;
   hasColor = true;
+  getValue = false;
   uptake.resetCount();
-  Bottom_Uptake_Optical.set_led_pwm(0); // Turn on optical sensor LED
+  Bottom_Uptake_Optical.set_led_pwm(0);
   Middle_Uptake_Optical.set_led_pwm(0);
   string printColorB, printColorM;
   double hueB, proxB,
          hueM, proxM;
   bool passed = true;
+  delay(300);
 
   while (isRunning) {
 
-    hueB = Bottom_Uptake_Optical.get_hue();
-    proxB = Bottom_Uptake_Optical.get_proximity();
+    if (getValue) {
 
-    hueM = Middle_Uptake_Optical.get_hue();
-    proxM = Middle_Uptake_Optical.get_proximity();
+      // Bottom optical sensor
+      hueB = Bottom_Uptake_Optical.get_hue();
+      proxB = Bottom_Uptake_Optical.get_proximity();
 
-    // Sets voltage or velocity of uptakes
-    if (voltage != 0) {
-      LU.move_voltage(voltage);
-      RU.move_voltage(voltage);
-    } else if (velocity != 0) {
-      LU.move_velocity(velocity);
-      RU.move_velocity(velocity);
-    }
-
-    // Bottom optical sensor
-    if (hueB <= redThresh && proxB >= 220) {
-      currentColorB = 'R';
-      printColorB = "Red";
-    } else if (hueB >= blueThresh && proxB >= 220) {
-      currentColorB = 'B';
-      printColorB = "Blue";
-    } else {
-      currentColorB = 'N';
-      printColorB = "Not Blue/Red";
-    }
-
-    // Middle optical sensor
-    if (hueM <= redThresh && proxM >= 220) {
-      currentColorM = 'R';
-      printColorM = "Red";
-    } else if (hueM >= blueThresh && proxM >= 220) {
-      currentColorM = 'B';
-      printColorM = "Blue";
-    } else {
-      currentColorM = 'N';
-      printColorM = "Not Blue/Red";
-    }
-
-    // Distance sensor counting logic
-    if (Distance_Sensor.get() <= distanceThresh && passed) {
-      passed = false;
-      currentAmount ++;
-    } else if (Distance_Sensor.get() > distanceThresh && !passed) {
-      passed = true;
-    }
-
-    // Detection logic for cycling functions
-    if (!hasColor && !isShooting) { // Color
-      if (millis() >= timeOut) {
-        hasColor = true;
-      } else if (desiredColorB == currentColorB) {
-        hasColor = true;
-      } else if (desiredColorM == currentColorM) {
-        hasColor = true;
+      if (hueB <= redThresh && proxB >= 220) {
+        currentColorB = 'R';
+        //printColorB = "Red";
+      } else if (hueB >= blueThresh && proxB >= 220) {
+        currentColorB = 'B';
+        //printColorB = "Blue";
+      } else {
+        currentColorB = 'N';
+        //printColorB = "Not Blue/Red";
       }
-    } else if (hasColor && isShooting) { // Shooting
-      if (millis() >= timeOut) {
-        isShooting = false;
-      } else if (desiredAmount == currentAmount) {
-        isShooting = false;
-      }
-    }
 
-    // Display variables to LCD display
-    // Useful for debugging
-    // lcd::print(6, "Bottom Uptake Color: %s \n", printColorB);
-    // lcd::print(6, "Middle Uptake Color: %s \n", printColorM);
-    // lcd::print(7, "Count: %i \n", currentAmount);
+      // Middle optical sensor
+      hueM = Middle_Uptake_Optical.get_hue();
+      proxM = Middle_Uptake_Optical.get_proximity();
+
+      if (hueM <= redThresh && proxM >= 220) {
+        currentColorM = 'R';
+        //printColorM = "Red";
+      } else if (hueM >= blueThresh && proxM >= 220) {
+        currentColorM = 'B';
+        //printColorM = "Blue";
+      } else {
+        currentColorM = 'N';
+        //printColorM = "Not Blue/Red";
+      }
+
+      // Distance sensor counting logic
+      if (Distance_Sensor.get() <= distanceThresh && passed) {
+        passed = false;
+        currentAmount ++;
+      } else if (Distance_Sensor.get() > distanceThresh && !passed) {
+        passed = true;
+      }
+
+      // // Sets voltage or velocity of uptakes
+      // if (voltage != 0) {
+      //   LU.move_voltage(voltage);
+      //   RU.move_voltage(voltage);
+      // } else if (velocity != 0) {
+      //   LU.move_velocity(velocity);
+      //   RU.move_velocity(velocity);
+      // }
+
+      // Detection logic for cycling functions
+      if (!hasColor && !isShooting) { // Color
+        if (millis() >= timeOut) {
+          hasColor = true;
+          getValue = false;
+        } else if (desiredColorB == currentColorB) {
+          hasColor = true;
+          getValue = false;
+        } else if (desiredColorM == currentColorM) {
+          hasColor = true;
+          getValue = false;
+        }
+      } else if (hasColor && isShooting) { // Shooting
+        if (millis() >= timeOut) {
+          isShooting = false;
+          getValue = false;
+        } else if (desiredAmount == currentAmount) {
+          isShooting = false;
+          getValue = false;
+        }
+      }
+
+      // Display variables to LCD display
+      // Useful for debugging
+      // lcd::print(6, "Bottom Uptake Color: %s \n", printColorB);
+      // lcd::print(6, "Middle Uptake Color: %s \n", printColorM);
+      // lcd::print(7, "Count: %i \n", currentAmount);
+    }
     delay(20);
   }
-
 }
 
 /**

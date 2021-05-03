@@ -8,14 +8,7 @@
  * Line up on right of the field facing the right wall with
  * left side of drive wheels on the white line
  */
-void rightCorner(char color) {
-
-  char opponentColor;
-  if (color == 'B') {
-    opponentColor = 'R';
-  } else {
-    opponentColor = 'B';
-  }
+void rightCorner() {
 
   intake.moveVolt(-100); // Deploy
   delay(150);
@@ -23,10 +16,10 @@ void rightCorner(char color) {
 
   // Drive towards 1st goal
   chassis.stop().brake();
-  chassis.moveVel(80, 'L');
-  chassis.moveVel(20, 'R');
+  chassis.move(80, 'L');
+  chassis.move(20, 'R');
   delay(425);
-  chassis.moveVel(20);
+  chassis.move(20);
 
   // Cycle 1st goal
   delay(50);

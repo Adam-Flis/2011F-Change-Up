@@ -71,8 +71,8 @@ Controller Main (CONTROLLER_MASTER);
 
 // Variables
 // Optical
-double blueThresh = 200;
-double redThresh = 18;
+double blueThresh = 210;
+double redThresh = 20;
 // Distance
 double distanceThresh = 225;
 

@@ -59,9 +59,9 @@ void Odom::start() {
   odom.thetaRad = odom.thetaDeg = 0; // Reset theta values
 
   // Define variables
-  double Tv = 3.0, // Distance from tracking center to middle of vertical wheel
+  double Tv = 2.865, // Distance from tracking center to middle of vertical wheel
          Th = 7.035, // Distance from tracking center to middle of horizontial wheel
-         //9.5
+         //2.865
          //7.035
          Sv = 1.0, // Slop adjustment for vertical tracking wheel
          Sh = 1.0,  // Slop adjustment for horizontial trackinng wheel
@@ -94,6 +94,9 @@ void Odom::start() {
    // IMU
          Li, // Left IMU sensor
          Ri; // Right IMU sensor
+
+  bool cleared = false;
+  delay(300);
 
   while (isRunning) {
 
@@ -158,21 +161,31 @@ void Odom::start() {
     odom.thetaDeg = math.radToDeg(odom.thetaRad);
 
     // Display theta value to controller when robot is set to disabled mode
+    // Display sensor values and variables to LCD display
     // Useful for debugging
     if (competition::is_disabled()) {
       Main.print(2, 0, "Theta: %0.1f", odom.thetaDeg);
-    } else {
+      lcd::print(0, "X: %f \n", odom.x);
+      lcd::print(1, "Y: %f \n", odom.y);
+      lcd::print(2, "Theta: %f radians\n", odom.thetaRad);
+      lcd::print(3, "Theta: %f degress\n", odom.thetaDeg);
+      lcd::print(4, "Left IMU: %f degress\n", Li);
+      lcd::print(5, "Right IMU: %f degress\n", Ri);
+      cleared = false;
+    } else if (cleared == false) {
       Main.clear_line(2);
+      lcd::clear_line(0);
+      lcd::clear_line(1);
+      lcd::clear_line(2);
+      lcd::clear_line(3);
+      lcd::clear_line(4);
+      lcd::clear_line(5);
+      cleared = true;
     }
 
-    // Display sensor values and variables to LCD display
+    //
     // Useful for debugging
-    lcd::print(0, "X: %f \n", odom.x);
-    lcd::print(1, "Y: %f \n", odom.y);
-    lcd::print(2, "Theta: %f radians\n", odom.thetaRad);
-    lcd::print(3, "Theta: %f degress\n", odom.thetaDeg);
-    lcd::print(4, "Left IMU: %f degress\n", Li);
-    lcd::print(5, "Right IMU: %f degress\n", Ri);
+
 
     delay(10);
   }

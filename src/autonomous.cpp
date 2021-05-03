@@ -14,14 +14,14 @@ void autonomous() {
 
   //homeRow('R');
   //homeRow('B');
-  //rightCorner('R');
-  rightCorner('B');
+  center();
+  //rightCorner();
   //skills();
 
 /* ************************************************** */
 
   //chassis.driveToPoint(0, 48, 100, 'Y', 10.0, 0).waitUntillSettled();
-  //chassis.turnToAngle(90, 100, 10.0).waitUntillSettled();
+  //chassis.turnToAngle(180, 100, 10.0).waitUntillSettled();
   //chassis.stop();
   //intake.moveVel(100);
 

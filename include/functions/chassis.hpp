@@ -15,14 +15,14 @@ public:
 
   void reset();
 
-  Chassis& moveVel(double velocity_, char side_ = 'B');
+  Chassis& move(double speed_, char side_ = 'B');
 
-  Chassis& driveToPoint(double targetX_, double targetY_, double maxVelocity_,
+  Chassis& driveToPoint(double targetX_, double targetY_, double maxSpeed_,
                         char errorType_, double timeOut_, double angle_, bool reversed_ = false);
 
-  Chassis& turnToAngle(double targetTheta_, double maxVelocity_, double timeOut_, char side_ = 'B', bool reversed_ = false);
+  Chassis& turnToAngle(double targetTheta_, double maxSpeed_, double timeOut_, char side_ = 'B', bool reversed_ = false);
 
-  Chassis& withMinVel(double minVelocity_);
+  Chassis& withMinSpeed(double minSpeed_);
   Chassis& withTolerance(double tolerance_);
   Chassis& withMultiplier(double multiplier_);
 
@@ -34,7 +34,7 @@ public:
 private:
   static bool isRunning, isSettled, isTurning, isDriving, reversed, first;
   static double targetTheta, targetX, targetY, timeOut, tolerance, multiplier,
-                maxVelocity, minVelocity, leftVelocity, rightVelocity, angle;
+                maxSpeed, minSpeed, leftSpeed, rightSpeed;
   static char errorType, side;
 };
 

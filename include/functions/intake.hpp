@@ -24,7 +24,7 @@ public:
   void end();
 
 private:
-  static bool isRunning, hasColor;
+  static bool isRunning, hasColor, getValue;
   static char desiredColor, currentColor;
   static double velocity, voltage, timeOut;
 
