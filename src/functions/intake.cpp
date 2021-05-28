@@ -9,21 +9,10 @@ Intake::~Intake(){}
 Intake intake;
 static Math math;
 
-// Define variables
-bool Intake::isRunning = false,
-     Intake::hasColor = false,
-     Intake::getValue = false;
-
-char Intake::desiredColor, Intake::currentColor;
-
-double Intake::velocity, Intake::voltage, Intake::timeOut;
-
 /**
  * Stops the intakes
  */
 Intake& Intake::stop() {
-  velocity = 0;
-  voltage = 0;
   LI.move_velocity(0);
   RI.move_velocity(0);
   return *this;
@@ -57,9 +46,8 @@ void Intake::hold() {
  * Sets the voltage of the intakes
  * @param voltage -100 to 100 (In percentage of max intake speed)
  */
-Intake& Intake::moveVolt(double voltage_) {
-  velocity = 0;
-  voltage = math.percentToVoltage(voltage_);
+Intake& Intake::moveVolt(double voltage) {
+  voltage = math.percentToVoltage(voltage);
   LI.move_voltage(voltage);
   RI.move_voltage(voltage);
   return *this;
@@ -69,115 +57,9 @@ Intake& Intake::moveVolt(double voltage_) {
  * Sets the velocity of the intakes
  * @param velocity -100 to 100 (In percentage of max intake speed)
  */
-Intake& Intake::moveVel(double velocity_) {
-  voltage = 0;
-  velocity = math.percentToVelocity(velocity_, 'B');
+Intake& Intake::moveVel(double velocity) {
+  velocity = math.percentToVelocity(velocity, 'B');
   LI.move_velocity(velocity);
   RI.move_velocity(velocity);
   return *this;
-}
-
-/**
- * Returns current ball color ('R', 'B', 'N')
- */
-char Intake::getColor() {
-  getValue = true;
-  delay(20);
-  return intake.currentColor;
-  getValue = false;
-}
-
-/**
- * Waits until a certain ball color is detected in the intakes
- * Pervents overcycling of balls in autonomous
- * @param color 'B' or 'R' (Ball color; Blue or Red)
- * @param timeOut (In seconds)
- */
-Intake& Intake::color(char color_, double timeOut_) {
-  desiredColor = color_;
-  timeOut = math.secToMillis(timeOut_) + millis();
-  hasColor = false;
-  getValue = true;
-  return *this;
-}
-
-/**
- * Waits until the intake has desired color
- */
-Intake& Intake::waitForColor() {
-  while (!hasColor) delay(20);
-  return *this;
-}
-
-/**
- * Starts the intake task
- */
-void Intake::start() {
-  isRunning = true;
-  hasColor = true;
-  getValue = false;
-  Intake_Optical.set_led_pwm(0);
-  string printColor;
-  double hue, prox;
-  delay(300);
-
-  while (isRunning) {
-
-    if (getValue) {
-
-      // Optical sensor
-      hue = Intake_Optical.get_hue();
-      prox = Intake_Optical.get_proximity();
-
-      if (hue <= redThresh && prox >= 210) {
-        currentColor = 'R';
-        //printColor = "Red";
-      } else if (hue >= blueThresh && prox >= 210) {
-        currentColor = 'B';
-        //printColor = "Blue";
-      } else {
-        currentColor = 'N';
-        //printColor = "Not Blue/Red";
-      }
-
-      // // Sets voltage or velocity of intakes
-      // if (voltage != 0) {
-      //   LI.move_voltage(voltage);
-      //   RI.move_voltage(voltage);
-      // } else if (velocity != 0) {
-      //   LI.move_velocity(velocity);
-      //   RI.move_velocity(velocity);
-      // }
-
-      // Detection logic for cycling functions
-      if (!hasColor) { // Color
-        if (millis() >= timeOut) {
-          hasColor = true;
-          getValue = false;
-        } else if (desiredColor == currentColor) {
-          hasColor = true;
-          getValue = false;
-        }
-      }
-
-      // Display variables to LCD display
-      // Useful for debugging
-      // lcd::print(6, "Inatke Color: %s \n", printColor);
-    }
-    delay(20);
-  }
-}
-
-/**
- * Ends the intake task
- */
-void Intake::end() {
-  if (intakeTask != nullptr) {
-    intake.stop().brake(); // Stops intakes
-    isRunning = false;
-    intakeTask->remove(); // Removes memory stack task is occupying
-    delete intakeTask; // Deletes the task from memory
-    intakeTask = nullptr;
-    Intake_Optical.set_led_pwm(0); // Turn off optical sensor LED
-  }
 }

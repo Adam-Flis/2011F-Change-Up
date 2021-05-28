@@ -6,17 +6,18 @@ void autonomous() {
 
   float time = millis();
 
-  Intake_Optical.set_led_pwm(100); // Turn on optical sensor LED
-  Bottom_Uptake_Optical.set_led_pwm(100);
+  Bottom_Uptake_Optical.set_led_pwm(100); // Turn on optical sensor LED
   Middle_Uptake_Optical.set_led_pwm(100);
 
 /* ********** Select what autonomous to run ********** */
 
   //homeRow('R');
   //homeRow('B');
-  center();
+  //center();
+  //twoGoal('R');
+  //twoGoal('B');
   //rightCorner();
-  //skills();
+  skills();
 
 /* ************************************************** */
 

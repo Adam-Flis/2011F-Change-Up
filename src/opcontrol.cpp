@@ -2,14 +2,12 @@
 #include "define.hpp"
 #include "functions/odometry.hpp"
 #include "functions/chassis.hpp"
-#include "functions/intake.hpp"
 #include "functions/uptake.hpp"
 
 
 void opcontrol() {
 
   Odom odom;
-  Intake intake;
   Uptake uptake;
   Chassis chassis;
 
@@ -21,7 +19,6 @@ void opcontrol() {
   chassis.stop().brake();
   odom.end();
   chassis.end();
-  intake.end();
   uptake.end();
   lcd::clear();
   lcd::shutdown();

@@ -9,7 +9,7 @@ void center() {
   float time = millis();
 
   intake.moveVolt(-100); // Deploy
-  delay(150);
+  delay(250);
   intake.moveVolt(100);
 
   chassis.driveToPoint(0, 44, 100, 'Y', 1.3, 0).waitUntillSettled(); // Drive towards center field

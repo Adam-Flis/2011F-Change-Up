@@ -3,11 +3,11 @@
 #include "autonomous.hpp"
 
 /**
- * Full cycle home row
+ * Cycle corner and wall goal
  * Line up on right of the field facing the right wall with
  * left side of drive wheels on the white line
  */
-void homeRow(char color) {
+void twoGoal(char color){
 
   // Figure out what color is the opponent is, used with optical sensors
   char opponentColor;
@@ -68,39 +68,13 @@ void homeRow(char color) {
   delay(100);
   uptake.stop().brake();
   delay(80);
+  intake.stop().brake();
+  delay(6000); // Wait to drive away from goal
 
   intake.moveVolt(-50); // Discard opponent ball
   uptake.moveVolt(-100);
   chassis.driveToPoint(-20, -42.5, 100, 'X', 1.1, 90, true).waitUntillSettled(); // Drive away from 2nd goal
-  chassis.turnToAngle(180, 100, 0.7).waitUntillSettled(); // Turn upfield
   intake.stop().brake();
   uptake.stop().brake();
-
-  chassis.driveToPoint(-20, -71, 100, 'Y', 1.3, 180).waitUntillSettled(); // Drive across the field
-  chassis.stop();
-
-  chassis.turnToAngle(135, 100, 0.8).waitUntillSettled(); // Turn to face 3rd goal
-
-  intake.moveVolt(100);
-  chassis.driveToPoint(3.7, -99.5, 100, 'X', 1.05, 135).waitUntillSettled(); // Drive towards 3rd goal
-  chassis.move(-10);
-
-  // Cycle 3rd goal
-  delay(10);
-  chassis.move(15);
-  delay(20);
-  uptake.resetCount();
-  uptake.moveVolt(100).color(opponentColor, 1, 1.3).waitForColor(); // Cycle until opponent color is detected inside robot, prevents overcycling
-  intake.moveVolt(-50);
-  delay(100);
-  uptake.stop().brake();
-  delay(80);
-
-  chassis.move(-100); // Drive away from 3rd goal
-  delay(350);
-  intake.stop().coast();
-  uptake.stop().coast();
-
-  chassis.turnToAngle(-60, 60, 0.8).waitUntillSettled().stop().coast();
 
 }

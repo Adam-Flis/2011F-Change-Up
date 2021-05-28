@@ -24,7 +24,6 @@
 #define Distance_Port 12
 
 // Optical
-#define Intake_Optical_Port 1
 #define Bottom_Uptake_Optical_Port 5
 #define Middle_Uptake_Optical_Port 2
 
@@ -58,8 +57,7 @@ Imu LIMU (LIMU_Port),
 Distance Distance_Sensor (Distance_Port);
 
 // Optical
-Optical Intake_Optical (Intake_Optical_Port),
-        Bottom_Uptake_Optical (Bottom_Uptake_Optical_Port),
+Optical Bottom_Uptake_Optical (Bottom_Uptake_Optical_Port),
         Middle_Uptake_Optical (Middle_Uptake_Optical_Port);
 
 // Encoder
@@ -79,5 +77,4 @@ double distanceThresh = 225;
 // Tasks
 Task *trackingTask = nullptr;
 Task *chassisTask = nullptr;
-Task *intakeTask = nullptr;
 Task *uptakeTask = nullptr;

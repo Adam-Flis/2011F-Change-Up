@@ -85,7 +85,6 @@ Uptake& Uptake::moveVel(double velocity_) {
  */
 char Uptake::getColorB() {
   getValue = true;
-  delay(20);
   return uptake.currentColorB;
   getValue = false;
 }
@@ -95,7 +94,6 @@ char Uptake::getColorB() {
  */
 char Uptake::getColorM() {
   getValue = true;
-  delay(20);
   return uptake.currentColorM;
   getValue = false;
 }
@@ -143,7 +141,6 @@ void Uptake::resetCount() {
  */
 int Uptake::getCount() {
   getValue = true;
-  delay(20);
   return uptake.currentAmount;
   getValue = false;
 }

@@ -288,16 +288,16 @@ void Chassis::start() {
           driftSpeed *= -1;
         }
 
+        // Constrain speed to allow for smoother acceleration
+        driveSpeed = math.slew(driveSpeed, lastSpeed);
+        lastSpeed = driveSpeed;
+
         // Constrain speed
         if (fabs(driveSpeed) >= maxSpeed) {
           driveSpeed = maxSpeed;
         } else if (fabs(driveSpeed) <= minSpeed) {
           driveSpeed = minMovement;
         }
-
-        // Constrain speed to allow for smoother acceleration
-        driveSpeed = math.slew(driveSpeed, lastSpeed);
-        lastSpeed = driveSpeed;
 
         // Display speed to lcd; useful for debugging
         // lcd::print(7, "%f", driveSpeed);
