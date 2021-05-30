@@ -9,7 +9,7 @@ void skills () {
 
   intake.moveVolt(-100); // Deploy
 
-  chassis.driveToPoint(21, 45.4, 100, 'Y', 1.25, 23.5); // Drive at wall
+  chassis.driveToPoint(21, 45.5, 100, 'Y', 1.25, 23.5); // Drive at wall
   delay(100);
   intake.moveVolt(100);
   uptake.moveVolt(60).color('R', 1, 0.5).waitForColor().stop(); // Grab line ball
@@ -210,7 +210,7 @@ void skills () {
   intake.moveVolt(100);
   delay(500);
 
-  chassis.driveToPoint(61, 18, 100, 'Y', 1.0, -360, true).waitUntillSettled(); // Drive away from 8th goal
+  chassis.driveToPoint(61, 18, 60, 'Y', 1.0, -360, true).waitUntillSettled(); // Drive away from 8th goal
   intake.moveVolt(-100);
   chassis.turnToAngle(-184, 100, 1.0).waitUntillSettled(); // Turn at 9th goal
 

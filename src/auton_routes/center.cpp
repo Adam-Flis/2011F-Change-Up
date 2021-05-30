@@ -12,7 +12,8 @@ void center() {
   delay(250);
   intake.moveVolt(100);
 
-  chassis.driveToPoint(0, 44, 100, 'Y', 1.3, 0).waitUntillSettled(); // Drive towards center field
+  chassis.driveToPoint(0, 44, 70, 'Y', 1.1, 0).waitUntillSettled();
+  chassis.stop(); // Drive towards center field
   delay(200);
 
   chassis.driveToPoint(0, 18, 80, 'Y', 1.4, 0, true).waitUntillSettled(); // Drive away from center field

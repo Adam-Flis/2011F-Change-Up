@@ -164,8 +164,8 @@
         "upload_options": {
             "compress_bin": true,
             "description": "\"Never bet against FaZe Clan\" -Grant Cox",
-            "remote_name": "Skills",
-            "slot": 7
+            "remote_name": "Center Goal",
+            "slot": 3
         }
     }
 }

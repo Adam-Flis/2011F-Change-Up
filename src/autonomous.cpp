@@ -13,11 +13,11 @@ void autonomous() {
 
   //homeRow('R');
   //homeRow('B');
-  //center();
+  center();
   //twoGoal('R');
   //twoGoal('B');
   //rightCorner();
-  skills();
+  //skills();
 
 /* ************************************************** */
 
